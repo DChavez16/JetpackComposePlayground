@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="products_list_screen_title">Products</string>
+    <string name="add_product_screen_title">Add product</string>
+    <string name="edit_product_screen_title">Edit product</string>
+</resources>

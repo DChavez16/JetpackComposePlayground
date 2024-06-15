@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Names -->
+    <string name="lazy_layouts_screen">Lazy Layouts</string>
+    <string name="animations_screen">Animations</string>
+    <string name="draw_scope_screen">Draw Scopes</string>
+    <string name="themes_screen">Themes</string>
+    <string name="dependency_injection_screen">Dependency Injection</string>
+    <string name="local_database_screen">Local Database</string>
+    <string name="data_persistence">Data Persistence</string>
+    <string name="persistent_work_screen">Persistent Work</string>
+</resources>

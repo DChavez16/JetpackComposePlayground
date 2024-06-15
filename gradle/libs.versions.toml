@@ -1,0 +1,147 @@
+[versions]
+# Android Gradle
+agp = "8.4.1"
+# Kotlin
+kotlin = "1.9.22"
+# Core
+coreKtx = "1.13.1"
+# Lifecycle
+lifecycle = "2.8.1"
+# Compose & UI
+composeBom = "2024.05.00"
+activityCompose = "1.9.0"
+composeCompiler = "1.5.8"
+compose = "1.6.7"
+material = "1.2.1"
+# Navigation
+navigationCompose = "2.7.7"
+# KSP
+ksp = "1.9.22-1.0.18"
+# Hilt
+hilt = "2.51.1"
+hiltNavigationCompose = "1.2.0"
+# Room
+room = "2.6.1"
+# Datastore
+dataStore = "1.1.1"
+# WorkManager
+workManager = "2.9.0"
+# Android Jetpack Compose Color Picker
+colorPicker = "0.7.0"
+# Coroutines
+coroutines = "1.8.0"
+# Unit Test
+junitTest = "4.13.2"
+# Implementatnion Test
+androidXTest = "1.5.2"
+
+
+
+
+[libraries]
+# Core
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+# Gradle
+gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+# Kotlin
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+# Lifecycle
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+lifecycle-runtime-testing = { module = "androidx.lifecycle:lifecycle-runtime-testing", version.ref = "lifecycle" }
+# Compose & UI
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
+compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material" }
+# Navigation
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+# KSP
+ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+# Hilt
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+# Room
+room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+# Datastore
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore" }
+# WorkManager
+work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
+work-testing = { module = "androidx.work:work-testing", version.ref = "workManager" }
+# Android Jetpack Compose Color Picker
+compose-color-picker = { module = "com.godaddy.android.colorpicker:compose-color-picker", version.ref = "colorPicker" }
+compose-color-picker-android = { module = "com.godaddy.android.colorpicker:compose-color-picker-android", version.ref = "colorPicker" }
+# Unit Test
+junit = { module = "junit:junit", version.ref = "junitTest" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+# Instrumentation Test
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidXTest" }
+compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+# Debug implementation
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+
+
+
+
+[plugins]
+# AGP
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+# Kotlin
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+# KSP
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# Hilt
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+# Room
+room = { id = "androidx.room", version.ref = "room" }
+
+# Project plugins
+playground-android-application = { id = "playground.android.application", version = "unspecified" }
+playground-android-library = { id = "playground.android.library", version = "unspecified" }
+playground-feature = {  id = "playground.feature", version = "unspecified"  }
+playground-hilt = { id = "playground.hilt", version = "unspecified" }
+playground-application-compose = { id = "playground.application.compose", version = "unspecified" }
+playground-library-compose = { id = "playground.library.compose", version = "unspecified" }
+playground-room = { id = "playground.room", version = "unspecified" }
+
+
+
+
+[bundles]
+lifecycle = [
+    "lifecycle-runtime-compose",
+    "lifecycle-viewmodel-compose"
+]
+compose = [
+    "compose-ui",
+    "compose-runtime",
+    "compose-foundation",
+    "compose-animation",
+    "compose-material3",
+    "compose-ui-graphics",
+    "compose-ui-tooling-preview"
+]
+room = [
+    "room-ktx",
+    "room-runtime"
+]
+colorPicker = [
+    "compose-color-picker",
+    "compose-color-picker-android"
+]
+androidTest = [
+    "androidx-test-runner",
+    "compose-ui-test"
+]
