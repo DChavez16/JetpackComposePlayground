@@ -42,7 +42,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.godaddy.android.colorpicker.ClassicColorPicker
 import com.godaddy.android.colorpicker.HsvColor
 
@@ -341,7 +341,7 @@ private fun ColorPickerDialog(
 }
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun PreferencesExamplePreview() {
     AppTheme {

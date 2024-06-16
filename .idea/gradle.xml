@@ -50,7 +50,7 @@
             <option value="$PROJECT_DIR$/feature/drawScope" />
             <option value="$PROJECT_DIR$/feature/lazyLayouts" />
             <option value="$PROJECT_DIR$/feature/localDatabase" />
-            <option value="$PROJECT_DIR$/feature/navigationDrawer" />
+            <option value="$PROJECT_DIR$/feature/navigationUi" />
             <option value="$PROJECT_DIR$/feature/persistentWork" />
             <option value="$PROJECT_DIR$/feature/remoteDatabase" />
             <option value="$PROJECT_DIR$/feature/themes" />

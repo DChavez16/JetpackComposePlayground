@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 @Composable
@@ -98,7 +98,7 @@ private fun ConfigurationOptions(
 }
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun ConfigurationScreenPreview() {
     AppTheme {

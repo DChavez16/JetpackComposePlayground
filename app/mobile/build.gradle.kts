@@ -18,7 +18,7 @@ android {
 
 dependencies {
     // Feature
-    implementation(projects.feature.navigationDrawer)
+    implementation(projects.feature.navigationUi)
     implementation(projects.feature.configuration)
     implementation(projects.feature.lazyLayouts)
     implementation(projects.feature.animations)

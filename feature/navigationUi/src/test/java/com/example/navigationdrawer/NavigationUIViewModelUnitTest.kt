@@ -9,16 +9,16 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class NavigationDrawerViewModelUnitTest {
+class NavigationUIViewModelUnitTest {
 
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var viewModel: NavigationDrawerViewModel
+    private lateinit var viewModel: NavigationUIViewModel
 
     @Before
     fun setup() {
-        viewModel = NavigationDrawerViewModel(
+        viewModel = NavigationUIViewModel(
             themeRepository = FakeLocalThemeRepository()
         )
     }

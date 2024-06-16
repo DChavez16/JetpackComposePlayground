@@ -7,6 +7,6 @@
     <string name="themes_screen">Themes</string>
     <string name="dependency_injection_screen">Dependency Injection</string>
     <string name="local_database_screen">Local Database</string>
-    <string name="data_persistence">Data Persistence</string>
+    <string name="data_persistence_screen">Data Persistence</string>
     <string name="persistent_work_screen">Persistent Work</string>
 </resources>

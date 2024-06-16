@@ -262,7 +262,7 @@ private fun ActionIconButton(
 
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun DefaultTopAppBarOnPrincipalScreenPreview() {
     AppTheme {
@@ -277,7 +277,7 @@ private fun DefaultTopAppBarOnPrincipalScreenPreview() {
     }
 }
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun DefaultTopAppBarOnSecondaryScreenPreview() {
     AppTheme {

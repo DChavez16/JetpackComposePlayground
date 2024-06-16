@@ -49,7 +49,7 @@ fun HorizontalListBanner(title: String) {
 }
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun HorizontalListBannerPreview() {
     AppTheme {

@@ -41,7 +41,7 @@ enum class RootNavigationDestination(
         itemIcon = R.drawable.jetpack_compose_icon
     ),
     DataPersistence(
-        itemTitle = R.string.data_persistence,
+        itemTitle = R.string.data_persistence_screen,
         itemRouteName = "dataPersistence",
         itemIcon = R.drawable.jetpack_compose_icon
     ),

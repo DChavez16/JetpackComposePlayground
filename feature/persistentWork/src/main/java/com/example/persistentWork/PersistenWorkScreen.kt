@@ -20,7 +20,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 @Composable
@@ -91,7 +91,7 @@ private fun NotificationActions(
 }
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun WorkManagerExamplePreview() {
     AppTheme {

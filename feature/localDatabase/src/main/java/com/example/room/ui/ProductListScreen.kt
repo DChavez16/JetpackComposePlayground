@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.Product
 import com.example.room.ProductsUiState
 import com.example.room.ProductsViewModel
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -237,7 +237,7 @@ private fun cardAvailabilityGradient(cardColor: Color, isAvailable: Boolean) =
 
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun ProductListScreenExample() {
     com.example.ui.theme.AppTheme {

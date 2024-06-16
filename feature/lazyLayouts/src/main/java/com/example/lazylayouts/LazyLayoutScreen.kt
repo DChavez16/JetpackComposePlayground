@@ -21,7 +21,7 @@ import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
 import com.example.ui.ui.HorizontalListBanner
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -130,7 +130,7 @@ private fun LazyLayoutsList(
 
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyListScreenPreview() {
     AppTheme {
