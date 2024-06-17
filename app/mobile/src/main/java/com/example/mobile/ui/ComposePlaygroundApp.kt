@@ -28,11 +28,10 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
-    // TODO Add adaptative navigation and adaptative ui where needed
+    // TODO Change the aproach when calling screens, where the screen called dont direclty contain the content, but references to it as state less composables, change ui testing with this new approach
     // TODO Finish convention plugins documentation
     // TODO Improve accesibility (Talkback) and performance for all screens
     // TODO Implement Retrofit using a test API
-    // TODO Change the aproach when calling screens, where the screen called dont direclty contain the content, but references to it as state less composables, change ui testing with this new approach
 
     // Defines a coroutine scope
     val scope = rememberCoroutineScope()

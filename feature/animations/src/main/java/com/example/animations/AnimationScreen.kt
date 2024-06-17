@@ -11,6 +11,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.example.animations.ui.AnimateAsStateExample
 import com.example.animations.ui.AnimateContentSizeExample
 import com.example.animations.ui.AnimatedContentExample
@@ -18,11 +20,9 @@ import com.example.animations.ui.AnimatedVisibilityExample
 import com.example.animations.ui.CrossfadeExample
 import com.example.animations.ui.InfiniteTransitionExample
 import com.example.animations.ui.UpdateTrasitionExample
-import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
 import com.example.ui.ui.HorizontalListBanner
-import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -56,6 +56,9 @@ fun AnimationScreen(
 private fun AnimationsList(
     modifier: Modifier = Modifier
 ) {
+    // Stores the current ViewModelStoreOwner
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -71,10 +74,16 @@ private fun AnimationsList(
             ExampleComponent(
                 title = "AnimatedVisibility",
                 description = "Se usa para ocultar o mostrar un elemento Composable\nSe puede personalizar la transicion al especificar EnterTransition y ExitTransition.\nEn este ejemplo se observa la animacion al aparecer y desaparecer un elemento usando una TweenSpec",
-                content = { AnimatedVisibilityExample() }
+                content = {
+                    AnimatedVisibilityExample(
+                        animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
+
+        // TODO Add the AnimationsViewModel to the example
         // Crossfade example
         item {
             ExampleComponent(
@@ -84,6 +93,7 @@ private fun AnimationsList(
             )
         }
 
+        // TODO Add the AnimationsViewModel to the example
         // AnimatedContent example
         item {
             ExampleComponent(
@@ -93,6 +103,7 @@ private fun AnimationsList(
             )
         }
 
+        // TODO Add the AnimationsViewModel to the example
         // animateContentSize example
         item {
             ExampleComponent(
@@ -105,6 +116,7 @@ private fun AnimationsList(
         // Animations based on state examples
         item(key = 2) { HorizontalListBanner(title = "Animaciones basadas en el estado") }
 
+        // TODO Add the AnimationsViewModel to the example
         // rememberInfiniteTransition example
         item {
             ExampleComponent(
@@ -114,6 +126,7 @@ private fun AnimationsList(
             )
         }
 
+        // TODO Add the AnimationsViewModel to the example
         // updateTransition example
         item {
             ExampleComponent(
@@ -123,6 +136,7 @@ private fun AnimationsList(
             )
         }
 
+        // TODO Add the AnimationsViewModel to the example
         // animate*AsState example
         item {
             ExampleComponent(
@@ -131,17 +145,5 @@ private fun AnimationsList(
                 content = { AnimateAsStateExample() }
             )
         }
-    }
-}
-
-
-
-@CompactSizeScreenThemePreview
-@Composable
-private fun AnimationsExamplePreview() {
-    AppTheme {
-        AnimationScreen(
-            onMenuButtonClick = {}
-        )
     }
 }

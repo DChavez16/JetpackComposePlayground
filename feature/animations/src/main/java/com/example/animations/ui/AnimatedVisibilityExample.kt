@@ -1,29 +1,9 @@
 package com.example.animations.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.EaseInBack
-import androidx.compose.animation.core.EaseOutBack
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOut
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,37 +16,57 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.animations.AnimationsViewModel
 import com.example.animations.R
-import com.example.ui.theme.AppTheme
+import com.example.animations.Transitions
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomDropdownMenu
 
-// Ejemplo de AnimatedVisibility
+// AnimatedVisibility example
 @Composable
-internal fun AnimatedVisibilityExample() {
-    var imageVisibility by remember { mutableStateOf(false) }
-    var currentTransition by remember { mutableStateOf(Transitions.None) }
+internal fun AnimatedVisibilityExample(
+    animationsViewModel: AnimationsViewModel = hiltViewModel()
+) {
+    val imageVisibility by animationsViewModel.imageVisibility.collectAsState()
+    val currentTransition by animationsViewModel.currentTransition.collectAsState()
+
+    // Display the AnimatedVisibility example content
+    AnimatedVisibilityContent(
+        imageVisibility = imageVisibility,
+        currentTransition = currentTransition,
+        onImageVisibilityChange = animationsViewModel::changeImageVisibility,
+        onTransitionChange = animationsViewModel::changeCurrentTransition
+    )
+}
+
+
+@Composable
+private fun AnimatedVisibilityContent(
+    imageVisibility: Boolean,
+    currentTransition: Transitions,
+    onImageVisibilityChange: (Boolean) -> Unit,
+    onTransitionChange: (String) -> Unit
+) {
+    // TODO Apply accesbility best practices
+    // TODO Apply performance best practices
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        // DropdownMenu que indica las transiciones de entrada y de salida de la animacion
+        // DropdownMenu that shows the enter and exit transitions of the animation
         CustomDropdownMenu(
             dropdownMenuLabel = "Transicion",
             currentElementDisplay = currentTransition.transitionName,
             optionsList = Transitions.entries.map { transition -> transition.transitionName },
-            onElementSelected = { elementSelected ->
-                currentTransition =
-                    Transitions.entries.find { it.transitionName == elementSelected }!!
-            }
+            onElementSelected = onTransitionChange
         )
 
         Row(
@@ -74,7 +74,7 @@ internal fun AnimatedVisibilityExample() {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Box que va a ser de contenedor para la imagen que se va a animar en el ejemplo
+            // Box containing the image that will be animated in the example
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -89,7 +89,10 @@ internal fun AnimatedVisibilityExample() {
                 this@Row.AnimatedVisibility(
                     visible = imageVisibility,
                     enter = currentTransition.transition.enterTransition,
-                    exit = currentTransition.transition.exitTransition
+                    exit = currentTransition.transition.exitTransition,
+                    label = "ImageAnimatedVisiblity",
+                    // Added a clip to avoid the image to move outside the box limits during the animation
+                    modifier = Modifier.clipToBounds()
                 ) {
                     Image(
                         painter = painterResource(R.drawable.jetpack_compose_icon),
@@ -100,9 +103,9 @@ internal fun AnimatedVisibilityExample() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Boton para accionar la animacion (habilitar o deshabilitar la visiblidad de la imagen)
+            // Button to trigger the animation (enable or disable the visibility of the image)
             Button(
-                onClick = { imageVisibility = !imageVisibility },
+                onClick = { onImageVisibilityChange(!imageVisibility) },
                 modifier = Modifier.weight(3f)
             ) {
                 Text(
@@ -116,73 +119,19 @@ internal fun AnimatedVisibilityExample() {
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun AnimatedVisibilityExamplePreview() {
-    AppTheme {
-        AnimatedVisibilityExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        AnimatedVisibilityContent(
+            imageVisibility = false,
+            currentTransition = Transitions.None,
+            onImageVisibilityChange = {},
+            onTransitionChange = {}
+        )
     }
-}
-
-
-// Clases utiles para el ejemplo
-private data class Transition(
-    val enterTransition: EnterTransition = EnterTransition.None,
-    val exitTransition: ExitTransition = ExitTransition.None
-)
-
-private enum class Transitions(val transitionName: String, val transition: Transition) {
-    None("Sin transiciones", Transition()),
-    Fade("Fade", Transition(fadeIn(), fadeOut())),
-    Slide(
-        "Slide",
-        Transition(
-            enterTransition = slideIn(initialOffset = { fullSize ->
-                IntOffset(
-                    fullSize.width,
-                    fullSize.height
-                )
-            }),
-            exitTransition = slideOut(targetOffset = { fullSize ->
-                IntOffset(
-                    -fullSize.width,
-                    -fullSize.height
-                )
-            })
-        )
-    ),
-    SlideHorizontally(
-        "SlideHorizontally",
-        Transition(
-            enterTransition = slideInHorizontally(
-                animationSpec = tween(1000, easing = EaseOutBack),
-                initialOffsetX = { fullSize -> fullSize }),
-            exitTransition = slideOutHorizontally(
-                animationSpec = tween(1000, easing = EaseInBack),
-                targetOffsetX = { fullSize -> -fullSize })
-        )
-    ),
-    SlideVertically(
-        "SlideVertically",
-        Transition(
-            enterTransition = slideInVertically(initialOffsetY = { fullSize -> fullSize }),
-            exitTransition = slideOutVertically(targetOffsetY = { fullSize -> -fullSize })
-        )
-    ),
-    Scale("Scale", Transition(scaleIn(), scaleOut())),
-    ExpandShrink("Expand/Shrink", Transition(expandIn(), shrinkOut())),
-    ExpandShrinkHorizontally(
-        "Expand/Shrink Horizontally",
-        Transition(
-            expandHorizontally(),
-            shrinkHorizontally()
-        )
-    ),
-    ExpandShrinkVertically(
-        "Expand/Shrink Vertically",
-        Transition(
-            expandVertically(),
-            shrinkVertically()
-        )
-    )
 }
