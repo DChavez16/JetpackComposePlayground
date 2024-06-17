@@ -17,12 +17,12 @@ class NavigationDrawerUserFlow {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-    private lateinit var navigationDrawerViewModel: NavigationDrawerViewModel
+    private lateinit var navigationDrawerViewModel: NavigationUIViewModel
 
     @Before
     fun setup() {
         // Initialize NavigationDrawerViewModel with FakeLocalThemeRepository
-        navigationDrawerViewModel = NavigationDrawerViewModel(
+        navigationDrawerViewModel = NavigationUIViewModel(
             themeRepository = FakeLocalThemeRepository()
         )
     }

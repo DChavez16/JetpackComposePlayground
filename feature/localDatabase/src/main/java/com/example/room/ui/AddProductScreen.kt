@@ -36,7 +36,7 @@ import com.example.model.isValidForSave
 import com.example.room.ProductsViewModel
 import com.example.room.R
 import com.example.ui.theme.AppTheme
-import com.example.ui.ui.ThemePreview
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 /**
  * Composable to add a new product to the database
@@ -309,7 +309,7 @@ private fun ProductAvailabilityField(
 }
 
 
-@ThemePreview
+@CompactSizeScreenThemePreview
 @Composable
 private fun AddProductScreenPreview() {
     AppTheme {

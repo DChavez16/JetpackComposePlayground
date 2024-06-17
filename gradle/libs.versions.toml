@@ -1,18 +1,19 @@
 [versions]
 # Android Gradle
-agp = "8.4.1"
+agp = "8.4.2"
 # Kotlin
 kotlin = "1.9.22"
 # Core
 coreKtx = "1.13.1"
 # Lifecycle
-lifecycle = "2.8.1"
+lifecycle = "2.8.2"
 # Compose & UI
-composeBom = "2024.05.00"
+composeBom = "2024.06.00"
 activityCompose = "1.9.0"
 composeCompiler = "1.5.8"
-compose = "1.6.7"
+compose = "1.6.8"
 material = "1.2.1"
+materialAdaptative = "1.0.0-beta03"
 # Navigation
 navigationCompose = "2.7.7"
 # KSP
@@ -60,6 +61,7 @@ compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref 
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material" }
+compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "materialAdaptative" }
 # Navigation
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 # KSP
@@ -130,6 +132,7 @@ compose = [
     "compose-foundation",
     "compose-animation",
     "compose-material3",
+    "compose-material3-adaptive",
     "compose-ui-graphics",
     "compose-ui-tooling-preview"
 ]

@@ -1,6 +1,7 @@
 package com.example.ui.theme
 
 import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -92,6 +93,47 @@ fun AppTheme(
     // Collect the dynamicTheme value as a Flow
     val dynamicTheme by themeViewModel.dynamicThemeFlow.collectAsState()
 
+    // Define the theme's colors based on the selected parameters
+    val colors = if (dynamicTheme) {
+        val context = LocalContext.current
+
+        if (darkTheme) dynamicDarkColorScheme(context)
+        else dynamicLightColorScheme(context)
+    } else {
+        // Code for using a non-dynamic theme
+        if (darkTheme) DarkColors
+        else LightColors
+    }
+
+
+    // Code that changes the status bar color
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colors.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                darkTheme
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colors,
+        // La tipografia utilizada para este ejemplo incluira los estilos displaySmall, titleMedium, titleSmall, bodyLarge, bodyMedium, bodySmall
+        typography = typography,
+        // Las formas que van a ser usadas como ejemplo
+        shapes = shapes,
+        content = content
+    )
+}
+
+
+@Composable
+fun PreviewAppTheme(
+    darkTheme: Boolean = false,
+    dynamicTheme: Boolean = false,
+    content: @Composable () -> Unit
+) {
     // Define the theme's colors based on the selected parameters
     val colors = if (dynamicTheme) {
         val context = LocalContext.current

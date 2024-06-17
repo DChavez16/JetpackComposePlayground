@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class NavigationDrawerViewModel @Inject constructor(
+class NavigationUIViewModel @Inject constructor(
     private val themeRepository: ThemeRepository
 ) : ViewModel() {
 

@@ -3,7 +3,7 @@ package com.example.navigationdrawer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,20 +34,56 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.ThemePreview
+import com.example.navigationdrawer.util.NavigationUiExtraButtons
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.ExpandedSizeScreenThemePreview
 import com.example.util.RootNavigationDestination
 
 
 @Composable
-fun NavigationDrawerContent(
+fun CustomNavigationDrawer(
     currentSelectedItem: RootNavigationDestination,
+    isWidthScreenExpanded: Boolean = false,
     onDrawerItemClick: (RootNavigationDestination) -> Unit,
     onConfigurationButtonClick: () -> Unit,
-    navigationDrawerViewModel: NavigationDrawerViewModel = hiltViewModel()
+    navigationDrawerViewModel: NavigationUIViewModel = hiltViewModel()
 ) {
     // Value that indicates if the current theme is dark or not
     val isDarkTheme by navigationDrawerViewModel.darkThemeFlow.collectAsState()
+
+    // Calls the navigation drawer content
+    NavigationDrawerContent(
+        currentSelectedItem = currentSelectedItem,
+        isDarkTheme = isDarkTheme,
+        isWidthScreenExpanded = isWidthScreenExpanded,
+        onDrawerItemClick = onDrawerItemClick,
+        onConfigurationButtonClick = onConfigurationButtonClick,
+        onThemeButtonClick = navigationDrawerViewModel::updateDarkTheme
+    )
+}
+
+@Composable
+private fun NavigationDrawerContent(
+    currentSelectedItem: RootNavigationDestination,
+    isDarkTheme: Boolean,
+    isWidthScreenExpanded: Boolean,
+    onDrawerItemClick: (RootNavigationDestination) -> Unit,
+    onConfigurationButtonClick: () -> Unit,
+    onThemeButtonClick: (Boolean) -> Unit
+) {
+    var localModifier = Modifier
+        .fillMaxHeight()
+        .background(color = MaterialTheme.colorScheme.primaryContainer)
+
+    localModifier = if (isWidthScreenExpanded) {
+//        localModifier.then(Modifier.width(280.dp))
+        localModifier.then(
+            Modifier.sizeIn(maxWidth = 280.dp)
+        )
+    } else {
+        localModifier.then(Modifier.fillMaxWidth(0.75f))
+    }
 
     /*  Main column of the navigation drawer content. It holds the following:
         1 - The name of the app at the top
@@ -56,10 +92,7 @@ fun NavigationDrawerContent(
         4 - A row of configuration and theme buttons in the bottom
      */
     Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth(0.75f)
-            .background(color = MaterialTheme.colorScheme.primaryContainer)
+        modifier = localModifier
     ) {
         // App's Name
         DrawerContentAppName()
@@ -81,10 +114,11 @@ fun NavigationDrawerContent(
         )
 
         // Configuration and theme buttons
-        DrawerContentBottomButtons(
+        NavigationUiExtraButtons(
             isDarkTheme = isDarkTheme,
+            enableConfigurationButton = currentSelectedItem != RootNavigationDestination.Configuration,
             onConfigurationButtonClick = onConfigurationButtonClick,
-            onThemeButtonClick = navigationDrawerViewModel::updateDarkTheme
+            onThemeButtonClick = onThemeButtonClick
         )
     }
 }
@@ -147,14 +181,14 @@ private fun DrawerContentNavigationItems(
                         vertical = 6.dp,
                         horizontal = 12.dp
                     )
-                    .semantics(mergeDescendants = true) { contentDescription = navigationItemTitle}
+                    .semantics(mergeDescendants = true) { contentDescription = navigationItemTitle }
             ) {
-                // Drawer element image
-                Image(
-                    painter = painterResource(drawerItem.itemIcon ?: 0),
+                // Drawer element icon
+                Icon(
+                    imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(32.dp)
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(32.dp)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -173,65 +207,14 @@ private fun DrawerContentNavigationItems(
 }
 
 
-@Composable
-private fun DrawerContentBottomButtons(
-    isDarkTheme: Boolean,
-    onConfigurationButtonClick: () -> Unit,
-    onThemeButtonClick: (Boolean) -> Unit
-) {
-    val iconContentDescription = "Change to ${if(isDarkTheme) "light" else "dark"} theme"
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+
+@CompactSizeScreenThemePreview
+@Composable
+private fun NavigationDrawerCompactSizePreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
     ) {
-        // Configuration button
-        IconButton(
-            onClick = {
-                onConfigurationButtonClick()
-            },
-            modifier = Modifier.semantics(
-                mergeDescendants = true
-            ) {
-                contentDescription = "Configuration"
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-
-        // Theme button
-        IconButton(
-            onClick = {
-                onThemeButtonClick(!isDarkTheme)
-            },
-            modifier = Modifier.semantics(
-                mergeDescendants = true
-            ) {
-                testTag = "ChangeThemeIconButton"
-                contentDescription = iconContentDescription
-            }
-        ) {
-            Icon(
-                painter = painterResource(
-                    id = if (isDarkTheme) R.drawable.night_mode
-                    else R.drawable.light_mode
-                ),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-    }
-}
-
-
-@ThemePreview
-@Composable
-private fun ComposePlaygroundDrawerContentPreview() {
-    AppTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -239,8 +222,36 @@ private fun ComposePlaygroundDrawerContentPreview() {
         ) {
             NavigationDrawerContent(
                 currentSelectedItem = RootNavigationDestination.LazyLayouts,
+                isDarkTheme = isSystemInDarkTheme(),
+                isWidthScreenExpanded = false,
                 onDrawerItemClick = {},
-                onConfigurationButtonClick = {}
+                onConfigurationButtonClick = {},
+                onThemeButtonClick = {}
+            )
+        }
+    }
+}
+
+
+
+@ExpandedSizeScreenThemePreview
+@Composable
+private fun NavigationDrawerExpandedSizePreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.Transparent)
+        ) {
+            NavigationDrawerContent(
+                currentSelectedItem = RootNavigationDestination.LazyLayouts,
+                isDarkTheme = isSystemInDarkTheme(),
+                isWidthScreenExpanded = true,
+                onDrawerItemClick = {},
+                onConfigurationButtonClick = {},
+                onThemeButtonClick = {}
             )
         }
     }
