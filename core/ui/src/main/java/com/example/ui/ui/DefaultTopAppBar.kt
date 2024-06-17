@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.ui.theme.AppTheme
 
 
@@ -54,7 +57,8 @@ fun DefaultTopAppBar(
     isPrincipalScreen: Boolean = true,
     actionButtonIcon: ImageVector? = null,
     onActionButtonClick: () -> Unit = {},
-    actionButtonContentDescription: String? = null
+    actionButtonContentDescription: String? = null,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -69,10 +73,13 @@ fun DefaultTopAppBar(
              */
 
             // Shows the menu button icon if the principal screen is focused, and handles its visibility animation
-            MenuIconButton(
-                isPrincipalScreen = isPrincipalScreen,
-                onMenuButtonClick = onMenuButtonClick
-            )
+            // Only show the menu button whe WindowWidthClass is Compact
+            if(windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                MenuIconButton(
+                    isPrincipalScreen = isPrincipalScreen,
+                    onMenuButtonClick = onMenuButtonClick
+                )
+            }
 
             // Shows the back button icon if a secondary screen is focused, and handles its visibility animation
             BackIconButton(
