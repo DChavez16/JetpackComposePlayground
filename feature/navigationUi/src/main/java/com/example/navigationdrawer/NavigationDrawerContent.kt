@@ -187,7 +187,9 @@ private fun DrawerContentNavigationItems(
                 Icon(
                     imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    tint = with(MaterialTheme.colorScheme) {
+                        if (currentSelectedItem == drawerItem) primaryContainer else onPrimaryContainer
+                    },
                     modifier = Modifier.size(32.dp)
                 )
 
@@ -198,7 +200,7 @@ private fun DrawerContentNavigationItems(
                     text = navigationItemTitle,
                     style = MaterialTheme.typography.bodyLarge,
                     color = with(MaterialTheme.colorScheme) {
-                        if (currentSelectedItem == drawerItem) onPrimary else onPrimaryContainer
+                        if (currentSelectedItem == drawerItem) primaryContainer else onPrimaryContainer
                     }
                 )
             }
