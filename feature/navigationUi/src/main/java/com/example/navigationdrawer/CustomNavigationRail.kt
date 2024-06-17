@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -83,6 +84,7 @@ private fun NavigationRailContent(
         // Extra Rail Buttons
         NavigationRailContentExtraButtons(
             isDarkTheme = isDarkTheme,
+            enableConfigurationButton = currentSelectedItem != RootNavigationDestination.Configuration,
             onConfigurationButtonClick = onConfigurationButtonClick,
             onThemeButtonClick = onThemeButtonClick
         )
@@ -138,6 +140,7 @@ private fun NavigationRailContentItems(
 @Composable
 private fun NavigationRailContentExtraButtons(
     isDarkTheme: Boolean,
+    enableConfigurationButton: Boolean,
     onConfigurationButtonClick: () -> Unit,
     onThemeButtonClick: (Boolean) -> Unit
 ) {
@@ -179,6 +182,7 @@ private fun NavigationRailContentExtraButtons(
             onClick = {
                 onConfigurationButtonClick()
             },
+            enabled = enableConfigurationButton,
             modifier = Modifier
                 .size(28.dp)
                 .semantics(
@@ -190,7 +194,10 @@ private fun NavigationRailContentExtraButtons(
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.alpha(
+                    if (enableConfigurationButton) 1f else 0.5f
+                )
             )
         }
     }

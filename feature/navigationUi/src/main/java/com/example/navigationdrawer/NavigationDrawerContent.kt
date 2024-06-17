@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -117,6 +118,7 @@ private fun NavigationDrawerContent(
         // Configuration and theme buttons
         DrawerContentBottomButtons(
             isDarkTheme = isDarkTheme,
+            enableConfigurationButton = currentSelectedItem != RootNavigationDestination.Configuration,
             onConfigurationButtonClick = onConfigurationButtonClick,
             onThemeButtonClick = onThemeButtonClick
         )
@@ -210,6 +212,7 @@ private fun DrawerContentNavigationItems(
 @Composable
 private fun DrawerContentBottomButtons(
     isDarkTheme: Boolean,
+    enableConfigurationButton: Boolean,
     onConfigurationButtonClick: () -> Unit,
     onThemeButtonClick: (Boolean) -> Unit
 ) {
@@ -224,6 +227,8 @@ private fun DrawerContentBottomButtons(
             onClick = {
                 onConfigurationButtonClick()
             },
+            // Disable when the current destination is the configuration screen
+            enabled = enableConfigurationButton,
             modifier = Modifier.semantics(
                 mergeDescendants = true
             ) {
@@ -233,7 +238,10 @@ private fun DrawerContentBottomButtons(
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.alpha(
+                    if (enableConfigurationButton) 1f else 0.5f
+                )
             )
         }
 
