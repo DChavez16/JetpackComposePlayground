@@ -48,6 +48,7 @@ import com.example.ui.theme.AppTheme
  * @param actionButtonIcon Optional icon to be displayed as the action button in the TopAppBar, show only if the value is not null, the default value is null.
  * @param onActionButtonClick Optional action button callback, default value is empty.
  * @param actionButtonContentDescription Optional content description for the action button, default value is null.
+ * @param windowSizeClass Observes the current Window Size Class, used to determine the visibility of the menu button
  */
 @Composable
 fun DefaultTopAppBar(

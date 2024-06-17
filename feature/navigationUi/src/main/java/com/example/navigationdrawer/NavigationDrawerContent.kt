@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,6 +34,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.navigationdrawer.util.NavigationUiExtraButtons
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.ExpandedSizeScreenThemePreview
@@ -116,7 +114,7 @@ private fun NavigationDrawerContent(
         )
 
         // Configuration and theme buttons
-        DrawerContentBottomButtons(
+        NavigationUiExtraButtons(
             isDarkTheme = isDarkTheme,
             enableConfigurationButton = currentSelectedItem != RootNavigationDestination.Configuration,
             onConfigurationButtonClick = onConfigurationButtonClick,
@@ -209,65 +207,6 @@ private fun DrawerContentNavigationItems(
 }
 
 
-@Composable
-private fun DrawerContentBottomButtons(
-    isDarkTheme: Boolean,
-    enableConfigurationButton: Boolean,
-    onConfigurationButtonClick: () -> Unit,
-    onThemeButtonClick: (Boolean) -> Unit
-) {
-    val iconContentDescription = "Change to ${if (isDarkTheme) "light" else "dark"} theme"
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        // Configuration button
-        IconButton(
-            onClick = {
-                onConfigurationButtonClick()
-            },
-            // Disable when the current destination is the configuration screen
-            enabled = enableConfigurationButton,
-            modifier = Modifier.semantics(
-                mergeDescendants = true
-            ) {
-                contentDescription = "Configuration"
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.alpha(
-                    if (enableConfigurationButton) 1f else 0.5f
-                )
-            )
-        }
-
-        // Theme button
-        IconButton(
-            onClick = {
-                onThemeButtonClick(!isDarkTheme)
-            },
-            modifier = Modifier.semantics(
-                mergeDescendants = true
-            ) {
-                testTag = "ChangeThemeIconButton"
-                contentDescription = iconContentDescription
-            }
-        ) {
-            Icon(
-                painter = painterResource(
-                    id = if (isDarkTheme) R.drawable.night_mode
-                    else R.drawable.light_mode
-                ),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-    }
-}
 
 
 @CompactSizeScreenThemePreview
