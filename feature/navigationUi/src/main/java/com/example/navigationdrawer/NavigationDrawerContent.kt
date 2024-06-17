@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -70,9 +71,21 @@ private fun NavigationDrawerContent(
     isWidthScreenExpanded: Boolean,
     onDrawerItemClick: (RootNavigationDestination) -> Unit,
     onConfigurationButtonClick: () -> Unit,
-    onThemeButtonClick: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    onThemeButtonClick: (Boolean) -> Unit
 ) {
+    var localModifier = Modifier
+        .fillMaxHeight()
+        .background(color = MaterialTheme.colorScheme.primaryContainer)
+
+    localModifier = if (isWidthScreenExpanded) {
+//        localModifier.then(Modifier.width(280.dp))
+        localModifier.then(
+            Modifier.sizeIn(maxWidth = 280.dp)
+        )
+    } else {
+        localModifier.then(Modifier.fillMaxWidth(0.75f))
+    }
+
     /*  Main column of the navigation drawer content. It holds the following:
         1 - The name of the app at the top
         2 - An horizontal separator line
@@ -80,12 +93,7 @@ private fun NavigationDrawerContent(
         4 - A row of configuration and theme buttons in the bottom
      */
     Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .fillMaxWidth(
-                if(isWidthScreenExpanded) 0.225f else 0.75f
-            )
-            .background(color = MaterialTheme.colorScheme.primaryContainer)
+        modifier = localModifier
     ) {
         // App's Name
         DrawerContentAppName()
@@ -175,12 +183,12 @@ private fun DrawerContentNavigationItems(
                     )
                     .semantics(mergeDescendants = true) { contentDescription = navigationItemTitle }
             ) {
-                // Drawer element image
-                Image(
-                    painter = painterResource(drawerItem.itemIcon ?: 0),
+                // Drawer element icon
+                Icon(
+                    imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(32.dp)
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(32.dp)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))

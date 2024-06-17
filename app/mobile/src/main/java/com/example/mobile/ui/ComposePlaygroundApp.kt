@@ -48,7 +48,7 @@ fun ComposePlaygroundApp(
     val currentRoute: String? = rootNavBackStackEntry?.destination?.route
 
 
-    /* Navigation drawer behavior
+    /* Navigation drawer behavior:
         When windowWidthSizeClass == WindowWidthSizeClass.COMPACT hide the drawer and show it by pressing the menu button
         When windowWidthSizeClass == WindowWidthSizeClass.MEDIUM use a static navigation rail
         When windowWidthSizeClass == WindowWidthSizeClass.EXPANDED use a static navigation drawer

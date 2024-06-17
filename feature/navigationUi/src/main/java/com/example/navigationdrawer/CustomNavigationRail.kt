@@ -1,6 +1,5 @@
 package com.example.navigationdrawer
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,18 +18,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.Text
+import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ui.theme.PreviewAppTheme
@@ -67,6 +64,8 @@ private fun NavigationRailContent(
     onThemeButtonClick: (Boolean) -> Unit
 ) {
     NavigationRail(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier
             .fillMaxHeight()
             .width(64.dp)
@@ -114,13 +113,22 @@ private fun NavigationRailContentItems(
                     selected = drawerItem == currentSelectedItem,
                     onClick = { onRailItemClicked(drawerItem) },
                     icon = {
-                        Image(
-                            painter = painterResource(drawerItem.itemIcon ?: 0),
+                        Icon(
+                            imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
                             contentDescription = null,
                             modifier = Modifier.size(28.dp)
                         )
                     },
-                    label = null
+                    label = null,
+                    colors = NavigationRailItemColors(
+                        selectedIconColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedIndicatorColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        disabledIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        disabledTextColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 )
             }
     }

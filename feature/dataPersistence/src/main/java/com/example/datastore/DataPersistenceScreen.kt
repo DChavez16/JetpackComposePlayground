@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
@@ -118,19 +119,24 @@ private fun DisplayContent(
     number: Number,
     color: Color
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-            .background(color = color)
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = "$number",
-            style = MaterialTheme.typography.displayLarge,
-            fontSize = 256.sp,
-            modifier = Modifier.semantics { testTag = "NumberDisplay" }
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .sizeIn(maxWidth = 320.dp)
+                .aspectRatio(1f)
+                .background(color = color)
+        ) {
+            Text(
+                text = "$number",
+                style = MaterialTheme.typography.displayLarge,
+                fontSize = 256.sp,
+                modifier = Modifier.semantics { testTag = "NumberDisplay" }
+            )
+        }
     }
 }
 
