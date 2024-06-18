@@ -23,6 +23,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,11 +40,15 @@ internal class AnimationsViewModel @Inject constructor(
 
     // Backing property and StateFlow for image visibility (AnimatedVisibilityExample)
     private val _imageVisibility = MutableStateFlow(false)
-    internal val imageVisibility: StateFlow<Boolean> = _imageVisibility
+    val imageVisibility: StateFlow<Boolean> = _imageVisibility
 
     // Backing property and StateFlow for current transition (AnimatedVisibilityExample)
     private val _currentTransition = MutableStateFlow(Transitions.None)
-    internal val currentTransition: StateFlow<Transitions> = _currentTransition
+    val currentTransition: StateFlow<Transitions> = _currentTransition
+
+    // Backing property and StateFlow for current crossfade item (CrossfadeExample)
+    private val _crossfadeItem = MutableStateFlow(CrossfadeItem(number = 1))
+    val crossfadeItem: StateFlow<CrossfadeItem> = _crossfadeItem
 
 
     // Methods to change image visibility and current transition (AnimatedVisibilityExample)
@@ -55,6 +60,19 @@ internal class AnimationsViewModel @Inject constructor(
         _currentTransition.value = Transitions.entries.find {
             context.getString(it.transitionName) == newCurrentTransitionString
         } ?: Transitions.None
+    }
+
+    // Methods to change crossfade item color and number (CrossfadeExample)
+    fun changeCrossfadeItemColor() {
+        _crossfadeItem.value = _crossfadeItem.value.copy(backgroundColor = getRandomColor())
+    }
+
+    fun increaseCrossfadeItemNumber() {
+        _crossfadeItem.value = _crossfadeItem.value.copy(number = _crossfadeItem.value.number + 1)
+    }
+
+    fun decreaseCrossfadeItemNumber() {
+        _crossfadeItem.value = _crossfadeItem.value.copy(number = _crossfadeItem.value.number - 1)
     }
 }
 
@@ -146,3 +164,15 @@ internal enum class Transitions(
         )
     )
 }
+
+internal data class CrossfadeItem(
+    var number: Int,
+    var backgroundColor: Color = Color.White
+)
+
+private fun getRandomColor() =
+    Color(
+        red = (0..255).random(),
+        green = (0..255).random(),
+        blue = (0..255).random()
+    )

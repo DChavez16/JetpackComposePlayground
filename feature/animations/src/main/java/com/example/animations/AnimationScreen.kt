@@ -89,9 +89,13 @@ private fun AnimationsList(
         // Crossfade example
         item {
             ExampleComponent(
-                title = "Crossfade",
-                description = "Crossfade anima entre dos diseños con una animacion de encadenado. Si alternas el calor que se pasa al parametro current, el contenido se cambia con una animacion de encadenado.\nEn este ejemplo, se muestra la animacion al aumentar o disminuir el numero, asi como al cambiar el color de fondo",
-                content = { CrossfadeExample() }
+                title = stringResource(R.string.animations_screen_crossfade_title),
+                description = stringResource(R.string.animations_screen_crossfade_description),
+                content = {
+                    CrossfadeExample(
+                        animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

@@ -5,6 +5,8 @@
     <string name="animations_screen_list_banner_1">Animations in layout content changes</string>
     <string name="animations_screen_animated_visibility_title">Animated Visibility</string>
     <string name="animations_screen_animated_visibility_description">Used to hide or show a Composable element.\nYou can customize the transition by specifying EnterTransition and ExitTransition.\nThis example shows the animation when an element appears and disappears using a TweenSpec</string>
+    <string name="animations_screen_crossfade_title">Crossfade</string>
+    <string name="animations_screen_crossfade_description">Crossfade animates between two layouts with a chaining animation. If you toggle the heat being passed to the current parameter, the content is changed with a chaining animation.\nIn this example, the animation is shown when increasing or decreasing the number, as well as changing the background color</string>
 
     <!-- Animated Visibility Example -->
     <string name="animations_screen_animated_visibility_dropdown_menu_label">Transition</string>
@@ -19,4 +21,8 @@
     <string name="animations_screen_animated_visibility_transition_expand_shrink">Expand/Shrink</string>
     <string name="animations_screen_animated_visibility_transition_expand_shrink_horizontally">Expand/Shrink Vertically</string>
     <string name="animations_screen_animated_visibility_transition_expand_shrink_vertically">Expand/Shrink Vertically</string>
+
+    <!-- Crossfade Example -->
+    <string name="animations_screen_crossfade_change_number">Change number</string>
+    <string name="animations_screen_crossfade_change_color">Change color</string>
 </resources>

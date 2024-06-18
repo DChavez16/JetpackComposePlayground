@@ -1,8 +1,8 @@
 package com.example.animations.ui
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,27 +22,48 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.animations.AnimationsViewModel
 import com.example.animations.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 @Composable
-internal fun CrossfadeExample() {
-    // Crear un contenedor que tenga un numero y un backgroundColor definidos por CrossfadeItem
-    // Agregar tres botones: Uno para disminuir el numero, otro para aumentar el numero y otro para cambiar el color de fondo
-    // Usar crossfade para la transicion de numero y color de fondo
-    var crossfadeItem by remember { mutableStateOf(CrossfadeItem(number = 1)) }
+internal fun CrossfadeExample(
+    animationsViewModel: AnimationsViewModel = hiltViewModel()
+) {
 
+    val crossfadeItem by animationsViewModel.crossfadeItem.collectAsState()
+
+    // Display the Crossfade example content
+    CrossfadeExampleContent(
+        crossfadeItemNumber = { crossfadeItem.number },
+        crossfadeItemColor = { crossfadeItem.backgroundColor },
+        increaseCrossfadeItemNumber = { animationsViewModel.increaseCrossfadeItemNumber() },
+        decreaseCrossfadeItemNumber = { animationsViewModel.decreaseCrossfadeItemNumber() },
+        changeCrossfadeItemColor = { animationsViewModel.changeCrossfadeItemColor() }
+    )
+}
+
+
+@Composable
+private fun CrossfadeExampleContent(
+    crossfadeItemNumber: () -> Int,
+    crossfadeItemColor: () -> Color,
+    increaseCrossfadeItemNumber: () -> Unit,
+    decreaseCrossfadeItemNumber: () -> Unit,
+    changeCrossfadeItemColor: () -> Unit
+) {
     // Row que muestra el contenedor y los botones
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -50,108 +71,156 @@ internal fun CrossfadeExample() {
         modifier = Modifier.fillMaxWidth()
     ) {
         // Box que va a ser de contenedor para el numero
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(3f)
-                .aspectRatio(1f)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    shape = RoundedCornerShape(4.dp)
-                )
-        ) {
-            Crossfade(targetState = crossfadeItem, label = "Example container") { crossfadeItem ->
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = crossfadeItem.backgroundColor)
-                ) {
-                    Text(
-                        text = "${crossfadeItem.number}",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
-            }
-        }
+        CrossfadeExampleContentContainer(
+            crossfadeItemNumber = { crossfadeItemNumber() },
+            crossfadeItemColor = { crossfadeItemColor() },
+            modifier = Modifier.weight(3f)
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
         // Column que muestra los botones para modificar el numero y el boton para cambiar el fondo
-        Column(modifier = Modifier.weight(3f)) {
-            // Row que muestra los botones para reducir y aumentar el valor del numero
-            Row {
-                // Button para disminuir el valor del numero, si el numero es 1 no se puede disminuir
-                IconButton(
-                    onClick = {
-                        crossfadeItem = crossfadeItem.copy(number = crossfadeItem.number - 1)
+        CrossfadeExampleContentInput(
+            decreaseButtonEnabled = { crossfadeItemNumber() > 1 },
+            increaseButtonEnabled = { crossfadeItemNumber() < 10 },
+            decreaseCrossfadeItemNumber = decreaseCrossfadeItemNumber,
+            increaseCrossfadeItemNumber = increaseCrossfadeItemNumber,
+            changeCrossfadeItemColor = changeCrossfadeItemColor,
+            modifier = Modifier.weight(3f)
+        )
+    }
+}
+
+
+@Composable
+private fun CrossfadeExampleContentContainer(
+    crossfadeItemNumber: () -> Int,
+    crossfadeItemColor: () -> Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .aspectRatio(1f)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(4.dp)
+            )
+    ) {
+        /* DEV NOTE
+        * The following code have some lines commented out, this is because with the current
+        * code, the number of recompositions will be lightly less, but the dev will be unable to
+        * correctly make use of the IDE's animation preview.
+        * To use de animation preview, comment the current lines of code and uncomment the other
+        * lines, this will let you preview the crossfade animations.
+        * */
+
+        Crossfade(
+//            targetState = crossfadeItemColor(),
+            targetState = crossfadeItemColor,
+            label = "CrossfadeColorAnimation"
+        ) { crossfadeItemColor ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind {
+                        drawRect(
+//                            color = crossfadeItemColor
+                            color = crossfadeItemColor()
+                        )
                     },
-                    enabled = crossfadeItem.number > 1,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.remove_icon),
-                        contentDescription = null
-                    )
-                }
-
-                Text(
-                    text = "Cambiar numero",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.sizeIn(maxWidth = 100.dp)
-                )
-
-                // Button para aumentar el valor del numero, si el numero es 10 no se puede aumentar
-                IconButton(
-                    onClick = {
-                        crossfadeItem = crossfadeItem.copy(number = crossfadeItem.number + 1)
-                    },
-                    enabled = crossfadeItem.number < 10,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Button para cambiar el color de fondo
-            Button(
-                onClick = { crossfadeItem = crossfadeItem.copy(backgroundColor = getRandomColor()) }
-            ) {
-                Text(
-                    text = "Cambiar color de fondo",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
-            }
+                content = { }
+            )
+        }
+        Crossfade(
+//            targetState = crossfadeItemNumber(),
+            targetState = crossfadeItemNumber,
+            label = "CrossfadeNumberAnimation"
+        ) { crossfadeItemNumer ->
+            Text(
+//                text = "$crossfadeItemNumer",
+                text = "${crossfadeItemNumer()}",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.displaySmall
+            )
         }
     }
 }
 
 
-@Preview(showBackground = true)
 @Composable
-private fun CrossfadeExamplePreview() {
-    AppTheme {
-        CrossfadeExample()
+private fun CrossfadeExampleContentInput(
+    decreaseButtonEnabled: () -> Boolean,
+    increaseButtonEnabled: () -> Boolean,
+    decreaseCrossfadeItemNumber: () -> Unit,
+    increaseCrossfadeItemNumber: () -> Unit,
+    changeCrossfadeItemColor: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        // Row que muestra los botones para reducir y aumentar el valor del numero
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Button para disminuir el valor del numero, si el numero es 1 no se puede disminuir
+            IconButton(
+                onClick = decreaseCrossfadeItemNumber,
+                enabled = decreaseButtonEnabled(),
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.remove_icon),
+                    contentDescription = null
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.animations_screen_crossfade_change_number),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.sizeIn(maxWidth = 100.dp)
+            )
+
+            // Button para aumentar el valor del numero, si el numero es 10 no se puede aumentar
+            IconButton(
+                onClick = increaseCrossfadeItemNumber,
+                enabled = increaseButtonEnabled(),
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Button para cambiar el color de fondo
+        Button(
+            onClick = changeCrossfadeItemColor,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.animations_screen_crossfade_change_color),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
 
-private data class CrossfadeItem(
-    var number: Int,
-    var backgroundColor: Color = Color.White
-)
-
-// Obtener un color aleatorio
-private fun getRandomColor() =
-    Color(
-        red = (0..255).random(),
-        green = (0..255).random(),
-        blue = (0..255).random()
-    )
+@CompactSizeScreenThemePreview
+@Composable
+private fun CrossfadeExampleContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        CrossfadeExampleContent(
+            crossfadeItemNumber = { 1 },
+            crossfadeItemColor = { Color.White },
+            increaseCrossfadeItemNumber = {},
+            decreaseCrossfadeItemNumber = {},
+            changeCrossfadeItemColor = {}
+        )
+    }
+}
