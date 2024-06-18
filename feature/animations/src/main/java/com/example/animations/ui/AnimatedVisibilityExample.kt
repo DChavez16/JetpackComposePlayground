@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,35 +37,39 @@ import com.example.ui.ui.CustomDropdownMenu
 internal fun AnimatedVisibilityExample(
     animationsViewModel: AnimationsViewModel = hiltViewModel()
 ) {
+
     val imageVisibility by animationsViewModel.imageVisibility.collectAsState()
     val currentTransition by animationsViewModel.currentTransition.collectAsState()
 
     // Display the AnimatedVisibility example content
-    AnimatedVisibilityContent(
+    AnimatedVisibilityExampleContent(
         imageVisibility = imageVisibility,
         currentTransition = currentTransition,
-        onImageVisibilityChange = animationsViewModel::changeImageVisibility,
-        onTransitionChange = animationsViewModel::changeCurrentTransition
+        onImageVisibilityChange = { animationsViewModel.changeImageVisibility(!imageVisibility) },
+        onTransitionChange = { animationsViewModel.changeCurrentTransition(it) }
     )
 }
 
 
 @Composable
-private fun AnimatedVisibilityContent(
+private fun AnimatedVisibilityExampleContent(
     imageVisibility: Boolean,
     currentTransition: Transitions,
-    onImageVisibilityChange: (Boolean) -> Unit,
+    onImageVisibilityChange: () -> Unit,
     onTransitionChange: (String) -> Unit
 ) {
-    // TODO Apply accesbility best practices
-    // TODO Apply performance best practices
+
+    // Button text based in the current imageVisibility value
+    val buttonText =
+        if (imageVisibility) stringResource(R.string.animations_screen_animated_visibility_hide_image)
+        else stringResource(R.string.animations_screen_animated_visibility_show_image)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
         // DropdownMenu that shows the enter and exit transitions of the animation
         CustomDropdownMenu(
-            dropdownMenuLabel = "Transicion",
-            currentElementDisplay = currentTransition.transitionName,
-            optionsList = Transitions.entries.map { transition -> transition.transitionName },
+            dropdownMenuLabel = stringResource(R.string.animations_screen_animated_visibility_dropdown_menu_label),
+            currentElementDisplay = stringResource(currentTransition.transitionName),
+            optionsList = Transitions.entries.map { transition -> stringResource(transition.transitionName) },
             onElementSelected = onTransitionChange
         )
 
@@ -74,9 +78,10 @@ private fun AnimatedVisibilityContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Box containing the image that will be animated in the example
-            Box(
-                contentAlignment = Alignment.Center,
+            // Row containing the image that will be animated in the example
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .weight(3f)
                     .aspectRatio(1f)
@@ -86,7 +91,7 @@ private fun AnimatedVisibilityContent(
                         shape = RoundedCornerShape(4.dp)
                     )
             ) {
-                this@Row.AnimatedVisibility(
+                AnimatedVisibility(
                     visible = imageVisibility,
                     enter = currentTransition.transition.enterTransition,
                     exit = currentTransition.transition.exitTransition,
@@ -105,11 +110,11 @@ private fun AnimatedVisibilityContent(
 
             // Button to trigger the animation (enable or disable the visibility of the image)
             Button(
-                onClick = { onImageVisibilityChange(!imageVisibility) },
+                onClick = { onImageVisibilityChange() },
                 modifier = Modifier.weight(3f)
             ) {
                 Text(
-                    text = if (imageVisibility) "Ocultar imagen" else "Mostrar Imagen",
+                    text = buttonText,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
@@ -119,15 +124,13 @@ private fun AnimatedVisibilityContent(
 }
 
 
-
-
 @CompactSizeScreenThemePreview
 @Composable
 private fun AnimatedVisibilityExamplePreview() {
     PreviewAppTheme(
         darkTheme = isSystemInDarkTheme()
     ) {
-        AnimatedVisibilityContent(
+        AnimatedVisibilityExampleContent(
             imageVisibility = false,
             currentTransition = Transitions.None,
             onImageVisibilityChange = {},

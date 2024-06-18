@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -35,7 +36,7 @@ fun AnimationScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Animations",
+                title = stringResource(R.string.animations_screen_title),
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}
@@ -67,13 +68,13 @@ private fun AnimationsList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Animation examples for content changes in the layout
-        item(key = 1) { HorizontalListBanner(title = "Animaciones en cambios de contenido en el diseño") }
+        item(key = 1) { HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_1)) }
 
         // AnimatedVisibility example
         item {
             ExampleComponent(
-                title = "AnimatedVisibility",
-                description = "Se usa para ocultar o mostrar un elemento Composable\nSe puede personalizar la transicion al especificar EnterTransition y ExitTransition.\nEn este ejemplo se observa la animacion al aparecer y desaparecer un elemento usando una TweenSpec",
+                title = stringResource(R.string.animations_screen_animated_visibility_title),
+                description = stringResource(R.string.animations_screen_animated_visibility_description),
                 content = {
                     AnimatedVisibilityExample(
                         animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
@@ -84,6 +85,7 @@ private fun AnimationsList(
 
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // Crossfade example
         item {
             ExampleComponent(
@@ -94,6 +96,7 @@ private fun AnimationsList(
         }
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // AnimatedContent example
         item {
             ExampleComponent(
@@ -104,6 +107,7 @@ private fun AnimationsList(
         }
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // animateContentSize example
         item {
             ExampleComponent(
@@ -117,6 +121,7 @@ private fun AnimationsList(
         item(key = 2) { HorizontalListBanner(title = "Animaciones basadas en el estado") }
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // rememberInfiniteTransition example
         item {
             ExampleComponent(
@@ -127,6 +132,7 @@ private fun AnimationsList(
         }
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // updateTransition example
         item {
             ExampleComponent(
@@ -137,6 +143,7 @@ private fun AnimationsList(
         }
 
         // TODO Add the AnimationsViewModel to the example
+        // TODO Implement string values
         // animate*AsState example
         item {
             ExampleComponent(

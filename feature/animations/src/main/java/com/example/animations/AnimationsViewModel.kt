@@ -1,5 +1,7 @@
 package com.example.animations
 
+import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseInBack
@@ -24,13 +26,16 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 
 @HiltViewModel
-internal class AnimationsViewModel @Inject constructor() : ViewModel() {
+internal class AnimationsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     // Backing property and StateFlow for image visibility (AnimatedVisibilityExample)
     private val _imageVisibility = MutableStateFlow(false)
@@ -48,7 +53,7 @@ internal class AnimationsViewModel @Inject constructor() : ViewModel() {
 
     fun changeCurrentTransition(newCurrentTransitionString: String) {
         _currentTransition.value = Transitions.entries.find {
-            it.transitionName == newCurrentTransitionString
+            context.getString(it.transitionName) == newCurrentTransitionString
         } ?: Transitions.None
     }
 }
@@ -60,29 +65,43 @@ internal data class Transition(
     val exitTransition: ExitTransition = ExitTransition.None
 )
 
-internal enum class Transitions(val transitionName: String, val transition: Transition) {
-    None("Sin transiciones", Transition()),
-    Fade("Fade", Transition(fadeIn(), fadeOut())),
+internal enum class Transitions(
+    @StringRes val transitionName: Int,
+    val transition: Transition
+) {
+    None(
+        transitionName = R.string.animations_screen_animated_visibility_transition_none,
+        transition = Transition()
+    ),
+    Fade(
+        transitionName = R.string.animations_screen_animated_visibility_transition_fade,
+        transition = Transition(
+            enterTransition = fadeIn(),
+            exitTransition = fadeOut()
+        )
+    ),
     Slide(
-        "Slide",
-        Transition(
-            enterTransition = slideIn(initialOffset = { fullSize ->
-                IntOffset(
-                    fullSize.width,
-                    fullSize.height
-                )
-            }),
-            exitTransition = slideOut(targetOffset = { fullSize ->
-                IntOffset(
-                    -fullSize.width,
-                    -fullSize.height
-                )
-            })
+        transitionName = R.string.animations_screen_animated_visibility_transition_slide,
+        transition = Transition(
+            enterTransition = slideIn(
+                initialOffset = { fullSize ->
+                    IntOffset(
+                        fullSize.width,
+                        fullSize.height
+                    )
+                }),
+            exitTransition = slideOut(
+                targetOffset = { fullSize ->
+                    IntOffset(
+                        -fullSize.width,
+                        -fullSize.height
+                    )
+                })
         )
     ),
     SlideHorizontally(
-        "SlideHorizontally",
-        Transition(
+        transitionName = R.string.animations_screen_animated_visibility_transition_slide_horizontally,
+        transition = Transition(
             enterTransition = slideInHorizontally(
                 animationSpec = tween(1000, easing = EaseOutBack),
                 initialOffsetX = { fullSize -> fullSize }),
@@ -92,26 +111,38 @@ internal enum class Transitions(val transitionName: String, val transition: Tran
         )
     ),
     SlideVertically(
-        "SlideVertically",
-        Transition(
+        transitionName = R.string.animations_screen_animated_visibility_transition_slide_vertically,
+        transition = Transition(
             enterTransition = slideInVertically(initialOffsetY = { fullSize -> fullSize }),
             exitTransition = slideOutVertically(targetOffsetY = { fullSize -> -fullSize })
         )
     ),
-    Scale("Scale", Transition(scaleIn(), scaleOut())),
-    ExpandShrink("Expand/Shrink", Transition(expandIn(), shrinkOut())),
+    Scale(
+        transitionName = R.string.animations_screen_animated_visibility_transition_scale,
+        transition = Transition(
+            enterTransition = scaleIn(),
+            exitTransition = scaleOut()
+        )
+    ),
+    ExpandShrink(
+        transitionName = R.string.animations_screen_animated_visibility_transition_expand_shrink,
+        transition = Transition(
+            enterTransition = expandIn(),
+            exitTransition = shrinkOut()
+        )
+    ),
     ExpandShrinkHorizontally(
-        "Expand/Shrink Horizontally",
-        Transition(
-            expandHorizontally(),
-            shrinkHorizontally()
+        transitionName = R.string.animations_screen_animated_visibility_transition_expand_shrink_horizontally,
+        transition = Transition(
+            enterTransition = expandHorizontally(),
+            exitTransition = shrinkHorizontally()
         )
     ),
     ExpandShrinkVertically(
-        "Expand/Shrink Vertically",
-        Transition(
-            expandVertically(),
-            shrinkVertically()
+        transitionName = R.string.animations_screen_animated_visibility_transition_expand_shrink_vertically,
+        transition = Transition(
+            enterTransition = expandVertically(),
+            exitTransition = shrinkVertically()
         )
     )
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Animations Screen -->
+    <string name="animations_screen_title">Animations</string>
+    <string name="animations_screen_list_banner_1">Animations in layout content changes</string>
+    <string name="animations_screen_animated_visibility_title">Animated Visibility</string>
+    <string name="animations_screen_animated_visibility_description">Used to hide or show a Composable element.\nYou can customize the transition by specifying EnterTransition and ExitTransition.\nThis example shows the animation when an element appears and disappears using a TweenSpec</string>
+
+    <!-- Animated Visibility Example -->
+    <string name="animations_screen_animated_visibility_dropdown_menu_label">Transition</string>
+    <string name="animations_screen_animated_visibility_show_image">Show image</string>
+    <string name="animations_screen_animated_visibility_hide_image">Hide image</string>
+    <string name="animations_screen_animated_visibility_transition_none">No transitions</string>
+    <string name="animations_screen_animated_visibility_transition_fade">Fade</string>
+    <string name="animations_screen_animated_visibility_transition_slide">Slide</string>
+    <string name="animations_screen_animated_visibility_transition_slide_horizontally">SlideHorizontally</string>
+    <string name="animations_screen_animated_visibility_transition_slide_vertically">SlideVertically</string>
+    <string name="animations_screen_animated_visibility_transition_scale">Scale</string>
+    <string name="animations_screen_animated_visibility_transition_expand_shrink">Expand/Shrink</string>
+    <string name="animations_screen_animated_visibility_transition_expand_shrink_horizontally">Expand/Shrink Vertically</string>
+    <string name="animations_screen_animated_visibility_transition_expand_shrink_vertically">Expand/Shrink Vertically</string>
+</resources>
