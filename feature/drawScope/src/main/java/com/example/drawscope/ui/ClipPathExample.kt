@@ -61,7 +61,7 @@ internal fun ClipPathExample() {
         // Dropdown menu para cambiar la operacion de recorte
         CustomDropdownMenu(
             dropdownMenuLabel = "Clip Operation",
-            currentElementDisplay = selectedClipOperation.clipOperationName,
+            currentElementDisplay = { selectedClipOperation.clipOperationName },
             optionsList = ClipOperationClipPath.entries.map { clipOperation -> clipOperation.clipOperationName },
             onElementSelected = { elementSelected ->
                 selectedClipOperation =

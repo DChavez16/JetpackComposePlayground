@@ -83,9 +83,6 @@ private fun AnimationsList(
             )
         }
 
-
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
         // Crossfade example
         item {
             ExampleComponent(

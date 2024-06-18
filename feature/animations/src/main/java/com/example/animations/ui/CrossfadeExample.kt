@@ -171,7 +171,7 @@ private fun CrossfadeExampleContentInput(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = null
+                    contentDescription = if (decreaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_decrease_number) else null
                 )
             }
 
@@ -188,7 +188,10 @@ private fun CrossfadeExampleContentInput(
                 enabled = increaseButtonEnabled(),
                 modifier = Modifier.weight(1f)
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = if (increaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_increase_number) else null
+                )
             }
         }
 

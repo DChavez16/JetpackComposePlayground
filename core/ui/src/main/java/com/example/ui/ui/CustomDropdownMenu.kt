@@ -19,12 +19,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 
 // Select transitions menu
 @Composable
 fun CustomDropdownMenu(
     dropdownMenuLabel: String,
-    currentElementDisplay: String,
+    currentElementDisplay: () -> String,
     optionsList: List<String>,
     onElementSelected: (String) -> Unit
 ) {
@@ -34,15 +35,19 @@ fun CustomDropdownMenu(
         Text(text = "$dropdownMenuLabel: ", style = MaterialTheme.typography.titleMedium)
         Column(modifier = Modifier.weight(1f)) {
             TextField(
-                value = currentElementDisplay,
+                value = currentElementDisplay(),
                 onValueChange = {},
                 enabled = false,
                 readOnly = true,
                 singleLine = true,
                 trailingIcon = {
-                    if (!dropdownMenuExpanded) {
-                        Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.rotate(
+                            if (dropdownMenuExpanded) 180f else 0f
+                        )
+                    )
                 },
                 modifier = Modifier.clickable { dropdownMenuExpanded = !dropdownMenuExpanded }
             )

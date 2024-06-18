@@ -47,7 +47,7 @@ internal fun DrawPointsExample() {
         // Dropdown menu para cambiar el modo de punto
         CustomDropdownMenu(
             dropdownMenuLabel = "Point Mode",
-            currentElementDisplay = pointModeOption.pointModeName,
+            currentElementDisplay = { pointModeOption.pointModeName },
             optionsList = PointModeOption.entries.map { pointModeOption -> pointModeOption.pointModeName },
             onElementSelected = { elementSelected ->
                 pointModeOption =

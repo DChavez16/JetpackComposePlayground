@@ -1,10 +1,14 @@
 package com.example.animations.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,8 +47,9 @@ internal fun AnimatedVisibilityExample(
 
     // Display the AnimatedVisibility example content
     AnimatedVisibilityExampleContent(
-        imageVisibility = imageVisibility,
-        currentTransition = currentTransition,
+        imageVisibility = { imageVisibility },
+        currentTransition = { currentTransition },
+        optionsList = animationsViewModel.transitionsNames,
         onImageVisibilityChange = { animationsViewModel.changeImageVisibility(!imageVisibility) },
         onTransitionChange = { animationsViewModel.changeCurrentTransition(it) }
     )
@@ -53,23 +58,20 @@ internal fun AnimatedVisibilityExample(
 
 @Composable
 private fun AnimatedVisibilityExampleContent(
-    imageVisibility: Boolean,
-    currentTransition: Transitions,
+    imageVisibility: () -> Boolean,
+    currentTransition: () -> Transitions,
+    optionsList: List<String>,
     onImageVisibilityChange: () -> Unit,
     onTransitionChange: (String) -> Unit
 ) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
 
-    // Button text based in the current imageVisibility value
-    val buttonText =
-        if (imageVisibility) stringResource(R.string.animations_screen_animated_visibility_hide_image)
-        else stringResource(R.string.animations_screen_animated_visibility_show_image)
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-        // DropdownMenu that shows the enter and exit transitions of the animation
-        CustomDropdownMenu(
-            dropdownMenuLabel = stringResource(R.string.animations_screen_animated_visibility_dropdown_menu_label),
-            currentElementDisplay = stringResource(currentTransition.transitionName),
-            optionsList = Transitions.entries.map { transition -> stringResource(transition.transitionName) },
+        AnimatedVisibilityExampleContentDropdownMenu(
+            currentElementDisplay = { currentTransition().transitionName },
+            optionsList = optionsList,
             onElementSelected = onTransitionChange
         )
 
@@ -78,49 +80,99 @@ private fun AnimatedVisibilityExampleContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Row containing the image that will be animated in the example
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .weight(3f)
-                    .aspectRatio(1f)
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-            ) {
-                AnimatedVisibility(
-                    visible = imageVisibility,
-                    enter = currentTransition.transition.enterTransition,
-                    exit = currentTransition.transition.exitTransition,
-                    label = "ImageAnimatedVisiblity",
-                    // Added a clip to avoid the image to move outside the box limits during the animation
-                    modifier = Modifier.clipToBounds()
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.jetpack_compose_icon),
-                        contentDescription = null
-                    )
-                }
-            }
+            AnimatedVisibilityExampleContentContainer(
+                imageVisibility = { imageVisibility() },
+                enterTransition = { currentTransition().transition.enterTransition },
+                exitTransition = { currentTransition().transition.exitTransition },
+                modifier = Modifier.weight(3f)
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Button to trigger the animation (enable or disable the visibility of the image)
-            Button(
-                onClick = { onImageVisibilityChange() },
+            AnimatedVisibilityExampleContentInputButton(
+                onImageVisibilityChange = onImageVisibilityChange,
+                buttonStringResource = {
+                    if (imageVisibility()) R.string.animations_screen_animated_visibility_hide_image
+                    else R.string.animations_screen_animated_visibility_show_image
+                },
                 modifier = Modifier.weight(3f)
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun AnimatedVisibilityExampleContentDropdownMenu(
+    @StringRes currentElementDisplay: () -> Int,
+    optionsList: List<String>,
+    onElementSelected: (String) -> Unit
+) {
+    val currentElementDisplayText = stringResource(currentElementDisplay())
+
+    // DropdownMenu that shows the enter and exit transitions of the animation
+    CustomDropdownMenu(
+        dropdownMenuLabel = stringResource(R.string.animations_screen_animated_visibility_dropdown_menu_label),
+        currentElementDisplay = { currentElementDisplayText },
+        optionsList = optionsList,
+        onElementSelected = onElementSelected
+    )
+}
+
+
+@Composable
+private fun AnimatedVisibilityExampleContentInputButton(
+    onImageVisibilityChange: () -> Unit,
+    buttonStringResource: () -> Int,
+    modifier: Modifier = Modifier
+) {
+    // Button to trigger the animation (enable or disable the visibility of the image)
+    Button(
+        onClick = { onImageVisibilityChange() },
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(buttonStringResource()),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@Composable
+private fun AnimatedVisibilityExampleContentContainer(
+    imageVisibility: () -> Boolean,
+    enterTransition: () -> EnterTransition,
+    exitTransition: () -> ExitTransition,
+    modifier: Modifier = Modifier
+) {
+    // Row containing the image that will be animated in the example
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .aspectRatio(1f)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(4.dp)
+            ),
+        content = {
+            AnimatedVisibility(
+                visible = imageVisibility(),
+                enter = enterTransition(),
+                exit = exitTransition(),
+                label = "ImageAnimatedVisiblity",
+                // Added a clip to avoid the image to move outside the box limits during the animation
+                modifier = Modifier.clipToBounds()
             ) {
-                Text(
-                    text = buttonText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
+                Image(
+                    painter = painterResource(R.drawable.jetpack_compose_icon),
+                    contentDescription = null
                 )
             }
         }
-    }
+    )
 }
 
 
@@ -131,8 +183,9 @@ private fun AnimatedVisibilityExamplePreview() {
         darkTheme = isSystemInDarkTheme()
     ) {
         AnimatedVisibilityExampleContent(
-            imageVisibility = false,
-            currentTransition = Transitions.None,
+            imageVisibility = { false },
+            currentTransition = { Transitions.None },
+            optionsList = Transitions.entries.map { stringResource(it.transitionName) },
             onImageVisibilityChange = {},
             onTransitionChange = {}
         )

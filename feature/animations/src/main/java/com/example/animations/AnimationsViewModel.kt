@@ -46,6 +46,9 @@ internal class AnimationsViewModel @Inject constructor(
     private val _currentTransition = MutableStateFlow(Transitions.None)
     val currentTransition: StateFlow<Transitions> = _currentTransition
 
+    internal val transitionsNames =
+        Transitions.entries.map { context.getString(it.transitionName) }
+
     // Backing property and StateFlow for current crossfade item (CrossfadeExample)
     private val _crossfadeItem = MutableStateFlow(CrossfadeItem(number = 1))
     val crossfadeItem: StateFlow<CrossfadeItem> = _crossfadeItem

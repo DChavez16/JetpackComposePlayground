@@ -25,4 +25,6 @@
     <!-- Crossfade Example -->
     <string name="animations_screen_crossfade_change_number">Change number</string>
     <string name="animations_screen_crossfade_change_color">Change color</string>
+    <string name="animations_screen_crossfade_decrease_number">Decrease number by 1</string>
+    <string name="animations_screen_crossfade_increase_number">Increase number by 1</string>
 </resources>
