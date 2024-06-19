@@ -49,17 +49,26 @@ internal class AnimationsViewModel @Inject constructor(
     internal val transitionsNames =
         Transitions.entries.map { context.getString(it.transitionName) }
 
+
     // Backing property and StateFlow for current crossfade item (CrossfadeExample)
     private val _crossfadeItem = MutableStateFlow(CrossfadeItem(number = 1))
     val crossfadeItem: StateFlow<CrossfadeItem> = _crossfadeItem
 
-    // Backing property and StateFlow expanded state (AnimatedContent)
+
+    // Backing property and StateFlow for expanded state (AnimatedContent)
     private val _isAnimatedContentExpanded = MutableStateFlow(false)
     val isAnimatedContentExpanded: StateFlow<Boolean> = _isAnimatedContentExpanded
 
-    // Backing property and StateFlow expanded state (AnimatedContent)
+    // Backing property and StateFlow animated contentn number (AnimatedContent)
     private val _isAnimatedContentNumber = MutableStateFlow(1)
     val isAnimatedContentNumber: StateFlow<Int> = _isAnimatedContentNumber
+
+
+    // Backing property and StateFlow for expanded state (AnimateContentSize)
+    private val _isAnimateContentSizeExpanded = MutableStateFlow(false)
+    val isAnimateContentSizeExpanded: StateFlow<Boolean> = _isAnimateContentSizeExpanded
+
+
 
 
     // Methods to change image visibility and current transition (AnimatedVisibilityExample)
@@ -73,6 +82,7 @@ internal class AnimationsViewModel @Inject constructor(
         } ?: Transitions.None
     }
 
+
     // Methods to change crossfade item color and number (CrossfadeExample)
     fun changeCrossfadeItemColor() {
         _crossfadeItem.value = _crossfadeItem.value.copy(backgroundColor = getRandomColor())
@@ -82,6 +92,7 @@ internal class AnimationsViewModel @Inject constructor(
         _crossfadeItem.value = _crossfadeItem.value.copy(number = newNumber)
     }
 
+
     // Methods to change animated content expanded value and number (AnimatedContent)
     fun changeAnimatedContentExpanded() {
         _isAnimatedContentExpanded.value = !_isAnimatedContentExpanded.value
@@ -89,6 +100,12 @@ internal class AnimationsViewModel @Inject constructor(
 
     fun changeAnimatedContentNumber(newNumber: Int) {
         _isAnimatedContentNumber.value = newNumber
+    }
+
+
+    // Methods to change animate content size expanded value (AnimateContentSize)
+    fun changeAnimateContentSizeExpanded() {
+        _isAnimateContentSizeExpanded.value = !_isAnimateContentSizeExpanded.value
     }
 }
 
