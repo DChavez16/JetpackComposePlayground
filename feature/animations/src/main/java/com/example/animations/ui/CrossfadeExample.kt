@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,9 +27,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,8 +50,7 @@ internal fun CrossfadeExample(
     CrossfadeExampleContent(
         crossfadeItemNumber = { crossfadeItem.number },
         crossfadeItemColor = { crossfadeItem.backgroundColor },
-        increaseCrossfadeItemNumber = { animationsViewModel.increaseCrossfadeItemNumber() },
-        decreaseCrossfadeItemNumber = { animationsViewModel.decreaseCrossfadeItemNumber() },
+        changeCrossfadeItemNumber = { animationsViewModel.changeCrossfadeItemNumber(it) },
         changeCrossfadeItemColor = { animationsViewModel.changeCrossfadeItemColor() }
     )
 }
@@ -60,17 +60,16 @@ internal fun CrossfadeExample(
 private fun CrossfadeExampleContent(
     crossfadeItemNumber: () -> Int,
     crossfadeItemColor: () -> Color,
-    increaseCrossfadeItemNumber: () -> Unit,
-    decreaseCrossfadeItemNumber: () -> Unit,
+    changeCrossfadeItemNumber: (Int) -> Unit,
     changeCrossfadeItemColor: () -> Unit
 ) {
-    // Row que muestra el contenedor y los botones
+    // Row that shows the container and buttons
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Box que va a ser de contenedor para el numero
+        // Box that shows the container for the number
         CrossfadeExampleContentContainer(
             crossfadeItemNumber = { crossfadeItemNumber() },
             crossfadeItemColor = { crossfadeItemColor() },
@@ -79,12 +78,12 @@ private fun CrossfadeExampleContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Column que muestra los botones para modificar el numero y el boton para cambiar el fondo
+        // Column that shows the buttons to modify the number and the button to change the background
         CrossfadeExampleContentInput(
-            decreaseButtonEnabled = { crossfadeItemNumber() > 1 },
-            increaseButtonEnabled = { crossfadeItemNumber() < 10 },
-            decreaseCrossfadeItemNumber = decreaseCrossfadeItemNumber,
-            increaseCrossfadeItemNumber = increaseCrossfadeItemNumber,
+            isDecreaseButtonEnabled = { crossfadeItemNumber() > 1 },
+            isIncreaseButtonEnabled = { crossfadeItemNumber() < 10 },
+            decreaseCrossfadeItemNumber = { changeCrossfadeItemNumber(crossfadeItemNumber().dec()) },
+            increaseCrossfadeItemNumber = { changeCrossfadeItemNumber(crossfadeItemNumber().inc()) },
             changeCrossfadeItemColor = changeCrossfadeItemColor,
             modifier = Modifier.weight(3f)
         )
@@ -151,27 +150,29 @@ private fun CrossfadeExampleContentContainer(
 
 @Composable
 private fun CrossfadeExampleContentInput(
-    decreaseButtonEnabled: () -> Boolean,
-    increaseButtonEnabled: () -> Boolean,
+    isDecreaseButtonEnabled: () -> Boolean,
+    isIncreaseButtonEnabled: () -> Boolean,
     decreaseCrossfadeItemNumber: () -> Unit,
     increaseCrossfadeItemNumber: () -> Unit,
     changeCrossfadeItemColor: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        // Row que muestra los botones para reducir y aumentar el valor del numero
+        // Row that shows the buttons to reduce and increase the number
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Button para disminuir el valor del numero, si el numero es 1 no se puede disminuir
+            // Button that decreases the number, if the number is 1, it cannot be decreased
             IconButton(
                 onClick = decreaseCrossfadeItemNumber,
-                enabled = decreaseButtonEnabled(),
+                enabled = isDecreaseButtonEnabled(),
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = if (decreaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_decrease_number) else null
+                    imageVector = Icons.Filled.Remove,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = if (isDecreaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_decrease_number) else null,
+                    modifier = Modifier.alpha(if (isDecreaseButtonEnabled()) 1f else 0.5f)
                 )
             }
 
@@ -182,22 +183,24 @@ private fun CrossfadeExampleContentInput(
                 modifier = Modifier.sizeIn(maxWidth = 100.dp)
             )
 
-            // Button para aumentar el valor del numero, si el numero es 10 no se puede aumentar
+            // Button that increases the number, if the number is 10, it cannot be increased
             IconButton(
                 onClick = increaseCrossfadeItemNumber,
-                enabled = increaseButtonEnabled(),
+                enabled = isIncreaseButtonEnabled(),
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = if (increaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_increase_number) else null
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = if (isIncreaseButtonEnabled()) stringResource(R.string.animations_screen_crossfade_increase_number) else null,
+                    modifier = Modifier.alpha(if (isIncreaseButtonEnabled()) 1f else 0.5f)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Button para cambiar el color de fondo
+        // Button that changes the background color
         Button(
             onClick = changeCrossfadeItemColor,
             modifier = Modifier.fillMaxWidth()
@@ -221,8 +224,7 @@ private fun CrossfadeExampleContentPreview() {
         CrossfadeExampleContent(
             crossfadeItemNumber = { 1 },
             crossfadeItemColor = { Color.White },
-            increaseCrossfadeItemNumber = {},
-            decreaseCrossfadeItemNumber = {},
+            changeCrossfadeItemNumber = {},
             changeCrossfadeItemColor = {}
         )
     }

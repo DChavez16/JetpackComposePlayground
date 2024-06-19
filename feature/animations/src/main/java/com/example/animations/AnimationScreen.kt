@@ -98,17 +98,25 @@ private fun AnimationsList(
 
         // TODO Add the AnimationsViewModel to the example
         // TODO Implement string values
+        // TODO Improve performance
+        // TODO Improve accessibility
         // AnimatedContent example
         item {
             ExampleComponent(
-                title = "AnimatedContent",
-                description = "Este elemento que admite composicion anima su contenido a medida que cambia en funcion de un estado objetivo\nEste ejemplo se va a separar en dos partes, una para mostrar el uso de SizeTransform (Personalizando la forma en la que un componente cambia su tamaño al expandirse) y la otra para mostra el uso de ContentTransform (Usando Enter/ExitTransitions para animar la aparicion y desaparicion de elementos)",
-                content = { AnimatedContentExample() }
+                title = stringResource(R.string.animations_screen_animated_content_title),
+                description = stringResource(R.string.animations_screen_animated_content_description),
+                content = {
+                    AnimatedContentExample(
+                        animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
         // TODO Add the AnimationsViewModel to the example
         // TODO Implement string values
+        // TODO Improve performance
+        // TODO Improve accessibility
         // animateContentSize example
         item {
             ExampleComponent(
@@ -123,6 +131,8 @@ private fun AnimationsList(
 
         // TODO Add the AnimationsViewModel to the example
         // TODO Implement string values
+        // TODO Improve performance
+        // TODO Improve accessibility
         // rememberInfiniteTransition example
         item {
             ExampleComponent(
@@ -134,6 +144,8 @@ private fun AnimationsList(
 
         // TODO Add the AnimationsViewModel to the example
         // TODO Implement string values
+        // TODO Improve performance
+        // TODO Improve accessibility
         // updateTransition example
         item {
             ExampleComponent(
@@ -145,6 +157,8 @@ private fun AnimationsList(
 
         // TODO Add the AnimationsViewModel to the example
         // TODO Implement string values
+        // TODO Improve performance
+        // TODO Improve accessibility
         // animate*AsState example
         item {
             ExampleComponent(

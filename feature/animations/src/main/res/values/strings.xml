@@ -7,6 +7,8 @@
     <string name="animations_screen_animated_visibility_description">Used to hide or show a Composable element.\nYou can customize the transition by specifying EnterTransition and ExitTransition.\nThis example shows the animation when an element appears and disappears using a TweenSpec</string>
     <string name="animations_screen_crossfade_title">Crossfade</string>
     <string name="animations_screen_crossfade_description">Crossfade animates between two layouts with a chaining animation. If you toggle the heat being passed to the current parameter, the content is changed with a chaining animation.\nIn this example, the animation is shown when increasing or decreasing the number, as well as changing the background color</string>
+    <string name="animations_screen_animated_content_title">AnimatedContent</string>
+    <string name="animations_screen_animated_content_description">Este elemento que admite composición anima su contenido a medida que cambia en función de un estado objetivo.\nEste ejemplo se va a separar en dos partes, una para mostrar el uso de SizeTransform (Personalizando la forma en la que un componente cambia su tamaño al expandirse) y la otra para mostrar el uso de ContentTransform (Usando Enter/ExitTransitions para animar la aparición y desaparición de elementos)</string>
 
     <!-- Animated Visibility Example -->
     <string name="animations_screen_animated_visibility_dropdown_menu_label">Transition</string>
@@ -27,4 +29,11 @@
     <string name="animations_screen_crossfade_change_color">Change color</string>
     <string name="animations_screen_crossfade_decrease_number">Decrease number by 1</string>
     <string name="animations_screen_crossfade_increase_number">Increase number by 1</string>
+
+    <!-- Animated Content Example -->
+    <string name="animations_screen_animated_content_expand">Expand</string>
+    <string name="animations_screen_animated_content_contract">Contract</string>
+    <string name="animations_screen_animated_content_change_number">Change number</string>
+    <string name="animations_screen_animated_content_decrease_number">Decrease number by 1</string>
+    <string name="animations_screen_animated_content_increase_number">Increase number by 1</string>
 </resources>

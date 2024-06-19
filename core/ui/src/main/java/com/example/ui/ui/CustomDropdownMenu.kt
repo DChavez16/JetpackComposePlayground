@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 
 // Select transitions menu
 @Composable
@@ -44,9 +44,9 @@ fun CustomDropdownMenu(
                     Icon(
                         imageVector = Icons.Filled.ArrowDropDown,
                         contentDescription = null,
-                        modifier = Modifier.rotate(
-                            if (dropdownMenuExpanded) 180f else 0f
-                        )
+                        modifier = Modifier.graphicsLayer {
+                            rotationZ = if (dropdownMenuExpanded) 180f else 0f
+                        }
                     )
                 },
                 modifier = Modifier.clickable { dropdownMenuExpanded = !dropdownMenuExpanded }

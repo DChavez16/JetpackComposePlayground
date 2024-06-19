@@ -53,6 +53,14 @@ internal class AnimationsViewModel @Inject constructor(
     private val _crossfadeItem = MutableStateFlow(CrossfadeItem(number = 1))
     val crossfadeItem: StateFlow<CrossfadeItem> = _crossfadeItem
 
+    // Backing property and StateFlow expanded state (AnimatedContent)
+    private val _isAnimatedContentExpanded = MutableStateFlow(false)
+    val isAnimatedContentExpanded: StateFlow<Boolean> = _isAnimatedContentExpanded
+
+    // Backing property and StateFlow expanded state (AnimatedContent)
+    private val _isAnimatedContentNumber = MutableStateFlow(1)
+    val isAnimatedContentNumber: StateFlow<Int> = _isAnimatedContentNumber
+
 
     // Methods to change image visibility and current transition (AnimatedVisibilityExample)
     fun changeImageVisibility(newImageVisibility: Boolean) {
@@ -70,12 +78,17 @@ internal class AnimationsViewModel @Inject constructor(
         _crossfadeItem.value = _crossfadeItem.value.copy(backgroundColor = getRandomColor())
     }
 
-    fun increaseCrossfadeItemNumber() {
-        _crossfadeItem.value = _crossfadeItem.value.copy(number = _crossfadeItem.value.number + 1)
+    fun changeCrossfadeItemNumber(newNumber: Int) {
+        _crossfadeItem.value = _crossfadeItem.value.copy(number = newNumber)
     }
 
-    fun decreaseCrossfadeItemNumber() {
-        _crossfadeItem.value = _crossfadeItem.value.copy(number = _crossfadeItem.value.number - 1)
+    // Methods to change animated content expanded value and number (AnimatedContent)
+    fun changeAnimatedContentExpanded() {
+        _isAnimatedContentExpanded.value = !_isAnimatedContentExpanded.value
+    }
+
+    fun changeAnimatedContentNumber(newNumber: Int) {
+        _isAnimatedContentNumber.value = newNumber
     }
 }
 
