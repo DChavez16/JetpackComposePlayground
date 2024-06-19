@@ -96,10 +96,6 @@ private fun AnimationsList(
             )
         }
 
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
-        // TODO Improve performance
-        // TODO Improve accessibility
         // AnimatedContent example
         item {
             ExampleComponent(
@@ -113,16 +109,16 @@ private fun AnimationsList(
             )
         }
 
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
-        // TODO Improve performance
-        // TODO Improve accessibility
         // animateContentSize example
         item {
             ExampleComponent(
-                title = "animateContentSize",
-                description = "El modificador animateContentSize anima un cambio de tamaño, se debe utilizar antes de otro modificador de tamaño para asegurar un correcto funcionamiento\nEl siguiente ejemplo consiste en expandir y contraer un contenedor para ver mas lineas de texto de una descripcion usando la animacion elegida",
-                content = { AnimateContentSizeExample() }
+                title = stringResource(R.string.animations_screen_animate_content_size_title),
+                description = stringResource(R.string.animations_screen_animate_content_size_description),
+                content = {
+                    AnimateContentSizeExample(
+                        animationViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
