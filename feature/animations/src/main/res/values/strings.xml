@@ -11,8 +11,11 @@
     <string name="animations_screen_animated_content_description">This composable element animates its content as it changes based on a target state.\nThis example is going to be separated into two parts, one to show the use of SizeTransform (Customizing how a component resizes when expand) and the other to show the use of ContentTransform (Using Enter/ExitTransitions to animate the appearance and disappearance of elements)</string>
     <string name="animations_screen_animate_content_size_title">animateContentSize</string>
     <string name="animations_screen_animate_content_size_description">The animateContentSize modifier animates a size change, it should be used before another size modifier to ensure correct operation.\nThe following example consists of expanding and collapsing a container to see more lines of text of a description using the chosen animation</string>
+    <string name="animations_screen_list_banner_2">Animations based in state</string>
     <string name="animations_screen_remember_infinite_transition_title">infiniteTransition</string>
     <string name="animations_screen_remember_infinite_transition_description">It contains one or more secondary animations, such as Transition, but the animations start running as soon as they enter the composition and do not stop unless you remove them.\nThis example simply consists of an image that rotates indefinitely.</string>
+    <string name="animations_screen_update_transition_title">updateTransition</string>
+    <string name="animations_screen_update_transition_description">updateTransition creates and remembers a Transition instance, and updates its state.\nIn the following example, a text box will be expanded horizontally, while the elevation, shadow and rotation of an expand button will be animated; all this reacting to the change of a single state.</string>
 
     <!-- Animated Visibility Example -->
     <string name="animations_screen_animated_visibility_dropdown_menu_label">Transition</string>
@@ -42,11 +45,17 @@
     <string name="animations_screen_animated_content_increase_number">Increase number by 1</string>
 
     <!-- Animated Content Size Example -->
-    <string name="animations_screen_animate_content_size_example_title">Title</string>
-    <string name="animations_screen_animate_content_size_example_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</string>
     <string name="animations_screen_animate_content_size_expand">Expand</string>
     <string name="animations_screen_animate_content_size_contract">Contract</string>
 
-    <!-- RememberI Example -->
+    <!-- RememberInfiniteTransition Example -->
     <string name="animations_screen_remember_infinite_transition_rotating_image">Image rotating indifinitely</string>
+
+    <!-- UpdateTransition Example -->
+    <string name="animations_screen_update_transition_expand">Expand</string>
+    <string name="animations_screen_update_transition_contract">Contract</string>
+
+    <!--- Util string resources -->
+    <string name="animations_screen_example_title">Title</string>
+    <string name="animations_screen_example_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</string>
 </resources>

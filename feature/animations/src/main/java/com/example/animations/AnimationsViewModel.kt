@@ -69,6 +69,10 @@ internal class AnimationsViewModel @Inject constructor(
     val isAnimateContentSizeExpanded: StateFlow<Boolean> = _isAnimateContentSizeExpanded
 
 
+    // Backing property and StateFlow for box state (UpdateTransition)
+    private val _boxState = MutableStateFlow(BoxState.Collapsed)
+    val boxState: StateFlow<BoxState> = _boxState
+
 
 
     // Methods to change image visibility and current transition (AnimatedVisibilityExample)
@@ -106,6 +110,12 @@ internal class AnimationsViewModel @Inject constructor(
     // Methods to change animate content size expanded value (AnimateContentSize)
     fun changeAnimateContentSizeExpanded() {
         _isAnimateContentSizeExpanded.value = !_isAnimateContentSizeExpanded.value
+    }
+
+
+    // Methods to change box state (UpdateTransition)
+    fun changeBoxState() {
+        _boxState.value = if (_boxState.value == BoxState.Collapsed) BoxState.Expanded else BoxState.Collapsed
     }
 }
 
@@ -209,3 +219,8 @@ private fun getRandomColor() =
         green = (0..255).random(),
         blue = (0..255).random()
     )
+
+internal enum class BoxState {
+    Collapsed,
+    Expanded
+}

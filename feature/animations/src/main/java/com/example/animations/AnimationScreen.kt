@@ -123,7 +123,7 @@ private fun AnimationsList(
         }
 
         // Animations based on state examples
-        item(key = 2) { HorizontalListBanner(title = "Animaciones basadas en el estado") }
+        item(key = 2) { HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_2)) }
 
         // rememberInfiniteTransition example
         item {
@@ -136,16 +136,16 @@ private fun AnimationsList(
             )
         }
 
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
-        // TODO Improve performance
-        // TODO Improve accessibility
         // updateTransition example
         item {
             ExampleComponent(
-                title = "updateTransition",
-                description = "updateTransition crea y recuerda una instancia de Transition, y actualiza su estado.\nEn el siguiente ejemplo se va a expandir un cuadro de texto verticalmente, mientras que se le va a animar el color de fondo, elevacion, tipo de borde y rotacion de un boton de expandir.",
-                content = { UpdateTrasitionExample() }
+                title = stringResource(R.string.animations_screen_update_transition_title),
+                description = stringResource(R.string.animations_screen_update_transition_description),
+                content = {
+                    UpdateTrasitionExample(
+                        animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

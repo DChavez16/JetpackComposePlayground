@@ -93,14 +93,14 @@ private fun ExpandedTitleAndDescription(
             )
     ) {
         Text(
-            text = stringResource(R.string.animations_screen_animate_content_size_example_title),
+            text = stringResource(R.string.animations_screen_example_title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .paddingFromBaseline(bottom = 16.dp)
         )
         Text(
-            text = stringResource(R.string.animations_screen_animate_content_size_example_text),
+            text = stringResource(R.string.animations_screen_example_text),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
             overflow = TextOverflow.Ellipsis,

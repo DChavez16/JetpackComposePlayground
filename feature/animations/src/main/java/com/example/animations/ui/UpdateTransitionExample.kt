@@ -1,6 +1,6 @@
 package com.example.animations.ui
 
-import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
@@ -9,6 +9,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -19,145 +20,135 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.animations.AnimationsViewModel
+import com.example.animations.BoxState
 import com.example.animations.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 @Composable
-internal fun UpdateTrasitionExample() {
+internal fun UpdateTrasitionExample(
+    animationsViewModel: AnimationsViewModel = hiltViewModel()
+) {
 
-    // Crea y recuerda una instancia de Transition
-    var currentState by remember { mutableStateOf(BoxState.Expanded) }
-    val transition = updateTransition(currentState, label = "Box State uppdate transicion")
+    val boxState by animationsViewModel.boxState.collectAsState()
 
-    // Inicializa las animaciones que se van a utilizar
-    // Color de fondo
-    val backgroundColor by transition.animateColor(
+    // Create and remember an instance of Transition
+    val transition = updateTransition(boxState, label = "BoxStateUpdateTransition")
+
+    // Initialize the animations that will be used
+    // Elevation shadow
+    val shadowElevationDp by transition.animateFloat(
         transitionSpec = {
-            when {
-                BoxState.Collapsed isTransitioningTo BoxState.Expanded ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-
-                else ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-            }
+            tween(durationMillis = 1000, easing = FastOutLinearInEasing)
         },
-        label = "backGroundColor update transition"
-    ) {
-        when (it) {
-            BoxState.Collapsed -> Color.Transparent
-            BoxState.Expanded -> MaterialTheme.colorScheme.surfaceVariant
-        }
-    }
-    // Elevacion
-    val elevationDp by transition.animateDp(
-        transitionSpec = {
-            when {
-                BoxState.Collapsed isTransitioningTo BoxState.Expanded ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-
-                else ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-            }
-        },
-        label = "elevationDp update transition"
-    ) {
-        when (it) {
-            BoxState.Collapsed -> 0.dp
-            BoxState.Expanded -> 16.dp
-        }
-    }
-    // Sombra de elevacion
-    val shadowElevationDp by transition.animateDp(
-        transitionSpec = {
-            when {
-                BoxState.Collapsed isTransitioningTo BoxState.Expanded ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-
-                else ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-            }
-        },
-        label = "shadowElevationDp update Transition"
-    ) {
-        when (it) {
-            BoxState.Collapsed -> 0.dp
-            BoxState.Expanded -> 16.dp
-        }
-    }
-    // Rotacion de un boton de expandir.
-    val iconAngle by transition.animateFloat(
-        transitionSpec = {
-            when {
-                BoxState.Collapsed isTransitioningTo BoxState.Expanded ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-
-                else ->
-                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
-            }
-        },
-        label = "iconAngle update Transition"
+        label = "ShadowElevationTransition"
     ) {
         when (it) {
             BoxState.Collapsed -> 0f
-            BoxState.Expanded -> -180f
+            BoxState.Expanded -> 20f
+        }
+    }
+    // Expand button rotation
+    val iconAngle by transition.animateFloat(
+        transitionSpec = {
+            tween(durationMillis = 1000, easing = FastOutLinearInEasing)
+        },
+        label = "IconAngleTransition"
+    ) {
+        when (it) {
+            BoxState.Collapsed -> 90f
+            BoxState.Expanded -> 270f
+        }
+    }
+    // Element border
+    val elementBorder by transition.animateDp(
+        transitionSpec = {
+            tween(durationMillis = 1000, easing = FastOutLinearInEasing)
+        },
+        label = "ElementBorderTransition"
+    ) {
+        when (it) {
+            BoxState.Collapsed -> 8.dp
+            BoxState.Expanded -> 16.dp
         }
     }
 
-    Surface(
-        color = backgroundColor,
-        tonalElevation = elevationDp,
-        shadowElevation = shadowElevationDp
+
+    UpdateTransitionExampleContent(
+        isExpanded = { boxState == BoxState.Expanded },
+        shadowElevationDp = { shadowElevationDp },
+        iconAngle = { iconAngle },
+        elementBorder = { elementBorder },
+        onExpandButtonClick = { animationsViewModel.changeBoxState() }
+    )
+}
+
+
+@Composable
+private fun UpdateTransitionExampleContent(
+    isExpanded: () -> Boolean,
+    shadowElevationDp: () -> Float,
+    iconAngle: () -> Float,
+    elementBorder: () -> Dp,
+    onExpandButtonClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .graphicsLayer {
+                shape = RoundedCornerShape(size = elementBorder())
+                shadowElevation = shadowElevationDp()
+                clip = true
+            }
+            .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            .height(IntrinsicSize.Min)
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .height(IntrinsicSize.Max)
-                .width(IntrinsicSize.Max)
+                .animateContentSize(
+                    tween(durationMillis = 1000, easing = FastOutLinearInEasing)
+                )
+                .weight(1f, fill = false)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                DecorativeImage()
-                if (currentState == BoxState.Expanded) TitleDescriptionText()
-            }
+            DecorativeImage()
 
-            ExpandButton(
-                iconAngle = iconAngle,
-                modifier = Modifier.width(32.dp),
-                onClick = {
-                    currentState =
-                        if (currentState == BoxState.Collapsed) BoxState.Expanded
-                        else BoxState.Collapsed
-                }
-            )
+            if (isExpanded()) TitleDescriptionText()
         }
+
+
+        ExpandButton(
+            iconAngle = iconAngle,
+            isExpanded = isExpanded,
+            onExpandButtonClick = onExpandButtonClick,
+            modifier = Modifier
+                .width(width = 32.dp)
+        )
     }
 }
 
-// Imagen 
+
 @Composable
-fun DecorativeImage() {
+private fun DecorativeImage() {
     Image(
         painter = painterResource(R.drawable.jetpack_compose_icon),
         contentDescription = null,
@@ -165,82 +156,84 @@ fun DecorativeImage() {
     )
 }
 
-// Texto con titulo y descripcion
+
 @Composable
 private fun TitleDescriptionText() {
-    var isExpanded by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .padding(8.dp)
+            .fillMaxWidth()
             .fillMaxHeight()
     ) {
         Text(
-            text = "Titulo",
+            text = stringResource(R.string.animations_screen_example_title),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         )
         Text(
-            text = exampleString,
+            text = stringResource(R.string.animations_screen_example_text),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodySmall,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Justify,
             softWrap = true,
-            maxLines = if (isExpanded) Int.MAX_VALUE else 3,
+            maxLines = 3,
             modifier = Modifier
                 .padding(bottom = 8.dp)
-        )
-        Text(
-            text = if (isExpanded) "Ver menos" else "Ver mas",
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .clickable { isExpanded = !isExpanded }
         )
     }
 }
 
-// Boton para contraer y expandir
+
 @Composable
-private fun ExpandButton(iconAngle: Float, modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun ExpandButton(
+    iconAngle: () -> Float,
+    isExpanded: () -> Boolean,
+    onExpandButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .fillMaxHeight()
-            .clickable { onClick() }
+            .clickable(
+                onClick = onExpandButtonClick,
+                onClickLabel = stringResource(
+                    if (isExpanded()) R.string.animations_screen_update_transition_contract
+                    else R.string.animations_screen_update_transition_expand
+                )
+            )
     ) {
         Icon(
-            imageVector = Icons.Filled.KeyboardArrowRight,
+            imageVector = Icons.Filled.KeyboardArrowUp,
             contentDescription = null,
             modifier = Modifier
-                .scale(scaleX = 1f, scaleY = 1.5f)
-                .rotate(iconAngle)
+                .graphicsLayer {
+                    rotationZ = iconAngle()
+                }
         )
     }
 }
 
-@Preview(showBackground = true)
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun UpdateTransitionExamplePreview() {
-    AppTheme {
-        UpdateTrasitionExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        UpdateTransitionExampleContent(
+            isExpanded = { false },
+            shadowElevationDp = { 0f },
+            iconAngle = { 90f },
+            elementBorder = { 4.dp },
+            onExpandButtonClick = {}
+        )
     }
 }
-
-
-// Enum class para identificar si el recuadro esta contraido o expandido.
-enum class BoxState {
-    Collapsed,
-    Expanded
-}
-
-private const val exampleString =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
