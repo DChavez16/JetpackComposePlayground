@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.animations.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 @Composable
 internal fun InfiniteTransitionExample() {
@@ -41,6 +43,16 @@ internal fun InfiniteTransitionExample() {
         label = "AngleInfiniteTransition"
     )
 
+    InfiniteTransitionExampleContent(
+        angleInfiniteTransition = { angleInfiniteTransition }
+    )
+}
+
+
+@Composable
+private fun InfiniteTransitionExampleContent(
+    angleInfiniteTransition: () -> Float
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -49,19 +61,27 @@ internal fun InfiniteTransitionExample() {
     ) {
         Image(
             painter = painterResource(R.drawable.jetpack_compose_icon),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.animations_screen_remember_infinite_transition_rotating_image),
             modifier = Modifier
                 .size(100.dp)
-                .rotate(angleInfiniteTransition)
+                .graphicsLayer {
+                    rotationZ = angleInfiniteTransition()
+                }
         )
     }
 }
 
 
-@Preview
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun InfiniteTransitionExamplePreview() {
-    AppTheme {
-        InfiniteTransitionExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        InfiniteTransitionExampleContent(
+            angleInfiniteTransition = { 0f }
+        )
     }
 }

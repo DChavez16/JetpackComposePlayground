@@ -125,16 +125,14 @@ private fun AnimationsList(
         // Animations based on state examples
         item(key = 2) { HorizontalListBanner(title = "Animaciones basadas en el estado") }
 
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
-        // TODO Improve performance
-        // TODO Improve accessibility
         // rememberInfiniteTransition example
         item {
             ExampleComponent(
-                title = "rememberInfiniteTransition",
-                description = "Contiene una o mas animaciones secundarias, como Transition, pero las animaciones comienzan a ejecutarse apenas entran en la composicion y no se detienen, a menos que se las quite.\nEste ejemplo consiste simplemente en una imagen que gira indefinidamente.",
-                content = { InfiniteTransitionExample() }
+                title = stringResource(R.string.animations_screen_remember_infinite_transition_title),
+                description = stringResource(R.string.animations_screen_remember_infinite_transition_description),
+                content = {
+                    InfiniteTransitionExample()
+                }
             )
         }
 
