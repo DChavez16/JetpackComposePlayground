@@ -149,16 +149,18 @@ private fun AnimationsList(
             )
         }
 
-        // TODO Add the AnimationsViewModel to the example
-        // TODO Implement string values
         // TODO Improve performance
         // TODO Improve accessibility
         // animate*AsState example
         item {
             ExampleComponent(
-                title = "animate*AsState",
-                description = "Son las APIs mas simples para crear un valor unico. So hay que proporcionar el valor final (o valor objetvio), y la API comenzara la animacion desde el valor actual hasta el especificada.\nEn el siguiente ejemplo se mostrara una imagen que cambiara su transparencia por medio de un Slider.",
-                content = { AnimateAsStateExample() }
+                title = stringResource(R.string.animations_screen_animate_as_state_title),
+                description = stringResource(R.string.animations_screen_animate_as_state_description),
+                content = {
+                    AnimateAsStateExample(
+                        animationsViewModel = hiltViewModel<AnimationsViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
     }

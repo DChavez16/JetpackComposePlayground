@@ -74,6 +74,11 @@ internal class AnimationsViewModel @Inject constructor(
     val boxState: StateFlow<BoxState> = _boxState
 
 
+    // Backing property and StateFlow for transparency slider value (AnimateAsState)
+    private val _transparencySliderValue = MutableStateFlow(0f)
+    val transparencySliderValue: StateFlow<Float> = _transparencySliderValue
+
+
 
     // Methods to change image visibility and current transition (AnimatedVisibilityExample)
     fun changeImageVisibility(newImageVisibility: Boolean) {
@@ -116,6 +121,12 @@ internal class AnimationsViewModel @Inject constructor(
     // Methods to change box state (UpdateTransition)
     fun changeBoxState() {
         _boxState.value = if (_boxState.value == BoxState.Collapsed) BoxState.Expanded else BoxState.Collapsed
+    }
+
+
+    // Methods to change slider value (AnimateAsState)
+    fun changeSliderValue(newValue: Float) {
+        _transparencySliderValue.value = newValue
     }
 }
 

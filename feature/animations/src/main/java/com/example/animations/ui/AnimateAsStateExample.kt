@@ -2,6 +2,7 @@ package com.example.animations.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,24 +12,40 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.animations.AnimationsViewModel
 import com.example.animations.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 @Composable
-internal fun AnimateAsStateExample() {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
+internal fun AnimateAsStateExample(
+    animationsViewModel: AnimationsViewModel = hiltViewModel()
+) {
+    val sliderPosition by animationsViewModel.transparencySliderValue.collectAsState()
 
+    AnimateAsStateExampleContent(
+        sliderPosition = { sliderPosition },
+        onSliderValueChange = { animationsViewModel.changeSliderValue(it) }
+    )
+}
+
+
+@Composable
+private fun AnimateAsStateExampleContent(
+    sliderPosition: () -> Float,
+    onSliderValueChange: (Float) -> Unit
+) {
     val imageTransparency by animateFloatAsState(
-        targetValue = 1-sliderPosition,
+        targetValue = sliderPosition(),
         label = "Image Transparency Animation"
     )
 
@@ -39,15 +56,19 @@ internal fun AnimateAsStateExample() {
     ) {
         ImageTransparencySlider(
             sliderValue = sliderPosition,
-            onSliderValueChange = { newPosition -> sliderPosition = newPosition }
+            onSliderValueChange = onSliderValueChange
         )
-        ImageExample(imageTransparency = imageTransparency)
+
+        ImageExample(
+            imageTransparency = { imageTransparency }
+        )
     }
 }
 
+
 @Composable
 private fun ImageTransparencySlider(
-    sliderValue: Float,
+    sliderValue: () -> Float,
     onSliderValueChange: (Float) -> Unit
 ) {
     Row(
@@ -55,32 +76,47 @@ private fun ImageTransparencySlider(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = "Transparency: ", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(R.string.animations_screen_animate_as_state_slider_label),
+            style = MaterialTheme.typography.titleMedium
+        )
+
         Slider(
-            value = sliderValue,
+            value = sliderValue(),
             onValueChange = { onSliderValueChange(it) },
             valueRange = 0f..1f
         )
     }
 }
 
+
 @Composable
-private fun ImageExample(imageTransparency: Float) {
-    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-        Image(
-            painter = painterResource(R.drawable.jetpack_compose_icon),
-            contentDescription = null,
-            alpha = imageTransparency,
-            modifier = Modifier.size(200.dp)
-        )
-    }
+private fun ImageExample(
+    imageTransparency: () -> Float
+) {
+    Image(
+        painter = painterResource(R.drawable.jetpack_compose_icon),
+        contentDescription = null,
+        modifier = Modifier
+            .size(200.dp)
+            .graphicsLayer {
+                alpha = 1 - imageTransparency()
+            }
+    )
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun AnimateAsStateExamplePreview() {
-    AppTheme {
-        AnimateAsStateExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        AnimateAsStateExampleContent(
+            sliderPosition = { 0f },
+            onSliderValueChange = {}
+        )
     }
 }
