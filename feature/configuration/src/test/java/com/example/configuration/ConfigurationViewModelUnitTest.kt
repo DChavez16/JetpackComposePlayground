@@ -29,14 +29,14 @@ class ConfigurationViewModelUnitTest {
         val dynamicThemeFlow = viewModel.dynamicThemeFlow
 
         // Change dynamic theme value to true
-        viewModel.updateDynamicTheme(!dynamicThemeFlow.value)
+        viewModel.updateDynamicTheme()
         advanceUntilIdle()
 
         // Assert dynamic theme value as true
         assertEquals(true, dynamicThemeFlow.value)
 
         // Change dynamic theme value to false
-        viewModel.updateDynamicTheme(!dynamicThemeFlow.value)
+        viewModel.updateDynamicTheme()
         advanceUntilIdle()
 
         // Assert dynamic theme value as false

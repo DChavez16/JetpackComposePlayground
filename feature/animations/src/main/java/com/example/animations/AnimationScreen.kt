@@ -149,8 +149,6 @@ private fun AnimationsList(
             )
         }
 
-        // TODO Improve performance
-        // TODO Improve accessibility
         // animate*AsState example
         item {
             ExampleComponent(

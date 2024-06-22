@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Configuration Screen -->
+    <string name="configuration_screen_title">Configuration</string>
+    <string name="configuration_screen_dynamic_theme_label">Use dynamic theme:</string>
+    <string name="configuration_screen_dynamic_theme_enabled">The dynamic theme is enabled, click to toggle</string>
+    <string name="configuration_screen_dynamic_theme_disabled">The dynamic theme is disabled, click to toggle</string>
+</resources>

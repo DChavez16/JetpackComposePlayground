@@ -4,9 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.theme.ThemeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
     private val themeRepository: ThemeRepository
-): ViewModel() {
+) : ViewModel() {
 
     // Define a Flow for dynamicTheme value and its backing property
     private val _dynamicThemeFlow = MutableStateFlow(false)
@@ -32,9 +29,9 @@ class ConfigurationViewModel @Inject constructor(
     }
 
     // Function to update the dynamicTheme value
-    fun updateDynamicTheme(newDynamicThemeValue: Boolean) {
+    fun updateDynamicTheme() {
         viewModelScope.launch {
-            themeRepository.setDynamicThemePreferences(newDynamicThemeValue)
+            themeRepository.setDynamicThemePreferences(!dynamicThemeFlow.value)
         }
     }
 }

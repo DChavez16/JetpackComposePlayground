@@ -1,6 +1,7 @@
 package com.example.configuration
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,14 +18,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.DefaultTopAppBar
+import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 
 
 @Composable
@@ -39,16 +41,16 @@ fun ConfigurationScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Configuration",
+                title = stringResource(R.string.configuration_screen_title),
                 onMenuButtonClick = {},
                 onBackButtonPressed = onBackButtonClick,
                 isPrincipalScreen = false
             )
         }
     ) { innerPadding ->
-        ConfigurationOptions(
-            isDynamicTheme = isDynamicTheme,
-            onDynamicThemeChange = configurationViewModel::updateDynamicTheme,
+        ConfigurationScreenContent(
+            isDynamicTheme = { isDynamicTheme },
+            updateDynamicTheme = configurationViewModel::updateDynamicTheme,
             modifier = modifier.padding(innerPadding)
         )
     }
@@ -56,11 +58,30 @@ fun ConfigurationScreen(
 
 
 @Composable
+private fun ConfigurationScreenContent(
+    isDynamicTheme: () -> Boolean,
+    updateDynamicTheme: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ConfigurationOptions(
+        isDynamicTheme = isDynamicTheme,
+        onDynamicThemeChange = updateDynamicTheme,
+        modifier = modifier
+    )
+}
+
+
+@Composable
 private fun ConfigurationOptions(
-    isDynamicTheme: Boolean,
-    onDynamicThemeChange: (Boolean) -> Unit,
+    isDynamicTheme: () -> Boolean,
+    onDynamicThemeChange: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val enabledSwitchContentDescription =
+        stringResource(R.string.configuration_screen_dynamic_theme_enabled)
+    val disabledSwitchContentDescription =
+        stringResource(R.string.configuration_screen_dynamic_theme_disabled)
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
@@ -72,16 +93,16 @@ private fun ConfigurationOptions(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onDynamicThemeChange(!isDynamicTheme) }
+                .clickable(onClick = onDynamicThemeChange)
                 .semantics {
                     testTag = "DynamicThemeOption"
                     contentDescription =
-                        "The dynamic theme is ${if (isDynamicTheme) "enabled" else "disabled"}, click to toggle"
+                        if (isDynamicTheme()) enabledSwitchContentDescription else disabledSwitchContentDescription
                 }
         ) {
             // Switch label
             Text(
-                text = "Use dynamic theme",
+                text = stringResource(R.string.configuration_screen_dynamic_theme_label),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -89,8 +110,8 @@ private fun ConfigurationOptions(
 
             // Switch
             Switch(
-                checked = isDynamicTheme,
-                onCheckedChange = { onDynamicThemeChange(!isDynamicTheme) },
+                checked = isDynamicTheme(),
+                onCheckedChange = { onDynamicThemeChange() },
                 modifier = Modifier.semantics { testTag = "DynamicThemeSwitch" }
             )
         }
@@ -101,9 +122,12 @@ private fun ConfigurationOptions(
 @CompactSizeScreenThemePreview
 @Composable
 private fun ConfigurationScreenPreview() {
-    AppTheme {
-        ConfigurationScreen(
-            onBackButtonClick = {}
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        ConfigurationScreenContent(
+            isDynamicTheme = { false },
+            updateDynamicTheme = {}
         )
     }
 }
