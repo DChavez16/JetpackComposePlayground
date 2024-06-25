@@ -28,16 +28,16 @@ class NavigationDrawerUserFlow {
     }
 
 
-
     @Test
     fun `theme icon changing depending on current theme`() {
         // Start the NavigationDrawerContent
         composeTestRule.setContent {
             // Shows the NavigationDrawerContent screen using the ViewModel with fake repository
-            NavigationDrawerContent(
+            CustomNavigationDrawer(
                 currentSelectedItem = RootNavigationDestination.LazyLayouts,
-                onDrawerItemClick = {},
-                onConfigurationButtonClick = {},
+                isWidthScreenExpanded = true,
+                onDrawerItemClick = { },
+                onConfigurationButtonClick = { },
                 navigationDrawerViewModel = navigationDrawerViewModel
             )
         }

@@ -1,4 +1,4 @@
-package com.example.datastore
+package com.example.datapersistence
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.geometry.Offset

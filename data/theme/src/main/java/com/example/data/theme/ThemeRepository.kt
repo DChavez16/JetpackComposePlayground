@@ -1,7 +1,6 @@
 package com.example.data.theme
 
-import com.example.datastore.PreferencesDataStore
-import kotlinx.coroutines.CoroutineDispatcher
+import com.example.datapersistence.PreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

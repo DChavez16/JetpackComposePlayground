@@ -1,8 +1,9 @@
-package com.example.datastore
+package com.example.datapersistence
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -41,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.DefaultTopAppBar
+import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 import com.godaddy.android.colorpicker.ClassicColorPicker
 import com.godaddy.android.colorpicker.HsvColor
 
@@ -62,16 +65,16 @@ fun DataPersistenceScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Data Persistence",
+                title = stringResource(R.string.data_persistence_screen_top_bar_title),
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}
             )
         }
     ) { innerPadding ->
-        DataPersistenceExample(
-            number = number,
-            color = color,
+        DataPersistenceScreenContent(
+            number = { number },
+            color = { color },
             onNumberChange = dataPersistenceViewModel::updateNumberPreference,
             onColorChange = dataPersistenceViewModel::updateColorPreference,
             modifier = Modifier.padding(innerPadding)
@@ -79,13 +82,14 @@ fun DataPersistenceScreen(
     }
 }
 
+
 /**
  * Displays the current number and colors, as the controls to change their values
  */
 @Composable
-private fun DataPersistenceExample(
-    number: Int,
-    color: Color,
+private fun DataPersistenceScreenContent(
+    number: () -> Int,
+    color: () -> Color,
     onNumberChange: (String) -> Unit,
     onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
@@ -116,8 +120,8 @@ private fun DataPersistenceExample(
  */
 @Composable
 private fun DisplayContent(
-    number: Number,
-    color: Color
+    number: () -> Number,
+    color: () -> Color
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -128,10 +132,14 @@ private fun DisplayContent(
             modifier = Modifier
                 .sizeIn(maxWidth = 320.dp)
                 .aspectRatio(1f)
-                .background(color = color)
+                .drawBehind {
+                    drawRect(
+                        color = color()
+                    )
+                }
         ) {
             Text(
-                text = "$number",
+                text = "${number()}",
                 style = MaterialTheme.typography.displayLarge,
                 fontSize = 256.sp,
                 modifier = Modifier.semantics { testTag = "NumberDisplay" }
@@ -146,8 +154,8 @@ private fun DisplayContent(
  */
 @Composable
 private fun InputFields(
-    currentNumber: Int,
-    currentColor: Color,
+    currentNumber: () -> Int,
+    currentColor: () -> Color,
     onNumberChange: (String) -> Unit,
     onColorChange: (Color) -> Unit
 ) {
@@ -167,20 +175,22 @@ private fun InputFields(
     }
 }
 
+
 /**
  * Composable that contains the field to change the number
  */
 @Composable
 private fun NumberInputField(
-    currentNumber: Int,
+    currentNumber: () -> Int,
     onNumberChange: (String) -> Unit
 ) {
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Number:",
+            text = stringResource(R.string.data_persistence_screen_number_input_label),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(5f)
@@ -189,7 +199,7 @@ private fun NumberInputField(
         Spacer(modifier = Modifier.weight(1f))
 
         OutlinedTextField(
-            value = "$currentNumber",
+            value = "${currentNumber()}",
             onValueChange = { newNumberString -> onNumberChange(newNumberString) },
             textStyle = MaterialTheme.typography.titleLarge,
             keyboardOptions = KeyboardOptions(
@@ -208,7 +218,7 @@ private fun NumberInputField(
  */
 @Composable
 private fun ColorInputField(
-    currentColor: Color,
+    currentColor: () -> Color,
     onColorChange: (Color) -> Unit
 ) {
     // Flag value that indicates if the dialog is open
@@ -219,7 +229,7 @@ private fun ColorInputField(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Color:",
+            text = stringResource(R.string.data_persistence_screen_color_input_label),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(5f)
@@ -229,7 +239,8 @@ private fun ColorInputField(
 
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.weight(8f)
+            modifier = Modifier
+                .weight(8f)
         ) {
             Box(
                 modifier = Modifier
@@ -239,12 +250,12 @@ private fun ColorInputField(
                         color = Color.Black,
                         shape = RoundedCornerShape(size = 8.dp)
                     )
-                    .background(
-                        color = currentColor,
-                        shape = RoundedCornerShape(size = 8.dp)
-                    )
                     .clickable { isDialogOpen = true }
                     .semantics { contentDescription = "Change background color" }
+                    .background(
+                        color = currentColor(),
+                        shape = RoundedCornerShape(size = 8.dp)
+                    )
             )
         }
     }
@@ -268,7 +279,7 @@ private fun ColorInputField(
  */
 @Composable
 private fun ColorPickerDialog(
-    currentColor: Color,
+    currentColor: () -> Color,
     onDismiss: () -> Unit,
     onColorSelected: (Color) -> Unit
 ) {
@@ -292,7 +303,7 @@ private fun ColorPickerDialog(
             ) {
                 // Dialog title
                 Text(
-                    text = "Select a color",
+                    text = stringResource(R.string.data_persistence_screen_color_picker_header),
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
@@ -302,14 +313,18 @@ private fun ColorPickerDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(32.dp)
-                        .background(color = newCurrentColor)
+                        .drawBehind {
+                            drawRect(
+                                color = newCurrentColor()
+                            )
+                        }
                 )
 
                 // Color picker
                 ClassicColorPicker(
-                    color = HsvColor.from(color = newCurrentColor),
+                    color = HsvColor.from(color = newCurrentColor()),
                     onColorChanged = { hsvColor: HsvColor ->
-                        newCurrentColor = hsvColor.toColor()
+                        newCurrentColor = { hsvColor.toColor() }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -322,18 +337,18 @@ private fun ColorPickerDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Confirm",
+                        text = stringResource(R.string.data_persistence_screen_color_picker_confirm_button_label),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .weight(5f)
-                            .clickable { onColorSelected(newCurrentColor) }
+                            .clickable { onColorSelected(newCurrentColor()) }
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
-                        text = "Dismiss",
+                        text = stringResource(R.string.data_persistence_screen_color_picker_dismiss_button_dialog),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -347,12 +362,34 @@ private fun ColorPickerDialog(
 }
 
 
+
+
 @CompactSizeScreenThemePreview
 @Composable
-private fun PreferencesExamplePreview() {
-    AppTheme {
-        DataPersistenceScreen(
-            onMenuButtonClick = {}
+private fun DataPersistenceScreenContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DataPersistenceScreenContent(
+            number = { 0 },
+            color = { Color.Red },
+            onNumberChange = {},
+            onColorChange = {}
+        )
+    }
+}
+
+
+@CompactSizeScreenThemePreview
+@Composable
+private fun ColorInputDialogPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        ColorPickerDialog(
+            currentColor = { Color.Red },
+            onDismiss = {},
+            onColorSelected = {}
         )
     }
 }

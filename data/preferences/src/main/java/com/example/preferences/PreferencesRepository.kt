@@ -1,6 +1,6 @@
 package com.example.preferences
 
-import com.example.datastore.PreferencesDataStore
+import com.example.datapersistence.PreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

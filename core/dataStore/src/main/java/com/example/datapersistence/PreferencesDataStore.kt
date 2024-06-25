@@ -1,4 +1,4 @@
-package com.example.datastore
+package com.example.datapersistence
 
 import android.content.Context
 import androidx.datastore.core.DataStore

@@ -1,4 +1,4 @@
-package com.example.datastore
+package com.example.datapersistence
 
 import androidx.compose.ui.graphics.Color
 import com.example.testing.repositories.FakeLocalPreferencesRepository

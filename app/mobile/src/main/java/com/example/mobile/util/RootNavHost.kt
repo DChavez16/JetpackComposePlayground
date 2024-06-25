@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.animations.AnimationScreen
 import com.example.configuration.ConfigurationScreen
-import com.example.datastore.DataPersistenceScreen
+import com.example.datapersistence.DataPersistenceScreen
 import com.example.dependencyinjection.DependencyInjectionScreen
 import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen

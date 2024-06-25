@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="data_persistence_screen_top_bar_title">Data Persistence</string>
+    <string name="data_persistence_screen_number_input_label">Number:</string>
+    <string name="data_persistence_screen_color_input_label">Color:</string>
+    <string name="data_persistence_screen_color_picker_header">Select a color</string>
+    <string name="data_persistence_screen_color_picker_confirm_button_label">Confirm</string>
+    <string name="data_persistence_screen_color_picker_dismiss_button_dialog">Dismiss</string>
+</resources>
