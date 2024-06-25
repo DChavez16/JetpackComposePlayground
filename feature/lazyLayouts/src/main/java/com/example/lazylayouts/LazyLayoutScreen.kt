@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.lazylayouts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -64,7 +67,9 @@ private fun LazyLayoutsList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Lazy lists horizontal banner
-        item(key = 1) { HorizontalListBanner(title = "Listas verticales y horizontales") }
+        stickyHeader(key = 1) {
+            HorizontalListBanner(title = "Listas verticales y horizontales")
+        }
 
         // LazyRow example
         item {
@@ -85,7 +90,9 @@ private fun LazyLayoutsList(
         }
 
         // Lazy grids horizontal banner
-        item(key = 2) { HorizontalListBanner(title = "Parrillas horizontales y verticales") }
+        stickyHeader(key = 2) {
+            HorizontalListBanner(title = "Parrillas horizontales y verticales")
+        }
 
         // LazyHorizontalGrid example
         item {
@@ -106,7 +113,9 @@ private fun LazyLayoutsList(
         }
 
         // Lazy staggered grids horizontal banner
-        item(key = 3) { HorizontalListBanner(title = "Parrillas escalonadas horizontales y verticales") }
+        stickyHeader(key = 3) {
+            HorizontalListBanner(title = "Parrillas escalonadas horizontales y verticales")
+        }
 
         // LazyHorizontalStaggeredGrid example
         item {

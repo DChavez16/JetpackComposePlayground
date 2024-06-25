@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.drawscope
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +36,7 @@ import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.HorizontalListBanner
 
 
 /**
@@ -75,7 +79,9 @@ private fun DrawScopesList(
             .background(color = MaterialTheme.colorScheme.background)
     ) {
         // DrawScope graphics horizontal banner
-        item(key = 1) { com.example.ui.ui.HorizontalListBanner(title = "Graficos con DrawScope") }
+        stickyHeader(key = 1) {
+            HorizontalListBanner(title = "Graficos con DrawScope")
+        }
 
         // drawArc example
         item {
@@ -176,7 +182,9 @@ private fun DrawScopesList(
         }
 
         // DrawTransform transformations horizontal banner
-        item(key = 2) { com.example.ui.ui.HorizontalListBanner(title = "Transformaciones con DrawTransform") }
+        stickyHeader(key = 2) {
+            HorizontalListBanner(title = "Transformaciones con DrawTransform")
+        }
 
         // clipPath example
         item {

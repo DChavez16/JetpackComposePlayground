@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.animations
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -68,7 +71,9 @@ private fun AnimationsList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Animation examples for content changes in the layout
-        item(key = 1) { HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_1)) }
+        stickyHeader(key = 1) {
+            HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_1))
+        }
 
         // AnimatedVisibility example
         item {
@@ -123,7 +128,9 @@ private fun AnimationsList(
         }
 
         // Animations based on state examples
-        item(key = 2) { HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_2)) }
+        stickyHeader(key = 2) {
+            HorizontalListBanner(title = stringResource(R.string.animations_screen_list_banner_2))
+        }
 
         // rememberInfiniteTransition example
         item {

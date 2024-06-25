@@ -1,5 +1,6 @@
 package com.example.ui.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,8 +20,12 @@ import com.example.ui.theme.AppTheme
 @Composable
 fun HorizontalListBanner(title: String) {
     Row(
-        modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
     ) {
         HorizontalDivider(
             color = MaterialTheme.colorScheme.onBackground,
