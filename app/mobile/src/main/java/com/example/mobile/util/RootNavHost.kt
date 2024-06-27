@@ -7,7 +7,6 @@ import androidx.navigation.compose.composable
 import com.example.animations.AnimationScreen
 import com.example.configuration.ConfigurationScreen
 import com.example.datapersistence.DataPersistenceScreen
-import com.example.dependencyinjection.DependencyInjectionScreen
 import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen
 import com.example.persistentWork.PersistentWorkScreen
@@ -59,15 +58,6 @@ internal fun RootNavHost(
             route = RootNavigationDestination.Themes.itemRouteName
         ) {
             ThemeScreen(
-                onMenuButtonClick = onMenuButtonClick
-            )
-        }
-
-        // Dependency Injection destination
-        composable(
-            route = RootNavigationDestination.DependencyInjection.itemRouteName
-        ) {
-            DependencyInjectionScreen(
                 onMenuButtonClick = onMenuButtonClick
             )
         }

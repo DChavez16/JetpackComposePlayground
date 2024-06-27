@@ -24,7 +24,6 @@ dependencies {
     implementation(projects.feature.animations)
     implementation(projects.feature.drawScope)
     implementation(projects.feature.themes)
-    implementation(projects.feature.dependencyInjection)
     implementation(projects.feature.localDatabase)
     implementation(projects.feature.dataPersistence)
     implementation(projects.feature.persistentWork)

@@ -36,12 +36,6 @@ enum class RootNavigationDestination(
 //        itemIcon = R.drawable.jetpack_compose_icon
         itemIcon = Icons.Default.Build
     ),
-    DependencyInjection(
-        itemTitle = R.string.dependency_injection_screen,
-        itemRouteName = "dependencyInjection",
-//        itemIcon = R.drawable.jetpack_compose_icon
-        itemIcon = Icons.Default.Build
-    ),
     LocalDatabase(
         itemTitle = R.string.local_database_screen,
         itemRouteName = "localDatabase",
