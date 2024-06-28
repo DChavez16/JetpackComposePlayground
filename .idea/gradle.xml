@@ -46,7 +46,6 @@
             <option value="$PROJECT_DIR$/feature/animations" />
             <option value="$PROJECT_DIR$/feature/configuration" />
             <option value="$PROJECT_DIR$/feature/dataPersistence" />
-            <option value="$PROJECT_DIR$/feature/dependencyInjection" />
             <option value="$PROJECT_DIR$/feature/drawScope" />
             <option value="$PROJECT_DIR$/feature/lazyLayouts" />
             <option value="$PROJECT_DIR$/feature/localDatabase" />

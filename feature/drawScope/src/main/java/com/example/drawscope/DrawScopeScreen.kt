@@ -13,7 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.example.drawscope.ui.ClipPathExample
 import com.example.drawscope.ui.ClipRectExample
 import com.example.drawscope.ui.DrawArcExample
@@ -49,7 +52,7 @@ fun DrawScopeScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Draw Scopes",
+                title = stringResource(R.string.draw_scope_title),
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}
@@ -70,6 +73,9 @@ fun DrawScopeScreen(
 private fun DrawScopesList(
     modifier: Modifier = Modifier
 ) {
+    // Stores the current ViewModelStoreOwner
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
+
     // List of graphics and transformations that can be drawn with Compose
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -80,15 +86,20 @@ private fun DrawScopesList(
     ) {
         // DrawScope graphics horizontal banner
         stickyHeader(key = 1) {
-            HorizontalListBanner(title = "Graficos con DrawScope")
+            HorizontalListBanner(title = stringResource(R.string.draw_scope_list_banner_1))
         }
 
         // drawArc example
         item {
             ExampleComponent(
-                title = "drawArc",
-                description = "Dibuja un arco escalado para encajar dentro de un rectangulo dado.\nEn este ejemplo se dibujara un arco usando drawArc al que se le podra cambiar el angulo final.",
-                content = { DrawArcExample() })
+                title = stringResource(R.string.draw_scope_draw_arc_title),
+                description = stringResource(R.string.draw_scope_draw_arc_description),
+                content = {
+                    DrawArcExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
+            )
         }
 
         // drawCircle example

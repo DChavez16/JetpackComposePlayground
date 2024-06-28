@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--- Draw Scope Screen -->
+    <string name="draw_scope_title">Draw Scope</string>
+    <string name="draw_scope_list_banner_1">DrawScope graphics</string>
+    <string name="draw_scope_draw_arc_title">drawArc</string>
+    <string name="draw_scope_draw_arc_description">Draw an arc scaled to fit inside a given rectangle.\nIn this example an arc will be drawn using drawArc whose final angle can be changed.</string>
+
+    <string name="draw_scope_screen_">_</string>
+
+
+    <!-- DrawArc Example -->
+    <string name="draw_scope_draw_arc_slider_label">Final Angle</string>
+</resources>
