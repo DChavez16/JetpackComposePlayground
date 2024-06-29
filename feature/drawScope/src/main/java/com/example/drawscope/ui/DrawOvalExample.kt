@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,111 +22,143 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
+import com.example.drawscope.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomSlider
 
 
 @Composable
-internal fun DrawOvalExample() {
-    // SliderPositions para positionX, positionY, sizeX y sizeY
-    var xCoordSliderPosition by remember { mutableFloatStateOf(1f) }
-    var yCoordSliderPosition by remember { mutableFloatStateOf(2.5f) }
-    var xSizeSliderPosition by remember { mutableFloatStateOf(8f) }
-    var ySizeSliderPosition by remember { mutableFloatStateOf(5f) }
+internal fun DrawOvalExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
+    // SliderPositions for positionX, positionY, sizeX y sizeY
+    val xCoordSliderPosition by drawScopeViewModel.drawOvalStartXCoordSliderPosition.collectAsState()
+    val yCoordSliderPosition by drawScopeViewModel.drawOvalStartYCoordSliderPosition.collectAsState()
+    val xSizeSliderPosition by drawScopeViewModel.drawOvalSizeXSliderPosition.collectAsState()
+    val ySizeSliderPosition by drawScopeViewModel.drawOvalSizeYSliderPosition.collectAsState()
 
-    // Valores animables para positionX, positionY, sizeX y sizeY
-    val ovalStartXCoord by animateFloatAsState(
-        targetValue = xCoordSliderPosition / 10,
-        label = "Oval Start X Coordinate Animation"
+    DrawOvalExampleContent(
+        xCoordSliderPosition = { xCoordSliderPosition },
+        yCoordSliderPosition = { yCoordSliderPosition },
+        xSizeSliderPosition = { xSizeSliderPosition },
+        ySizeSliderPosition = { ySizeSliderPosition },
+        changeXCoordSliderPosition = drawScopeViewModel::changeDrawOvalStartXCoordSliderPosition,
+        changeYCoordSliderPosition = drawScopeViewModel::changeDrawOvalStartYCoordSliderPosition,
+        changeXSizeSliderPosition = drawScopeViewModel::changeDrawOvalSizeXSliderPosition,
+        changeYSizeSliderPosition = drawScopeViewModel::changeDrawOvalSizeYSliderPosition
     )
-    val ovalStartYCoord by animateFloatAsState(
-        targetValue = yCoordSliderPosition / 10,
-        label = "Oval Start Y Coordinate Animation"
-    )
-    val ovalSizeX by animateFloatAsState(
-        targetValue = xSizeSliderPosition / 10,
-        label = "Oval Size X Animation"
-    )
-    val ovalSizeY by animateFloatAsState(
-        targetValue = ySizeSliderPosition / 10,
-        label = "Oval Size Y Animation"
-    )
+}
 
+
+@Composable
+private fun DrawOvalExampleContent(
+    xCoordSliderPosition: () -> Float,
+    yCoordSliderPosition: () -> Float,
+    xSizeSliderPosition: () -> Float,
+    ySizeSliderPosition: () -> Float,
+    changeXCoordSliderPosition: (Float) -> Unit,
+    changeYCoordSliderPosition: (Float) -> Unit,
+    changeXSizeSliderPosition: (Float) -> Unit,
+    changeYSizeSliderPosition: (Float) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Slider para cambiar la coordenada X de inicio del ovalo
+        // Slider to change the start X coordinate of the oval
         CustomSlider(
-            sliderTextLabel = "Start X Position",
-            sliderValue = { xCoordSliderPosition },
-            sliderValueRange = -10f..10f,
-            onSliderValueChange = { newPosition -> xCoordSliderPosition = newPosition },
-            onSliderValueReset = { xCoordSliderPosition = 1f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_oval_start_x_position),
+            sliderValue = xCoordSliderPosition,
+            sliderValueRange = -1f..1f,
+            onSliderValueChange = changeXCoordSliderPosition,
+            onSliderValueReset = { changeXCoordSliderPosition(0f) }
         )
 
-        // Slider para cambiar la coordenada Y de inicio del ovalo
+        // Slider to change the start Y coordinate of the oval
         CustomSlider(
-            sliderTextLabel = "Start Y Position",
-            sliderValue = { yCoordSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> yCoordSliderPosition = newPosition },
-            onSliderValueReset = { yCoordSliderPosition = 2.5f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_oval_start_y_position),
+            sliderValue = yCoordSliderPosition,
+            sliderValueRange = 0f..0.5f,
+            onSliderValueChange = changeYCoordSliderPosition,
+            onSliderValueReset = { changeYCoordSliderPosition(0.25f) }
         )
 
-        // Slider para cambiar el tamaño X del ovalo
+        // Slider to change the size X of the oval
         CustomSlider(
-            sliderTextLabel = "Size X",
-            sliderValue = { xSizeSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> xSizeSliderPosition = newPosition },
-            onSliderValueReset = { xSizeSliderPosition = 8f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_oval_size_x),
+            sliderValue = xSizeSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeXSizeSliderPosition,
+            onSliderValueReset = { changeXSizeSliderPosition(1f) }
         )
 
-        // Slider para cambiar el tamaño Y del ovalo
+        // Slider to change the size Y of the oval
         CustomSlider(
-            sliderTextLabel = "Size Y",
-            sliderValue = { ySizeSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> ySizeSliderPosition = newPosition },
-            onSliderValueReset = { ySizeSliderPosition = 5f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_oval_size_y),
+            sliderValue = ySizeSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeYSizeSliderPosition,
+            onSliderValueReset = { changeYSizeSliderPosition(0.5f) }
         )
 
-        // Ovalo que va a ser dibujado
+        // Oval that will be drawn
         OvalExample(
-            ovalStartXCoord = ovalStartXCoord,
-            ovalStartYCoord = ovalStartYCoord,
-            ovalSizeX = ovalSizeX,
-            ovalSizeY = ovalSizeY
+            xCoordSliderPosition = xCoordSliderPosition,
+            yCoordSliderPosition = yCoordSliderPosition,
+            xSizeSliderPosition = xSizeSliderPosition,
+            ySizeSliderPosition = ySizeSliderPosition
         )
 
-        // Boton para reiniciar los valores de los sliders
+        // Button to reset the values of the sliders
         OutlinedButton(
             colors = ButtonDefaults.elevatedButtonColors(),
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
-                xCoordSliderPosition = 1f
-                yCoordSliderPosition = 2.5f
-                xSizeSliderPosition = 8f
-                ySizeSliderPosition = 5f
+                changeXCoordSliderPosition(0f)
+                changeYCoordSliderPosition(0.25f)
+                changeXSizeSliderPosition(1f)
+                changeYSizeSliderPosition(0.5f)
             },
             content = {
-                Text(text = "Reiniciar valores")
+                Text(text = stringResource(R.string.draw_scope_draw_oval_restart_button_label))
             }
         )
     }
 }
 
+
 @Composable
 private fun OvalExample(
-    ovalStartXCoord: Float,
-    ovalStartYCoord: Float,
-    ovalSizeX: Float,
-    ovalSizeY: Float
+    xCoordSliderPosition: () -> Float,
+    yCoordSliderPosition: () -> Float,
+    xSizeSliderPosition: () -> Float,
+    ySizeSliderPosition: () -> Float
 ) {
+
+    // Animated values for positionX, positionY, sizeX y sizeY
+    val ovalStartXCoord by animateFloatAsState(
+        targetValue = xCoordSliderPosition(),
+        label = "OvalStartXCoordinateAnimation"
+    )
+    val ovalStartYCoord by animateFloatAsState(
+        targetValue = yCoordSliderPosition(),
+        label = "OvalStartYCoordinateAnimation"
+    )
+    val ovalSizeX by animateFloatAsState(
+        targetValue = xSizeSliderPosition(),
+        label = "OvalSizeXAnimation"
+    )
+    val ovalSizeY by animateFloatAsState(
+        targetValue = ySizeSliderPosition(),
+        label = "OvalSizeYAnimation"
+    )
+
     val ovalPrimaryColor = MaterialTheme.colorScheme.primary
     val ovalSecondaryColor = Color.Black
 
@@ -155,10 +186,23 @@ private fun OvalExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawOvalExamplePreview() {
-    AppTheme {
-        DrawOvalExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawOvalExampleContent(
+            xCoordSliderPosition = { 0f },
+            yCoordSliderPosition = { 0.25f },
+            xSizeSliderPosition = { 1f },
+            ySizeSliderPosition = { 0.5f },
+            changeXCoordSliderPosition = {},
+            changeYCoordSliderPosition = {},
+            changeXSizeSliderPosition = {},
+            changeYSizeSliderPosition = {}
+        )
     }
 }

@@ -115,7 +115,6 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Improve performance (less recompositions)
         // drawLine example
         item {
             ExampleComponent(
@@ -123,22 +122,22 @@ private fun DrawScopesList(
                 description = stringResource(R.string.draw_scope_draw_line_description),
                 content = {
                     DrawLineExample(
-
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
                     )
                 }
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawOval example
         item {
             ExampleComponent(
-                title = "drawOval",
-                description = "Dibuja un ovalo de acuerdo con el tamaño y posicion determinados.\nEn el siguiente ejemplo se dibujara un ovalo con un tamaño y posicion personalizados.",
-                content = { DrawOvalExample() }
+                title = stringResource(R.string.draw_scope_draw_oval_title),
+                description = stringResource(R.string.draw_scope_draw_oval_description),
+                content = {
+                    DrawOvalExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

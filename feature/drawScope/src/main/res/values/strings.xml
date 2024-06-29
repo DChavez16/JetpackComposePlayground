@@ -9,6 +9,8 @@
     <string name="draw_scope_draw_circle_description">Draw a circle with the center coordinate and radius provided.\nIn this example a circle will be drawn, the size and position of which can be adjusted.</string>
     <string name="draw_scope_draw_line_title">drawLine</string>
     <string name="draw_scope_draw_line_description">Draw a line between the established points.\nIn the following example a line will be drawn with the final position of the customizable stroke.</string>
+    <string name="draw_scope_draw_oval_title">drawOval</string>
+    <string name="draw_scope_draw_oval_description">Draw an oval according to the determined size and positio\nIn the following example an oval will be drawn with a custom size and position.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -26,4 +28,11 @@
     <string name="draw_scope_draw_line_end_x_coord_slider_label">End X Coord</string>
     <string name="draw_scope_draw_line_end_y_coord_slider_label">End Y Coord</string>
     <string name="draw_scope_draw_line_restart_button_label">Restart values</string>
+
+    <!-- DrawOval Example -->
+    <string name="draw_scope_draw_oval_start_x_position">Start X Position</string>
+    <string name="draw_scope_draw_oval_start_y_position">Start Y Position</string>
+    <string name="draw_scope_draw_oval_size_x">Size X</string>
+    <string name="draw_scope_draw_oval_size_y">Size Y</string>
+    <string name="draw_scope_draw_oval_restart_button_label">Restart values</string>
 </resources>

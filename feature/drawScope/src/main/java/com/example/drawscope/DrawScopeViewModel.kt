@@ -37,6 +37,23 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawLineEndYCoordSliderPosition: StateFlow<Float> = _drawLineEndYCoordSliderPosition
 
 
+    // Backing property and StateFlow for oval start x coord slider position (DrawOval)
+    private val _drawOvalStartXCoordSliderPosition = MutableStateFlow(0f)
+    val drawOvalStartXCoordSliderPosition: StateFlow<Float> = _drawOvalStartXCoordSliderPosition
+
+    // Backing property and StateFlow for oval start y coord slider position (DrawOval)
+    private val _drawOvalStartYCoordSliderPosition = MutableStateFlow(0.25f)
+    val drawOvalStartYCoordSliderPosition: StateFlow<Float> = _drawOvalStartYCoordSliderPosition
+
+    // Backing property and StateFlow for oval size x slider position (DrawOval)
+    private val _drawOvalSizeXSliderPosition = MutableStateFlow(1f)
+    val drawOvalSizeXSliderPosition: StateFlow<Float> = _drawOvalSizeXSliderPosition
+
+    // Backing property and StateFlow for oval size y slider position (DrawOval)
+    private val _drawOvalSizeYSliderPosition = MutableStateFlow(0.5f)
+    val drawOvalSizeYSliderPosition: StateFlow<Float> = _drawOvalSizeYSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -70,4 +87,24 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
         _drawLineEndYCoordSliderPosition.value = newValue
     }
 
+
+    // Methods to change oval start x coord slider value (DrawOval)
+    fun changeDrawOvalStartXCoordSliderPosition(newValue: Float) {
+        _drawOvalStartXCoordSliderPosition.value = newValue
+    }
+
+    // Methods to change oval start y coord slider value (DrawOval)
+    fun changeDrawOvalStartYCoordSliderPosition(newValue: Float) {
+        _drawOvalStartYCoordSliderPosition.value = newValue
+    }
+
+    // Methods to change oval size x slider value (DrawOval)
+    fun changeDrawOvalSizeXSliderPosition(newValue: Float) {
+        _drawOvalSizeXSliderPosition.value = newValue
+    }
+
+    // Methods to change oval size y slider value (DrawOval)
+    fun changeDrawOvalSizeYSliderPosition(newValue: Float) {
+        _drawOvalSizeYSliderPosition.value = newValue
+    }
 }
