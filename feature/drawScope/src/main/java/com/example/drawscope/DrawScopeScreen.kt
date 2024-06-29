@@ -115,15 +115,24 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Improve performance (less recompositions)
         // drawLine example
         item {
             ExampleComponent(
-                title = "drawLine",
-                description = "Dibuja una linea entre los puntos establecidos.\nEn el siguiente ejemplo se dibujara una linea con la posicion final del trazo personalizable.",
-                content = { DrawLineExample() }
+                title = stringResource(R.string.draw_scope_draw_line_title),
+                description = stringResource(R.string.draw_scope_draw_line_description),
+                content = {
+                    DrawLineExample(
+
+                    )
+                }
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawOval example
         item {
             ExampleComponent(
@@ -133,6 +142,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawPath example
         item {
             ExampleComponent(
@@ -142,6 +155,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawPoints example
         item {
             ExampleComponent(
@@ -151,6 +168,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawRect example
         item {
             ExampleComponent(
@@ -160,6 +181,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawRoundRect example
         item {
             ExampleComponent(
@@ -169,6 +194,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawOutline example
         item {
             ExampleComponent(
@@ -178,6 +207,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawText example
         item {
             ExampleComponent(
@@ -187,6 +220,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // drawImage example
         item {
             ExampleComponent(
@@ -196,11 +233,16 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Change plain text with string resources
         // DrawTransform transformations horizontal banner
         stickyHeader(key = 2) {
             HorizontalListBanner(title = "Transformaciones con DrawTransform")
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // clipPath example
         item {
             ExampleComponent(
@@ -210,6 +252,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // clipRect example
         item {
             ExampleComponent(
@@ -219,6 +265,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // inset example
         item {
             ExampleComponent(
@@ -228,6 +278,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // rotate example
         item {
             ExampleComponent(
@@ -237,6 +291,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // scale example
         item {
             ExampleComponent(
@@ -246,6 +304,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // translate example
         item {
             ExampleComponent(
@@ -255,6 +317,10 @@ private fun DrawScopesList(
             )
         }
 
+        // TODO Add DrawScopeViewModel
+        // TODO Refactorize to follow a testable aproach
+        // TODO Change plain text with string resources
+        // TODO Improve performance (less recompositions)
         // withTransform (multiple transformations) example
         item {
             ExampleComponent(

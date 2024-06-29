@@ -28,6 +28,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawCircleYCoordSliderPosition: StateFlow<Float> = _drawCircleYCoordSliderPosition
 
 
+    // Backing property and StateFlow for end x coord slider position (DrawLine)
+    private val _drawLineEndXCoordSliderPosition = MutableStateFlow(0.5f)
+    val drawLineEndXCoordSliderPosition: StateFlow<Float> = _drawLineEndXCoordSliderPosition
+    
+    // Backing property and StateFlow for end y coord slider position (DrawLine)
+    private val _drawLineEndYCoordSliderPosition = MutableStateFlow(0.5f)
+    val drawLineEndYCoordSliderPosition: StateFlow<Float> = _drawLineEndYCoordSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -48,6 +57,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change y coord slider value (DrawCircle)
     fun changeDrawCircleYCoordSliderPosition(newValue: Float) {
         _drawCircleYCoordSliderPosition.value = newValue
+    }
+
+
+    // Methods to change end x coord slider value (DrawLine)
+    fun changeDrawLineEndXCoordSliderPosition(newValue: Float) {
+        _drawLineEndXCoordSliderPosition.value = newValue
+    }
+
+    // Methods to change end y coord slider value (DrawLine)
+    fun changeDrawLineEndYCoordSliderPosition(newValue: Float) {
+        _drawLineEndYCoordSliderPosition.value = newValue
     }
 
 }
