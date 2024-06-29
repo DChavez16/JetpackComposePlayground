@@ -36,9 +36,9 @@ import com.example.drawscope.ui.RotateExample
 import com.example.drawscope.ui.ScaleExample
 import com.example.drawscope.ui.TranslateExample
 import com.example.ui.theme.AppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
-import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.HorizontalListBanner
 
 
@@ -105,9 +105,13 @@ private fun DrawScopesList(
         // drawCircle example
         item {
             ExampleComponent(
-                title = "drawCircle",
-                description = "Dibuja un circulo con el centro de coordenada y radio proporcionados.\nEn este ejemplo se dibujara un circulo, al cual se le prodra ajustar el tamaño y posicion.",
-                content = { DrawCircleExample() }
+                title = stringResource(R.string.draw_scope_draw_circle_title),
+                description = stringResource(R.string.draw_scope_draw_circle_description),
+                content = {
+                    DrawCircleExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
