@@ -1,5 +1,7 @@
 package com.example.drawscope
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.PointMode
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +60,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Backing property and StateFlow for path values list (DrawPath)
     private val _drawPathValuesList = MutableStateFlow(generateRandomGraphValues())
     val drawPathValuesList: StateFlow<List<Int>> = _drawPathValuesList
+
+
+    // Backing property and StateFlow for points list (DrawPoints)
+    private val _drawPointsList = MutableStateFlow(emptyList<Offset>())
+    val drawPointsList: StateFlow<List<Offset>> = _drawPointsList
+
+    // Backing property and StateFlow for point mode (DrawPoints)
+    private val _drawPointsPointMode = MutableStateFlow(PointModeOption.Points)
+    val drawPointsPointMode: StateFlow<PointModeOption> = _drawPointsPointMode
 
 
 
@@ -119,6 +130,27 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     fun updateDrawPathValuesList() {
         _drawPathValuesList.value = generateRandomGraphValues()
     }
+
+
+    // Methods to add an offset to the points list (DrawPoints)
+    fun addOffsetToPointsList(newOffset: Offset) {
+        _drawPointsList.value = _drawPointsList.value.addOffset(newOffset)
+    }
+
+    // Methods to delete the last offset from the points list (DrawPoints)
+    fun deleteLastOffsetFromPointsList() {
+        _drawPointsList.value = _drawPointsList.value.deleteLastOffset()
+    }
+
+    // Methods to clean the points list (DrawPoints)
+    fun cleanPointsList() {
+        _drawPointsList.value = emptyList()
+    }
+
+    // Methods to change the point mode (DrawPoints)
+    fun changePointMode(newPointMode: PointModeOption) {
+        _drawPointsPointMode.value = newPointMode
+    }
 }
 
 
@@ -126,4 +158,19 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
 
 private fun generateRandomGraphValues(): List<Int> {
     return List(7) { Random.nextInt(1000) }
+}
+
+
+private fun List<Offset>.addOffset(newOffset: Offset): List<Offset> {
+    return this + newOffset
+}
+
+private fun List<Offset>.deleteLastOffset(): List<Offset> {
+    return dropLast(1)
+}
+
+internal enum class PointModeOption(val pointModeName: String, val pointMode: PointMode) {
+    Points("Points", PointMode.Points),
+    Lines("Lines", PointMode.Lines),
+    Polygon("Polygon", PointMode.Polygon)
 }

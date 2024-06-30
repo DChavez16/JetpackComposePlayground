@@ -154,16 +154,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawPoints example
         item {
             ExampleComponent(
-                title = "drawPoints",
-                description = "Dibuja una secuencia de puntos de acuerdo con el PointMode proporcionado.\nEn este ejemplo se van a dibujar puntos en la pantalla en cada lugar que se presione, tambien se podra eliminar el ultimo punto agregado y borrarlos todos, asi como seleccionar el tipo de punto.",
-                content = { DrawPointsExample() }
+                title = stringResource(R.string.draw_scope_draw_points_title),
+                description = stringResource(R.string.draw_scope_draw_points_description),
+                content = {
+                    DrawPointsExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

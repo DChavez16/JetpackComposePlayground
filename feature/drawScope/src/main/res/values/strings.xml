@@ -13,6 +13,8 @@
     <string name="draw_scope_draw_oval_description">Draw an oval according to the determined size and positio\nIn the following example an oval will be drawn with a custom size and position.</string>
     <string name="draw_scope_draw_path_title">drawPath</string>
     <string name="draw_scope_draw_path_description">Series of mathematical instructions that result in a drawing once executed.\nIn this example a randomly generated graph will be plotted using a drawPath.</string>
+    <string name="draw_scope_draw_points_title">drawPoints</string>
+    <string name="draw_scope_draw_points_description">Draws a sequence of points according to the provided PointMode.\nIn this example, points will be drawn on the screen in each place that is pressed, you can also delete the last point added and delete them all, as well as select the type of point.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -41,4 +43,9 @@
     <!-- DrawPath Example -->
     <string name="draw_scope_draw_path_values_list">Values: %s</string>
     <string name="draw_scope_draw_path_generate_values_button_label">Generate values</string>
+
+    <!-- DrawPoints Example -->
+    <string name="draw_scope_draw_points_dropdown_menu_label">Point Mode:</string>
+    <string name="draw_scope_draw_points_delete_last_point_button_label">Delete last point</string>
+    <string name="draw_scope_draw_points_empty_points_button_label">Delete all points</string>
 </resources>

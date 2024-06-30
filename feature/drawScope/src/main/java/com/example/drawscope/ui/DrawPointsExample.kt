@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,17 +27,45 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
+import com.example.drawscope.PointModeOption
+import com.example.drawscope.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomDropdownMenu
 
 
 @Composable
-internal fun DrawPointsExample() {
-    var pointsList: List<Offset> by remember { mutableStateOf(listOf()) }
-    var pointModeOption by remember { mutableStateOf(PointModeOption.Points) }
+internal fun DrawPointsExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
 
+    val pointsList by drawScopeViewModel.drawPointsList.collectAsState()
+    val pointModeOption by drawScopeViewModel.drawPointsPointMode.collectAsState()
+
+    DrawPointsExampleContent(
+        pointsList = { pointsList },
+        pointModeOption = { pointModeOption },
+        addPoint = drawScopeViewModel::addOffsetToPointsList,
+        removeLastPoint = drawScopeViewModel::deleteLastOffsetFromPointsList,
+        emptyPoints = drawScopeViewModel::cleanPointsList,
+        changePointMode = drawScopeViewModel::changePointMode
+    )
+}
+
+
+@Composable
+private fun DrawPointsExampleContent(
+    pointsList: () -> List<Offset>,
+    pointModeOption: () -> PointModeOption,
+    addPoint: (Offset) -> Unit,
+    removeLastPoint: () -> Unit,
+    emptyPoints: () -> Unit,
+    changePointMode: (PointModeOption) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,20 +73,19 @@ internal fun DrawPointsExample() {
     ) {
         // Dropdown menu para cambiar el modo de punto
         CustomDropdownMenu(
-            dropdownMenuLabel = "Point Mode",
-            currentElementDisplay = { pointModeOption.pointModeName },
+            dropdownMenuLabel = stringResource(R.string.draw_scope_draw_points_dropdown_menu_label),
+            currentElementDisplay = { pointModeOption().pointModeName },
             optionsList = PointModeOption.entries.map { pointModeOption -> pointModeOption.pointModeName },
             onElementSelected = { elementSelected ->
-                pointModeOption =
-                    PointModeOption.entries.find { it.pointModeName == elementSelected }!!
+                changePointMode(PointModeOption.entries.find { it.pointModeName == elementSelected }!!)
             }
         )
 
         // Espacio interactuable donde se van a dibujar los puntos
         PointsExample(
             pointsList = pointsList,
-            currentPointMode = pointModeOption.pointMode,
-            onPointAdded = { newOffset -> pointsList = pointsList.addOffset(newOffset) }
+            currentPointMode = { pointModeOption().pointMode },
+            onPointAdded = addPoint
         )
 
         // Botones para eliminar uno o todos los puntos
@@ -67,28 +93,29 @@ internal fun DrawPointsExample() {
             OutlinedButton(
                 colors = ButtonDefaults.elevatedButtonColors(),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                onClick = { pointsList = pointsList.deleteLastOffset() },
+                onClick = removeLastPoint,
                 content = {
-                    Text(text = "Borrar ultimo punto")
+                    Text(text = stringResource(R.string.draw_scope_draw_points_delete_last_point_button_label))
                 }
             )
 
             OutlinedButton(
                 colors = ButtonDefaults.elevatedButtonColors(),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                onClick = { pointsList = emptyList() },
+                onClick = emptyPoints,
                 content = {
-                    Text(text = "Borrar todos los puntos")
+                    Text(text = stringResource(R.string.draw_scope_draw_points_empty_points_button_label))
                 }
             )
         }
     }
 }
 
+
 @Composable
-fun PointsExample(
-    pointsList: List<Offset>,
-    currentPointMode: PointMode,
+private fun PointsExample(
+    pointsList: () -> List<Offset>,
+    currentPointMode: () -> PointMode,
     onPointAdded: (Offset) -> Unit
 ) {
     val pointColor = MaterialTheme.colorScheme.primary
@@ -115,9 +142,9 @@ fun PointsExample(
         )
         drawPoints(
             // Lista de puntos a dibujar con su pointMode especificado
-            points = pointsList,
+            points = pointsList(),
             // PointMode usado para indicar como se van a dibujar los puntos: Lines, Points, Polygon
-            pointMode = currentPointMode,
+            pointMode = currentPointMode(),
             // El color para rellenar la linea
             color = pointColor,
             // Opcionalmente se puede asiganr un Brush para el color
@@ -139,25 +166,21 @@ fun PointsExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawPointsExamplePreview() {
-    AppTheme {
-        DrawPointsExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawPointsExampleContent(
+            pointsList = { listOf(Offset(100f, 100f), Offset(200f, 200f), Offset(300f, 300f)) },
+            pointModeOption = { PointModeOption.Points },
+            addPoint = {},
+            removeLastPoint = {},
+            emptyPoints = {},
+            changePointMode = {}
+        )
     }
-}
-
-
-private fun List<Offset>.addOffset(newOffset: Offset): List<Offset> {
-    return this + newOffset
-}
-
-private fun List<Offset>.deleteLastOffset(): List<Offset> {
-    return dropLast(1)
-}
-
-private enum class PointModeOption(val pointModeName: String, val pointMode: PointMode) {
-    Points("Points", PointMode.Points),
-    Lines("Lines", PointMode.Lines),
-    Polygon("Polygon", PointMode.Polygon)
 }
