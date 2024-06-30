@@ -11,6 +11,8 @@
     <string name="draw_scope_draw_line_description">Draw a line between the established points.\nIn the following example a line will be drawn with the final position of the customizable stroke.</string>
     <string name="draw_scope_draw_oval_title">drawOval</string>
     <string name="draw_scope_draw_oval_description">Draw an oval according to the determined size and positio\nIn the following example an oval will be drawn with a custom size and position.</string>
+    <string name="draw_scope_draw_path_title">drawPath</string>
+    <string name="draw_scope_draw_path_description">Series of mathematical instructions that result in a drawing once executed.\nIn this example a randomly generated graph will be plotted using a drawPath.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -35,4 +37,8 @@
     <string name="draw_scope_draw_oval_size_x">Size X</string>
     <string name="draw_scope_draw_oval_size_y">Size Y</string>
     <string name="draw_scope_draw_oval_restart_button_label">Restart values</string>
+
+    <!-- DrawPath Example -->
+    <string name="draw_scope_draw_path_values_list">Values: %s</string>
+    <string name="draw_scope_draw_path_generate_values_button_label">Generate values</string>
 </resources>

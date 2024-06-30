@@ -141,16 +141,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawPath example
         item {
             ExampleComponent(
-                title = "drawPath",
-                description = "Serie de instrucciones matematicas que dan como resultado un dibujo una vez ejecutado.\n En este ejemplo se trazara una grafica generada aleatoriamente usando un drawPath.",
-                content = { DrawPathExample() }
+                title = stringResource(R.string.draw_scope_draw_path_title),
+                description = stringResource(R.string.draw_scope_draw_path_description),
+                content = {
+                    DrawPathExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
@@ -330,7 +330,6 @@ private fun DrawScopesList(
         }
     }
 }
-
 
 
 @CompactSizeScreenThemePreview

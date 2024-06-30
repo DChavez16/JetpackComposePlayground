@@ -3,6 +3,7 @@ package com.example.drawscope.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,18 +28,38 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
+import com.example.drawscope.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlin.math.ceil
-import kotlin.random.Random
 
 
 @Composable
-internal fun DrawPathExample() {
-    var valuesList by remember { mutableStateOf(generateRandomGraphValues()) }
+internal fun DrawPathExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
+
+    val valuesList by drawScopeViewModel.drawPathValuesList.collectAsState()
+
+    DrawPathExampleContent(
+        valuesList = { valuesList },
+        updateValuesList = drawScopeViewModel::updateDrawPathValuesList
+    )
+}
+
+
+@Composable
+private fun DrawPathExampleContent(
+    valuesList: () -> List<Int>,
+    updateValuesList: () -> Unit
+) {
+
     var isPathUpdating by remember { mutableStateOf(true) }
 
     val pathVerticalClip by animateFloatAsState(
@@ -45,7 +67,7 @@ internal fun DrawPathExample() {
         animationSpec = tween(
             durationMillis = if (isPathUpdating) 1000 else 0
         ),
-        label = "Path Vertical Clip Animation",
+        label = "PathVerticalClipAnimation",
         finishedListener = { isPathUpdating = true }
     )
 
@@ -55,13 +77,19 @@ internal fun DrawPathExample() {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Text(text = "Valores: $valuesList", style = MaterialTheme.typography.titleSmall)
+        Text(
+            text = stringResource(
+                R.string.draw_scope_draw_path_values_list,
+                valuesList().toString()
+            ),
+            style = MaterialTheme.typography.titleSmall
+        )
 
         // Grafico que se va a dibujar
         PathExample(
             valuesList = valuesList,
-            isPathUpdating = isPathUpdating,
-            pathVerticalClip = pathVerticalClip
+            isPathUpdating = { isPathUpdating },
+            pathVerticalClip = { pathVerticalClip }
         )
 
         // Boton para generar los valores del grafico
@@ -70,24 +98,26 @@ internal fun DrawPathExample() {
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
                 isPathUpdating = false
-                valuesList = generateRandomGraphValues()
+                updateValuesList()
             },
             content = {
-                Text(text = "Generar valores")
+                Text(text = stringResource(R.string.draw_scope_draw_path_generate_values_button_label))
             },
             enabled = pathVerticalClip == 1f
         )
     }
 }
 
+
 @Composable
 private fun PathExample(
-    valuesList: List<Int>,
-    isPathUpdating: Boolean,
-    pathVerticalClip: Float
+    valuesList: () -> List<Int>,
+    isPathUpdating: () -> Boolean,
+    pathVerticalClip: () -> Float
 ) {
+
     val textMeasurer = rememberTextMeasurer()
-    val maxValue = (valuesList.maxOrNull() ?: 0).roundUp()
+    val maxValue = (valuesList().maxOrNull() ?: 0).roundUp()
     val graphStartingXCoord = 0.11f
     val pathPrimaryColor = MaterialTheme.colorScheme.primary
     val pathSecondaryColor = MaterialTheme.colorScheme.secondary
@@ -128,18 +158,18 @@ private fun PathExample(
             if (i == 0) {
                 path.moveTo(
                     x = size.width * graphStartingXCoord,
-                    y = size.height * (1 - (valuesList[i] / maxValue.toFloat()))
+                    y = size.height * (1 - (valuesList()[i] / maxValue.toFloat()))
                 )
             } else {
                 path.lineTo(
                     x = size.width * (graphStartingXCoord + (i * (1 - graphStartingXCoord) / 6)),
-                    y = size.height * (1 - (valuesList[i] / maxValue.toFloat()))
+                    y = size.height * (1 - (valuesList()[i] / maxValue.toFloat()))
                 )
             }
         }
         clipRect(
             left = size.width * graphStartingXCoord,
-            right = if(!isPathUpdating) 0f else size.width * pathVerticalClip,
+            right = if (!isPathUpdating()) 0f else size.width * pathVerticalClip(),
             clipOp = ClipOp.Intersect
         ) {
             drawPath(
@@ -168,18 +198,19 @@ private fun PathExample(
 }
 
 
-@Preview(showBackground = true)
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawPathExamplePreview() {
-    AppTheme {
-        DrawPathExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawPathExampleContent(
+            valuesList = { listOf(100, 200, 300, 400, 500, 600, 700) },
+            updateValuesList = {}
+        )
     }
 }
 
-
-private fun generateRandomGraphValues(): List<Int> {
-    return List(7) { Random.nextInt(1000) }
-}
 
 private fun Int.roundUp(): Int {
     val decimalValue = (this / 100.0)

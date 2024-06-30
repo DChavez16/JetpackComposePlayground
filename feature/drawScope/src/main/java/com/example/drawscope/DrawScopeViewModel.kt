@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 @HiltViewModel
@@ -52,6 +53,11 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Backing property and StateFlow for oval size y slider position (DrawOval)
     private val _drawOvalSizeYSliderPosition = MutableStateFlow(0.5f)
     val drawOvalSizeYSliderPosition: StateFlow<Float> = _drawOvalSizeYSliderPosition
+
+
+    // Backing property and StateFlow for path values list (DrawPath)
+    private val _drawPathValuesList = MutableStateFlow(generateRandomGraphValues())
+    val drawPathValuesList: StateFlow<List<Int>> = _drawPathValuesList
 
 
 
@@ -107,4 +113,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     fun changeDrawOvalSizeYSliderPosition(newValue: Float) {
         _drawOvalSizeYSliderPosition.value = newValue
     }
+
+
+    // Methods to update path values list (DrawPath)
+    fun updateDrawPathValuesList() {
+        _drawPathValuesList.value = generateRandomGraphValues()
+    }
+}
+
+
+
+
+private fun generateRandomGraphValues(): List<Int> {
+    return List(7) { Random.nextInt(1000) }
 }
