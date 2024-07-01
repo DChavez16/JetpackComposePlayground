@@ -180,16 +180,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawRoundRect example
         item {
             ExampleComponent(
-                title = "drawRoundRect",
-                description = "Dibuja un rectangulo redondeado.\nEn el ejemplo se dibujara un rectangulo redondeado con posicion fija, pero con tamaño y radio de esquinas personalizables.",
-                content = { DrawRoundRectExample() }
+                title = stringResource(R.string.draw_scope_draw_round_rect_title),
+                description = stringResource(R.string.draw_scope_draw_round_rect_description),
+                content = {
+                    DrawRoundRectExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

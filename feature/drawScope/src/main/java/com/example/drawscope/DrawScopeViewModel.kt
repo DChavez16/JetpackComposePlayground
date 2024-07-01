@@ -88,6 +88,23 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawRectSizeYSliderPosition: StateFlow<Float> = _drawRectSizeYSliderPosition
 
 
+    // Backing property and StateFlow for round rect x size slider position (DrawRoundRect)
+    private val _drawRoundRectXSizeSliderPosition = MutableStateFlow(0.8f)
+    val drawRoundRectXSizeSliderPosition: StateFlow<Float> = _drawRoundRectXSizeSliderPosition
+
+    // Backing property and StateFlow for round rect y size slider position (DrawRoundRect)
+    private val _drawRoundRectYSizeSliderPosition = MutableStateFlow(0.5f)
+    val drawRoundRectYSizeSliderPosition: StateFlow<Float> = _drawRoundRectYSizeSliderPosition
+
+    // Backing property and StateFlow for round rect x radius slider position (DrawRoundRect)
+    private val _drawRoundRectXRadiusSliderPosition = MutableStateFlow(0.2f)
+    val drawRoundRectXRadiusSliderPosition: StateFlow<Float> = _drawRoundRectXRadiusSliderPosition
+
+    // Backing property and StateFlow for round rect y radius slider position (DrawRoundRect)
+    private val _drawRoundRectYRadiusSliderPosition = MutableStateFlow(0.2f)
+    val drawRoundRectYRadiusSliderPosition: StateFlow<Float> = _drawRoundRectYRadiusSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -188,6 +205,27 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change rect size y slider value (DrawRect)
     fun changeDrawRectSizeYSliderPosition(newValue: Float) {
         _drawRectSizeYSliderPosition.value = newValue
+    }
+
+
+    // Methods to change round rect x size slider value (DrawRoundRect)
+    fun changeDrawRoundRectXSizeSliderPosition(newValue: Float) {
+        _drawRoundRectXSizeSliderPosition.value = newValue
+    }
+
+    // Methods to change round rect y size slider value (DrawRoundRect)
+    fun changeDrawRoundRectYSizeSliderPosition(newValue: Float) {
+        _drawRoundRectYSizeSliderPosition.value = newValue
+    }
+
+    // Methods to change round rect x radius slider value (DrawRoundRect)
+    fun changeDrawRoundRectXRadiusSliderPosition(newValue: Float) {
+        _drawRoundRectXRadiusSliderPosition.value = newValue
+    }
+
+    // Methods to change round rect y radius slider value (DrawRoundRect)
+    fun changeDrawRoundRectYRadiusSliderPosition(newValue: Float) {
+        _drawRoundRectYRadiusSliderPosition.value = newValue
     }
 }
 

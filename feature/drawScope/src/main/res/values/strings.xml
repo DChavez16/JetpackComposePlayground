@@ -17,6 +17,8 @@
     <string name="draw_scope_draw_points_description">Draws a sequence of points according to the provided PointMode.\nIn this example, points will be drawn on the screen in each place that is pressed, you can also delete the last point added and delete them all, as well as select the type of point.</string>
     <string name="draw_scope_draw_rect_title">drawRect</string>
     <string name="draw_scope_draw_rect_description">Draw a rectangle with the size and coordinates provided.\nIn this example a rectangle will be drawn with customizable position and size.</string>
+    <string name="draw_scope_draw_round_rect_title">drawRoundRect</string>
+    <string name="draw_scope_draw_round_rect_description">Draw a rounded rectangle.\nIn the example, a rounded rectangle will be drawn with a fixed position, but with customizable size and corner radius.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -57,4 +59,11 @@
     <string name="draw_scope_draw_rect_size_x">Size X</string>
     <string name="draw_scope_draw_rect_size_y">Size Y</string>
     <string name="draw_scope_draw_rect_restart_button_label">Restart values</string>
+
+    <!-- DrawRoundRect Example -->
+    <string name="draw_scope_draw_round_rect_size_x">Size X</string>
+    <string name="draw_scope_draw_round_rect_size_y">Size Y</string>
+    <string name="draw_scope_draw_round_rect_corner_radius_x">Corner Radius X</string>
+    <string name="draw_scope_draw_round_rect_corner_radius_y">Corner Radius Y</string>
+    <string name="draw_scope_draw_round_rect_restart_button_label">Restart values</string>
 </resources>

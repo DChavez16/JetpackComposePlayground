@@ -73,7 +73,7 @@ private fun DrawRectExampleContent(
         // Slider for changing the start X coordinate of the rectangle
         CustomSlider(
             sliderTextLabel = stringResource(R.string.draw_scope_draw_rect_start_x_position),
-            sliderValue = { xCoordSliderPosition() },
+            sliderValue = xCoordSliderPosition,
             sliderValueRange = -1f..1f,
             onSliderValueChange = changeXCoordSliderPosition,
             onSliderValueReset = { changeXCoordSliderPosition(0f) }
@@ -82,7 +82,7 @@ private fun DrawRectExampleContent(
         // Slider for changing the start Y coordinate of the rectangle
         CustomSlider(
             sliderTextLabel = stringResource(R.string.draw_scope_draw_rect_start_y_position),
-            sliderValue = { yCoordSliderPosition() },
+            sliderValue = yCoordSliderPosition,
             sliderValueRange = 0f..0.5f,
             onSliderValueChange = changeYCoordSliderPosition,
             onSliderValueReset = { changeYCoordSliderPosition(0.25f) }
@@ -91,7 +91,7 @@ private fun DrawRectExampleContent(
         // Slider for changing the size X of the rectangle
         CustomSlider(
             sliderTextLabel = stringResource(R.string.draw_scope_draw_rect_size_x),
-            sliderValue = { xSizeSliderPosition() },
+            sliderValue = xSizeSliderPosition,
             sliderValueRange = 0f..1f,
             onSliderValueChange = changeXSizeSliderPosition,
             onSliderValueReset = { changeXSizeSliderPosition(1f) }
@@ -100,7 +100,7 @@ private fun DrawRectExampleContent(
         // Slider for changing the size Y of the rectangle
         CustomSlider(
             sliderTextLabel = stringResource(R.string.draw_scope_draw_rect_size_y),
-            sliderValue = { ySizeSliderPosition() },
+            sliderValue = ySizeSliderPosition,
             sliderValueRange = 0f..1f,
             onSliderValueChange = changeYSizeSliderPosition,
             onSliderValueReset = { changeYSizeSliderPosition(0.5f) }
