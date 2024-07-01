@@ -105,6 +105,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawRoundRectYRadiusSliderPosition: StateFlow<Float> = _drawRoundRectYRadiusSliderPosition
 
 
+    // Backing property and StateFlow for outline height slider position (DrawOutline)
+    private val _outlineHeightSliderPosition = MutableStateFlow(1f)
+    val outlineHeightSliderPosition: StateFlow<Float> = _outlineHeightSliderPosition
+
+    // Backing property and StateFlow for outline width slider position (DrawOutline)
+    private val _outlineWidthSliderPosition = MutableStateFlow(1f)
+    val outlineWidthSliderPosition: StateFlow<Float> = _outlineWidthSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -226,6 +235,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change round rect y radius slider value (DrawRoundRect)
     fun changeDrawRoundRectYRadiusSliderPosition(newValue: Float) {
         _drawRoundRectYRadiusSliderPosition.value = newValue
+    }
+
+
+    // Methods to change outline height slider value (DrawOutline)
+    fun changeOutlineHeightSliderPosition(newValue: Float) {
+        _outlineHeightSliderPosition.value = newValue
+    }
+
+    // Methods to change outline width slider value (DrawOutline)
+    fun changeOutlineWidthSliderPosition(newValue: Float) {
+        _outlineWidthSliderPosition.value = newValue
     }
 }
 

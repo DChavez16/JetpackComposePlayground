@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -25,74 +24,102 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
+import com.example.drawscope.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomSlider
 
 
 @Composable
-internal fun DrawOutlineExample() {
-    // Slider para width y height
-    var widthSliderPosition by remember { mutableFloatStateOf(10f) }
-    var heightSliderPosition by remember { mutableFloatStateOf(10f) }
+internal fun DrawOutlineExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
 
-    // Valores animables para width y height
-    val outlineWidth by animateFloatAsState(
-        targetValue = widthSliderPosition / 10,
-        label = "Outline Width Animation"
-    )
-    val outlineHeight by animateFloatAsState(
-        targetValue = heightSliderPosition / 10,
-        label = "Outline Height Animation"
-    )
+    // Slider for width and height
+    val heightSliderPosition by drawScopeViewModel.outlineHeightSliderPosition.collectAsState()
+    val widthSliderPosition by drawScopeViewModel.outlineWidthSliderPosition.collectAsState()
 
+    DrawOutlineExampleContent(
+        heightSliderPosition = { heightSliderPosition },
+        widthSliderPosition = { widthSliderPosition },
+        changeHeightSliderPosition = drawScopeViewModel::changeOutlineHeightSliderPosition,
+        changeWidthSliderPosition = drawScopeViewModel::changeOutlineWidthSliderPosition
+    )
+}
+
+
+@Composable
+private fun DrawOutlineExampleContent(
+    heightSliderPosition: () -> Float,
+    widthSliderPosition: () -> Float,
+    changeHeightSliderPosition: (Float) -> Unit,
+    changeWidthSliderPosition: (Float) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Slider para cambiar el ancho del Outline
+        // Slider to change the width of the Outline
         CustomSlider(
-            sliderTextLabel = "Outline Width",
-            sliderValue = { widthSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> widthSliderPosition = newPosition },
-            onSliderValueReset = { widthSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_outline_width),
+            sliderValue = widthSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeWidthSliderPosition,
+            onSliderValueReset = { changeWidthSliderPosition(1f) }
         )
 
-        // Slider para cambiar la altura del Outline
+        // Slider to change the height of the Outline
         CustomSlider(
-            sliderTextLabel = "Outline Height",
-            sliderValue = { heightSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> heightSliderPosition = newPosition },
-            onSliderValueReset = { heightSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_outline_height),
+            sliderValue = heightSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeHeightSliderPosition,
+            onSliderValueReset = { changeHeightSliderPosition(1f) }
         )
 
-        // Outline que se va a dibujar
-        OutlineExample(outlineWidth = outlineWidth, outlineHeight = outlineHeight)
+        // Outline to draw
+        OutlineExample(
+            heightSliderPosition = heightSliderPosition,
+            widthSliderPosition = widthSliderPosition
+        )
 
-        // Boton para reiniciar los dos valores
+        // Button to reset the two values
         OutlinedButton(
             colors = ButtonDefaults.elevatedButtonColors(),
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
-                widthSliderPosition = 10f
-                heightSliderPosition = 10f
+                changeHeightSliderPosition(1f)
+                changeWidthSliderPosition(1f)
             },
             content = {
-                Text(text = "Reiniciar valores")
+                Text(text = stringResource(R.string.draw_scope_draw_outline_restart_button_label))
             }
         )
     }
 }
 
+
 @Composable
 private fun OutlineExample(
-    outlineWidth: Float,
-    outlineHeight: Float
+    heightSliderPosition: () -> Float,
+    widthSliderPosition: () -> Float
 ) {
+
+    // Animated values for width and height
+    val outlineHeight by animateFloatAsState(
+        targetValue = heightSliderPosition(),
+        label = "Outline Height Animation"
+    )
+    val outlineWidth by animateFloatAsState(
+        targetValue = widthSliderPosition(),
+        label = "Outline Width Animation"
+    )
+
     val outlineColor = MaterialTheme.colorScheme.secondary
 
     Canvas(
@@ -143,10 +170,19 @@ private fun OutlineExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawOutlineExamplePreview() {
-    AppTheme {
-        DrawOutlineExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawOutlineExampleContent(
+            heightSliderPosition = { 1f },
+            widthSliderPosition = { 1f },
+            changeHeightSliderPosition = {},
+            changeWidthSliderPosition = {}
+        )
     }
 }

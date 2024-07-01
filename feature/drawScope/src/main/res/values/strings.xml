@@ -19,6 +19,8 @@
     <string name="draw_scope_draw_rect_description">Draw a rectangle with the size and coordinates provided.\nIn this example a rectangle will be drawn with customizable position and size.</string>
     <string name="draw_scope_draw_round_rect_title">drawRoundRect</string>
     <string name="draw_scope_draw_round_rect_description">Draw a rounded rectangle.\nIn the example, a rounded rectangle will be drawn with a fixed position, but with customizable size and corner radius.</string>
+    <string name="draw_scope_draw_outline_tilte">drawOutline</string>
+    <string name="draw_scope_draw_outline_description">The Outline defines a simple shape, used to limit graphical regions, the shape of a shadow cast by the component, or to crop contents.\nIn the example an outline will be drawn whose length and width can be changed.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -66,4 +68,9 @@
     <string name="draw_scope_draw_round_rect_corner_radius_x">Corner Radius X</string>
     <string name="draw_scope_draw_round_rect_corner_radius_y">Corner Radius Y</string>
     <string name="draw_scope_draw_round_rect_restart_button_label">Restart values</string>
+
+    <!-- DrawOutline Example -->
+    <string name="draw_scope_draw_outline_width">Outline Width</string>
+    <string name="draw_scope_draw_outline_height">Outline Height</string>
+    <string name="draw_scope_draw_outline_restart_button_label">Restart values</string>
 </resources>

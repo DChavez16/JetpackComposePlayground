@@ -193,16 +193,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawOutline example
         item {
             ExampleComponent(
-                title = "",
-                description = "El Outline define una forma simple, usado para limitar regiones graficas, la forma de una sombra proyectada por el componente, o para recortar los contenidos.\nEn el ejemplo se dibujara un outline al que se podra cambiar el largo y ancho.",
-                content = { DrawOutlineExample() }
+                title = stringResource(R.string.draw_scope_draw_outline_tilte),
+                description = stringResource(R.string.draw_scope_draw_outline_description),
+                content = {
+                    DrawOutlineExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
