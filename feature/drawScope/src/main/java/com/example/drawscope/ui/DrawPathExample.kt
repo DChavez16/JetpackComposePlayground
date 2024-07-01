@@ -205,7 +205,7 @@ private fun DrawPathExamplePreview() {
         darkTheme = isSystemInDarkTheme()
     ) {
         DrawPathExampleContent(
-            valuesList = { listOf(100, 200, 300, 400, 500, 600, 700) },
+            valuesList = { listOf(200, 100, 300, 150, 250, 400, 50) },
             updateValuesList = {}
         )
     }

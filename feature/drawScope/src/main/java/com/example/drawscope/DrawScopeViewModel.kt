@@ -71,6 +71,23 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawPointsPointMode: StateFlow<PointModeOption> = _drawPointsPointMode
 
 
+    // Backing property and StateFlow for rect start x coord slider position (DrawRect)
+    private val _drawRectStartXCoordSliderPosition = MutableStateFlow(0f)
+    val drawRectStartXCoordSliderPosition: StateFlow<Float> = _drawRectStartXCoordSliderPosition
+
+    // Backing property and StateFlow for rect start y coord slider position (DrawRect)
+    private val _drawRectStartYCoordSliderPosition = MutableStateFlow(0.25f)
+    val drawRectStartYCoordSliderPosition: StateFlow<Float> = _drawRectStartYCoordSliderPosition
+
+    // Backing property and StateFlow for rect size x slider position (DrawRect)
+    private val _drawRectSizeXSliderPosition = MutableStateFlow(1f)
+    val drawRectSizeXSliderPosition: StateFlow<Float> = _drawRectSizeXSliderPosition
+
+    // Backing property and StateFlow for rect size y slider position (DrawRect)
+    private val _drawRectSizeYSliderPosition = MutableStateFlow(0.5f)
+    val drawRectSizeYSliderPosition: StateFlow<Float> = _drawRectSizeYSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -150,6 +167,27 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change the point mode (DrawPoints)
     fun changePointMode(newPointMode: PointModeOption) {
         _drawPointsPointMode.value = newPointMode
+    }
+
+
+    // Methods to change rect start x coord slider value (DrawRect)
+    fun changeDrawRectStartXCoordSliderPosition(newValue: Float) {
+        _drawRectStartXCoordSliderPosition.value = newValue
+    }
+
+    // Methods to change rect start y coord slider value (DrawRect)
+    fun changeDrawRectStartYCoordSliderPosition(newValue: Float) {
+        _drawRectStartYCoordSliderPosition.value = newValue
+    }
+
+    // Methods to change rect size x slider value (DrawRect)
+    fun changeDrawRectSizeXSliderPosition(newValue: Float) {
+        _drawRectSizeXSliderPosition.value = newValue
+    }
+
+    // Methods to change rect size y slider value (DrawRect)
+    fun changeDrawRectSizeYSliderPosition(newValue: Float) {
+        _drawRectSizeYSliderPosition.value = newValue
     }
 }
 

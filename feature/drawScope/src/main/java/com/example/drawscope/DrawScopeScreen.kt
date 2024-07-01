@@ -167,16 +167,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawRect example
         item {
             ExampleComponent(
-                title = "drawRect",
-                description = "Dibuja un rectangulo con el tamaño y coordenadas proporcionadas.\nEn este ejemplo se dibujara un rectangulo con posicion y tamaño personalizables.",
-                content = { DrawRectExample() }
+                title = stringResource(R.string.draw_scope_draw_rect_title),
+                description = stringResource(R.string.draw_scope_draw_rect_description),
+                content = {
+                    DrawRectExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
