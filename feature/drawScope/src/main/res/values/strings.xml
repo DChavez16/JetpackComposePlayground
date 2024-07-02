@@ -28,6 +28,8 @@
     <string name="draw_scope_list_banner_2">Transformations with DrawTransform</string>
     <string name="draw_scope_clip_path_title">clipPath</string>
     <string name="draw_scope_clip_path_description">Reduces the crop region to the intersection of the current crop and the given rounded rectangle.\nThis example applies a clipPath to an image.</string>
+    <string name="draw_scope_clip_rect_title">clipRect</string>
+    <string name="draw_scope_clip_rect_description">Reduces the cut region to the intersection of the current cutout and the given rectangle indicated by the left, top, right, and bottom limits.\nThis example applies a clipRect to the image</string>
 
     <string name="draw_scope_">_</string>
 
@@ -98,4 +100,9 @@
     <string name="draw_scope_clip_path_clip_position">Clip Position</string>
     <string name="draw_scope_clip_path_dropdown_menu_label">Clip Operation</string>
     <string name="draw_scope_clip_path_restart_button_label">Restart values</string>
+
+    <!-- ClipRect Example -->
+    <string name="draw_scope_clip_rect_clip_scale">Clip Scale</string>
+    <string name="draw_scope_clip_rect_dropdown_menu_label">Clip Operation</string>
+    <string name="draw_scope_clip_rect_restart_button_label">Restart values</string>
 </resources>

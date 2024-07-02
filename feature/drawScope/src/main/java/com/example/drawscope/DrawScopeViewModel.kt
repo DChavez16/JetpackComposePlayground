@@ -150,9 +150,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val clipPositionSliderPosition: StateFlow<Float> = _clipPositionSliderPosition
 
     // Backing property and StateFlow for clip selected operation (ClipPath)
-    private val _selectedClipOperation = MutableStateFlow(ClipOperationClipPath.Intersect)
-    val selectedClipOperation: StateFlow<ClipOperationClipPath> = _selectedClipOperation
+    private val _selectedClipPathOperation = MutableStateFlow(ClipOperation.Intersect)
+    val selectedClipPathOperation: StateFlow<ClipOperation> = _selectedClipPathOperation
 
+
+    // Backing property and StateFlow for clip scale slider position (ClipRect)
+    private val _clipScaleSliderPosition = MutableStateFlow(1f)
+    val clipScaleSliderPosition: StateFlow<Float> = _clipScaleSliderPosition
+
+    // Backing property and StateFlow for clip selected operation (ClipRect)
+    private val _selectedClipRectOperation = MutableStateFlow(ClipOperation.Intersect)
+    val selectedClipRectOperation: StateFlow<ClipOperation> = _selectedClipRectOperation
 
 
 
@@ -332,9 +340,20 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
         _clipPositionSliderPosition.value = newValue
     }
 
-    // Methods to change selected clip operation (ClipPath)
-    fun changeSelectedClipOperation(newValue: ClipOperationClipPath) {
-        _selectedClipOperation.value = newValue
+    // Methods to change selected clip path operation (ClipPath)
+    fun changeSelectedClipPathOperation(newValue: ClipOperation) {
+        _selectedClipPathOperation.value = newValue
+    }
+
+
+    // Methods to change clip scale slider value (ClipRect)
+    fun changeClipScaleSliderPosition(newValue: Float) {
+        _clipScaleSliderPosition.value = newValue
+    }
+
+    // Methods to change selected clip rect operation (ClipRect)
+    fun changeSelectedClipRectOperation(newValue: ClipOperation) {
+        _selectedClipRectOperation.value = newValue
     }
 }
 
@@ -371,7 +390,7 @@ private const val exampleString =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 
 
-internal enum class ClipOperationClipPath(val clipOperationName: String, val clipOperation: ClipOp) {
+internal enum class ClipOperation(val clipOperationName: String, val clipOperation: ClipOp) {
     Intersect("Intersect", ClipOp.Intersect),
     Difference("Difference", ClipOp.Difference);
 }

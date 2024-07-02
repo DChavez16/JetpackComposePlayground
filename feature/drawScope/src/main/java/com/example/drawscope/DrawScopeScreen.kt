@@ -250,16 +250,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // clipRect example
         item {
             ExampleComponent(
-                title = "clipRect",
-                description = "Reduce la region de corte a la interseccion del recorte actual y el rectangulo dado indicado por los limites izquierdo, superior, derecho e inferior.\nEn este ejemplo se aplica un clipRect a la imagen",
-                content = { ClipRectExample() }
+                title = stringResource(R.string.draw_scope_clip_rect_title),
+                description = stringResource(R.string.draw_scope_clip_rect_description),
+                content = {
+                    ClipRectExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

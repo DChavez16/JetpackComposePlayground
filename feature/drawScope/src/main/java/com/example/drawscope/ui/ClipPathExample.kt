@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.drawscope.ClipOperationClipPath
+import com.example.drawscope.ClipOperation
 import com.example.drawscope.DrawScopeViewModel
 import com.example.drawscope.R
 import com.example.ui.theme.PreviewAppTheme
@@ -41,13 +41,13 @@ internal fun ClipPathExample(
     // Slider position for clipPosition
     val clipPositionSliderPosition by drawScopeViewModel.clipPositionSliderPosition.collectAsState()
     // Selected clip operation
-    val selectedClipOperation by drawScopeViewModel.selectedClipOperation.collectAsState()
+    val selectedClipOperation by drawScopeViewModel.selectedClipPathOperation.collectAsState()
 
     ClipPathExampleContent(
         clipPositionSliderPosition = { clipPositionSliderPosition },
         selectedClipOperation = { selectedClipOperation },
         changeClipPositionSliderPosition = drawScopeViewModel::changeClipPositionSliderPosition,
-        changeSelectedClipOperation = drawScopeViewModel::changeSelectedClipOperation
+        changeSelectedClipOperation = drawScopeViewModel::changeSelectedClipPathOperation
     )
 }
 
@@ -55,9 +55,9 @@ internal fun ClipPathExample(
 @Composable
 private fun ClipPathExampleContent(
     clipPositionSliderPosition: () -> Float,
-    selectedClipOperation: () -> ClipOperationClipPath,
+    selectedClipOperation: () -> ClipOperation,
     changeClipPositionSliderPosition: (Float) -> Unit,
-    changeSelectedClipOperation: (ClipOperationClipPath) -> Unit
+    changeSelectedClipOperation: (ClipOperation) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -77,9 +77,9 @@ private fun ClipPathExampleContent(
         CustomDropdownMenu(
             dropdownMenuLabel = stringResource(R.string.draw_scope_clip_path_dropdown_menu_label),
             currentElementDisplay = { selectedClipOperation().clipOperationName },
-            optionsList = ClipOperationClipPath.entries.map { clipOperation -> clipOperation.clipOperationName },
+            optionsList = ClipOperation.entries.map { clipOperation -> clipOperation.clipOperationName },
             onElementSelected = { elementSelected ->
-                changeSelectedClipOperation(ClipOperationClipPath.entries.find { it.clipOperationName == elementSelected }!!)
+                changeSelectedClipOperation(ClipOperation.entries.find { it.clipOperationName == elementSelected }!!)
             }
         )
 
@@ -95,7 +95,7 @@ private fun ClipPathExampleContent(
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
                 changeClipPositionSliderPosition(0f)
-                changeSelectedClipOperation(ClipOperationClipPath.Intersect)
+                changeSelectedClipOperation(ClipOperation.Intersect)
             },
             content = {
                 Text(text = stringResource(R.string.draw_scope_clip_path_restart_button_label))
@@ -111,10 +111,10 @@ private fun ImageExample(
     selectedClipOperation: () -> ClipOp
 ) {
 
-    // Valor animable para clipPosition
+    // Animated value for clipPosition
     val imageClipPosition by animateFloatAsState(
         targetValue = clipPositionSliderPosition(),
-        label = "Image Clip Position Animation"
+        label = "ImageClipPositionAnimation"
     )
 
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.jetpack_compose_icon)
@@ -154,7 +154,7 @@ private fun ClipPathExampleContentPreview() {
     ) {
         ClipPathExampleContent(
             clipPositionSliderPosition = { 0f },
-            selectedClipOperation = { ClipOperationClipPath.Intersect },
+            selectedClipOperation = { ClipOperation.Intersect },
             changeClipPositionSliderPosition = {},
             changeSelectedClipOperation = {}
         )
