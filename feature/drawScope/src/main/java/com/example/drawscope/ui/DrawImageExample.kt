@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,10 +11,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
@@ -21,115 +20,147 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
 import com.example.drawscope.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomSlider
 import kotlin.math.absoluteValue
 
 
 @Composable
-internal fun DrawImageExample() {
-    // SliderPositions para width, height, positionX y positionY
-    var widthSliderPosition by remember { mutableFloatStateOf(10f) }
-    var heightSliderPosition by remember { mutableFloatStateOf(10f) }
-    var positionXSliderPosition by remember { mutableFloatStateOf(0f) }
-    var positionYSliderPosition by remember { mutableFloatStateOf(0f) }
+internal fun DrawImageExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
 
-    // Valores animables para width, height, positionX y positionY
-    val imageWidth by animateFloatAsState(
-        targetValue = widthSliderPosition / 10,
-        label = "Image Width Animation"
-    )
-    val imageHeight by animateFloatAsState(
-        targetValue = heightSliderPosition / 10,
-        label = "Image Height Animation"
-    )
-    val imagePositionX by animateFloatAsState(
-        targetValue = positionXSliderPosition / 10,
-        label = "Image Position X Animation"
-    )
-    val imagePositionY by animateFloatAsState(
-        targetValue = positionYSliderPosition / 10,
-        label = "Image Position Y Animation"
-    )
+    // SliderPositions for width, height, positionX and positionY
+    val widthSliderPosition by drawScopeViewModel.drawImageWidthSliderPosition.collectAsState()
+    val heightSliderPosition by drawScopeViewModel.drawImageHeightSliderPosition.collectAsState()
+    val positionXSliderPosition by drawScopeViewModel.drawImagePositionXSliderPosition.collectAsState()
+    val positionYSliderPosition by drawScopeViewModel.drawImagePositionYSliderPosition.collectAsState()
 
+    DrawImageExampleContent(
+        widthSliderPosition = { widthSliderPosition },
+        heightSliderPosition = { heightSliderPosition },
+        positionXSliderPosition = { positionXSliderPosition },
+        positionYSliderPosition = { positionYSliderPosition },
+        changeWidthSliderPosition = drawScopeViewModel::changeDrawImageWidthSliderPosition,
+        changeHeightSliderPosition = drawScopeViewModel::changeDrawImageHeightSliderPosition,
+        changePositionXSliderPosition = drawScopeViewModel::changeDrawImagePositionXSliderPosition,
+        changePositionYSliderPosition = drawScopeViewModel::changeDrawImagePositionYSliderPosition
+    )
+}
+
+
+@Composable
+private fun DrawImageExampleContent(
+    widthSliderPosition: () -> Float,
+    heightSliderPosition: () -> Float,
+    positionXSliderPosition: () -> Float,
+    positionYSliderPosition: () -> Float,
+    changeWidthSliderPosition: (Float) -> Unit,
+    changeHeightSliderPosition: (Float) -> Unit,
+    changePositionXSliderPosition: (Float) -> Unit,
+    changePositionYSliderPosition: (Float) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Slider para cambiar el ancho de la imagen
+        // Slider for image width
         CustomSlider(
-            sliderTextLabel = "Width",
-            sliderValue = { widthSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> widthSliderPosition = newPosition },
-            onSliderValueReset = { widthSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_image_width),
+            sliderValue = widthSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeWidthSliderPosition,
+            onSliderValueReset = { changeWidthSliderPosition(1f) }
         )
 
-        // Slider para cambiar el alto de la imagen
+        // Slider for image height
         CustomSlider(
-            sliderTextLabel = "Height",
-            sliderValue = { heightSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> heightSliderPosition = newPosition },
-            onSliderValueReset = { heightSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_image_height),
+            sliderValue = heightSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeHeightSliderPosition,
+            onSliderValueReset = { changeHeightSliderPosition(1f) }
         )
 
-        // Slider para cambiar la posicion X de la imagen
+        // Slider for image position X
         CustomSlider(
-            sliderTextLabel = "Position X",
-            sliderValue = { positionXSliderPosition },
-            sliderValueRange = -10f..10f,
-            onSliderValueChange = { newPosition -> positionXSliderPosition = newPosition },
-            onSliderValueReset = { positionXSliderPosition = 0f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_image_position_x),
+            sliderValue = positionXSliderPosition,
+            sliderValueRange = -1f..1f,
+            onSliderValueChange = changePositionXSliderPosition,
+            onSliderValueReset = { changePositionXSliderPosition(0f) }
         )
 
-        // Slider para cambiar la posicion Y de la imagen
+        // Slider for image position Y
         CustomSlider(
-            sliderTextLabel = "Position Y",
-            sliderValue = { positionYSliderPosition },
-            sliderValueRange = -10f..10f,
-            onSliderValueChange = { newPosition -> positionYSliderPosition = newPosition },
-            onSliderValueReset = { positionYSliderPosition = 0f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_image_position_y),
+            sliderValue = positionYSliderPosition,
+            sliderValueRange = -1f..1f,
+            onSliderValueChange = changePositionYSliderPosition,
+            onSliderValueReset = { changePositionYSliderPosition(0f) }
         )
 
-        // Imagen a ser dibujada
+        // Image to be drawn
         ImageExample(
-            imageWidth = imageWidth,
-            imageHeight = imageHeight,
-            imagePositionX = imagePositionX,
-            imagePositionY = imagePositionY
+            widthSliderPosition = widthSliderPosition,
+            heightSliderPosition = heightSliderPosition,
+            positionXSliderPosition = positionXSliderPosition,
+            positionYSliderPosition = positionYSliderPosition
         )
 
-        // Boton para reiniciar los valores de los sliders
+        // Button for resetting the values of the sliders
         OutlinedButton(
             colors = ButtonDefaults.elevatedButtonColors(),
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
-                widthSliderPosition = 10f
-                heightSliderPosition = 10f
-                positionXSliderPosition = 0f
-                positionYSliderPosition = 0f
+                changeWidthSliderPosition(1f)
+                changeHeightSliderPosition(1f)
+                changePositionXSliderPosition(0f)
+                changePositionYSliderPosition(0f)
             },
             content = {
-                Text(text = "Reiniciar valores")
+                Text(text = stringResource(R.string.draw_scope_draw_image_restart_button_label))
             }
         )
     }
 }
 
+
 @Composable
 private fun ImageExample(
-    imageWidth: Float,
-    imageHeight: Float,
-    imagePositionX: Float,
-    imagePositionY: Float
+    widthSliderPosition: () -> Float,
+    heightSliderPosition: () -> Float,
+    positionXSliderPosition: () -> Float,
+    positionYSliderPosition: () -> Float
 ) {
+
+    // Animated values for width, height, positionX and positionY
+    val imageWidth by animateFloatAsState(
+        targetValue = widthSliderPosition(),
+        label = "ImageWidthAnimation"
+    )
+    val imageHeight by animateFloatAsState(
+        targetValue = heightSliderPosition(),
+        label = "ImageHeightAnimation"
+    )
+    val imagePositionX by animateFloatAsState(
+        targetValue = positionXSliderPosition(),
+        label = "ImagePositionXAnimation"
+    )
+    val imagePositionY by animateFloatAsState(
+        targetValue = positionYSliderPosition(),
+        label = "ImagePositionYAnimation"
+    )
+
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.jetpack_compose_icon)
 
     Canvas(modifier = Modifier.size(150.dp)) {
@@ -166,10 +197,23 @@ private fun ImageExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawImageExamplePreview() {
-    AppTheme {
-        DrawImageExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawImageExampleContent(
+            widthSliderPosition = { 1f },
+            heightSliderPosition = { 1f },
+            positionXSliderPosition = { 0f },
+            positionYSliderPosition = { 0f },
+            changeWidthSliderPosition = {},
+            changeHeightSliderPosition = {},
+            changePositionXSliderPosition = {},
+            changePositionYSliderPosition = {}
+        )
     }
 }

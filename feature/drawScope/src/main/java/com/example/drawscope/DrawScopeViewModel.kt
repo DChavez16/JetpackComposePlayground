@@ -127,6 +127,23 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val drawTextExampleText: StateFlow<String> = _drawTextExampleText
 
 
+    // Backing property and StateFlow for image width slider position (DrawImage)
+    private val _drawImageWidthSliderPosition = MutableStateFlow(1f)
+    val drawImageWidthSliderPosition: StateFlow<Float> = _drawImageWidthSliderPosition
+
+    // Backing property and StateFlow for image height slider position (DrawImage)
+    private val _drawImageHeightSliderPosition = MutableStateFlow(1f)
+    val drawImageHeightSliderPosition: StateFlow<Float> = _drawImageHeightSliderPosition
+
+    // Backing property and StateFlow for image position x slider position (DrawImage)
+    private val _drawImagePositionXSliderPosition = MutableStateFlow(0f)
+    val drawImagePositionXSliderPosition: StateFlow<Float> = _drawImagePositionXSliderPosition
+
+    // Backing property and StateFlow for image position y slider position (DrawImage)
+    private val _drawImagePositionYSliderPosition = MutableStateFlow(0f)
+    val drawImagePositionYSliderPosition: StateFlow<Float> = _drawImagePositionYSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -275,6 +292,27 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to regenerate text example (DrawText)
     fun regenerateTextExample() {
         _drawTextExampleText.value = getExampleText()
+    }
+
+
+    // Methods to change image width slider value (DrawImage)
+    fun changeDrawImageWidthSliderPosition(newValue: Float) {
+        _drawImageWidthSliderPosition.value = newValue
+    }
+
+    // Methods to change image height slider value (DrawImage)
+    fun changeDrawImageHeightSliderPosition(newValue: Float) {
+        _drawImageHeightSliderPosition.value = newValue
+    }
+
+    // Methods to change image position x slider value (DrawImage)
+    fun changeDrawImagePositionXSliderPosition(newValue: Float) {
+        _drawImagePositionXSliderPosition.value = newValue
+    }
+
+    // Methods to change image position y slider value (DrawImage)
+    fun changeDrawImagePositionYSliderPosition(newValue: Float) {
+        _drawImagePositionYSliderPosition.value = newValue
     }
 }
 

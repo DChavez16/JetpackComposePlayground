@@ -219,16 +219,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawImage example
         item {
             ExampleComponent(
-                title = "drawImage",
-                description = "Para dibujar un imageBitmap con DrawScope, se carga la imagen con imageResource y se llama drawImage.\n ",
-                content = { DrawImageExample() }
+                title = stringResource(R.string.draw_scope_draw_image_title),
+                description = stringResource(R.string.draw_scope_draw_image_description),
+                content = {
+                    DrawImageExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
