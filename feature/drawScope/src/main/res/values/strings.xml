@@ -30,6 +30,8 @@
     <string name="draw_scope_clip_path_description">Reduces the crop region to the intersection of the current crop and the given rounded rectangle.\nThis example applies a clipPath to an image.</string>
     <string name="draw_scope_clip_rect_title">clipRect</string>
     <string name="draw_scope_clip_rect_description">Reduces the cut region to the intersection of the current cutout and the given rectangle indicated by the left, top, right, and bottom limits.\nThis example applies a clipRect to the image</string>
+    <string name="draw_scope_inset_title">inset</string>
+    <string name="draw_scope_inset_description">Adjust the default parameters of the current DrawScope, change the drawing boundaries, and move drawings accordingly.\nThe following example adjusts the vertical and horizontal scale of an image.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -105,4 +107,9 @@
     <string name="draw_scope_clip_rect_clip_scale">Clip Scale</string>
     <string name="draw_scope_clip_rect_dropdown_menu_label">Clip Operation</string>
     <string name="draw_scope_clip_rect_restart_button_label">Restart values</string>
+
+    <!--- Inset Example -->
+    <string name="draw_scope_inset_vertical_scale">Vertical Scale</string>
+    <string name="draw_scope_inset_horizontal_scale">Horizontal Scale</string>
+    <string name="draw_scope_inset_restart_button_label">Restart values</string>
 </resources>

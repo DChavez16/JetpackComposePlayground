@@ -263,16 +263,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // inset example
         item {
             ExampleComponent(
-                title = "inset",
-                description = "Ajusta los parametros predeterminados del DrawScope actual cambia los limites de dibujoj y traslada los dibujos segun corresponda.\nEl siguiente ejemplo ajusta la escala vertical y horizontal de una imagen.",
-                content = { InsetExample() }
+                title = stringResource(R.string.draw_scope_inset_title),
+                description = stringResource(R.string.draw_scope_inset_description),
+                content = {
+                    InsetExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

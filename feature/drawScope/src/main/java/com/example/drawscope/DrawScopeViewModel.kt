@@ -163,6 +163,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val selectedClipRectOperation: StateFlow<ClipOperation> = _selectedClipRectOperation
 
 
+    // Backing property and StateFlow for inset vertical state slider position (Inset)
+    private val _insetVerticalScaleSliderPosition = MutableStateFlow(0f)
+    val insetVerticalScaleSliderPosition: StateFlow<Float> = _insetVerticalScaleSliderPosition
+
+    // Backing property and StateFlow for inset horizontal state slider position (Inset)
+    private val _insetHorizontalScaleSliderPosition = MutableStateFlow(0f)
+    val insetHorizontalScaleSliderPosition: StateFlow<Float> = _insetHorizontalScaleSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -354,6 +363,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change selected clip rect operation (ClipRect)
     fun changeSelectedClipRectOperation(newValue: ClipOperation) {
         _selectedClipRectOperation.value = newValue
+    }
+
+
+    // Methods to change inset vertical state slider value (Inset)
+    fun changeInsetVerticalScaleSliderPosition(newValue: Float) {
+        _insetVerticalScaleSliderPosition.value = newValue
+    }
+
+    // Methos to change inset horizontal state slider value (Inset)
+    fun changeInsetHorizontalScaleSliderPosition(newValue: Float) {
+        _insetHorizontalScaleSliderPosition.value = newValue
     }
 }
 
