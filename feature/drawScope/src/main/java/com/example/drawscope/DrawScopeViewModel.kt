@@ -1,6 +1,7 @@
 package com.example.drawscope
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.PointMode
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -142,6 +143,16 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Backing property and StateFlow for image position y slider position (DrawImage)
     private val _drawImagePositionYSliderPosition = MutableStateFlow(0f)
     val drawImagePositionYSliderPosition: StateFlow<Float> = _drawImagePositionYSliderPosition
+
+
+    // Backing property and StateFlow for clip position slider position (ClipPath)
+    private val _clipPositionSliderPosition = MutableStateFlow(0f)
+    val clipPositionSliderPosition: StateFlow<Float> = _clipPositionSliderPosition
+
+    // Backing property and StateFlow for clip selected operation (ClipPath)
+    private val _selectedClipOperation = MutableStateFlow(ClipOperationClipPath.Intersect)
+    val selectedClipOperation: StateFlow<ClipOperationClipPath> = _selectedClipOperation
+
 
 
 
@@ -314,6 +325,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     fun changeDrawImagePositionYSliderPosition(newValue: Float) {
         _drawImagePositionYSliderPosition.value = newValue
     }
+
+
+    // Methods to change clip position slider value (ClipPath)
+    fun changeClipPositionSliderPosition(newValue: Float) {
+        _clipPositionSliderPosition.value = newValue
+    }
+
+    // Methods to change selected clip operation (ClipPath)
+    fun changeSelectedClipOperation(newValue: ClipOperationClipPath) {
+        _selectedClipOperation.value = newValue
+    }
 }
 
 
@@ -347,3 +369,9 @@ internal fun getExampleText(): String {
 
 private const val exampleString =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+
+
+internal enum class ClipOperationClipPath(val clipOperationName: String, val clipOperation: ClipOp) {
+    Intersect("Intersect", ClipOp.Intersect),
+    Difference("Difference", ClipOp.Difference);
+}

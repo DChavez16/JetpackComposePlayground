@@ -25,6 +25,9 @@
     <string name="draw_scope_draw_text_description">DrawText is used when you want to draw text with customization. Draws an existing text layout produced by TextMeasurer.\nThe example shows a text that contains a random number of words, whose size will depend on the amount of text it contains with a maximum customizable width and height.</string>
     <string name="draw_scope_draw_image_title">drawImage</string>
     <string name="draw_scope_draw_image_description">To draw an imageBitmap with DrawScope, you load the image with imageResource and call drawImage.</string>
+    <string name="draw_scope_list_banner_2">Transformations with DrawTransform</string>
+    <string name="draw_scope_clip_path_title">clipPath</string>
+    <string name="draw_scope_clip_path_description">Reduces the crop region to the intersection of the current crop and the given rounded rectangle.\nThis example applies a clipPath to an image.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -90,4 +93,9 @@
     <string name="draw_scope_draw_image_position_x">Position X</string>
     <string name="draw_scope_draw_image_position_y">Position Y</string>
     <string name="draw_scope_draw_image_restart_button_label">Restart values</string>
+
+    <!-- ClipPath Example -->
+    <string name="draw_scope_clip_path_clip_position">Clip Position</string>
+    <string name="draw_scope_clip_path_dropdown_menu_label">Clip Operation</string>
+    <string name="draw_scope_clip_path_restart_button_label">Restart values</string>
 </resources>

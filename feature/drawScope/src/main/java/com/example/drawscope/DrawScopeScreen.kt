@@ -232,22 +232,21 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Change plain text with string resources
         // DrawTransform transformations horizontal banner
         stickyHeader(key = 2) {
-            HorizontalListBanner(title = "Transformaciones con DrawTransform")
+            HorizontalListBanner(title = stringResource(R.string.draw_scope_list_banner_2))
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // clipPath example
         item {
             ExampleComponent(
-                title = "clipPath",
-                description = "Reduce la region del recorte a la interseccion del recorte actual y el rectangulo redondeado dado.\nEn este ejemplo se aplica un clipPath a una imagen.",
-                content = { ClipPathExample() }
+                title = stringResource(R.string.draw_scope_clip_path_title),
+                description = stringResource(R.string.draw_scope_clip_path_description),
+                content = {
+                    ClipPathExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
