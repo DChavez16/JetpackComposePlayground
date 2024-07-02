@@ -40,8 +40,8 @@ internal fun DrawOutlineExample(
 ) {
 
     // Slider for width and height
-    val heightSliderPosition by drawScopeViewModel.outlineHeightSliderPosition.collectAsState()
-    val widthSliderPosition by drawScopeViewModel.outlineWidthSliderPosition.collectAsState()
+    val heightSliderPosition by drawScopeViewModel.drawOutlineHeightSliderPosition.collectAsState()
+    val widthSliderPosition by drawScopeViewModel.drawOutlineWidthSliderPosition.collectAsState()
 
     DrawOutlineExampleContent(
         heightSliderPosition = { heightSliderPosition },

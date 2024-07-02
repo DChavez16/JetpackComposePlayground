@@ -21,6 +21,8 @@
     <string name="draw_scope_draw_round_rect_description">Draw a rounded rectangle.\nIn the example, a rounded rectangle will be drawn with a fixed position, but with customizable size and corner radius.</string>
     <string name="draw_scope_draw_outline_tilte">drawOutline</string>
     <string name="draw_scope_draw_outline_description">The Outline defines a simple shape, used to limit graphical regions, the shape of a shadow cast by the component, or to crop contents.\nIn the example an outline will be drawn whose length and width can be changed.</string>
+    <string name="draw_scope_draw_text_title">drawText</string>
+    <string name="draw_scope_draw_text_description">DrawText is used when you want to draw text with customization. Draws an existing text layout produced by TextMeasurer.\nThe example shows a text that contains a random number of words, whose size will depend on the amount of text it contains with a maximum customizable width and height.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -73,4 +75,10 @@
     <string name="draw_scope_draw_outline_width">Outline Width</string>
     <string name="draw_scope_draw_outline_height">Outline Height</string>
     <string name="draw_scope_draw_outline_restart_button_label">Restart values</string>
+
+    <!-- DrawText Example -->
+    <string name="draw_scope_draw_text_max_width">Max Width</string>
+    <string name="draw_scope_draw_text_max_height">Max Height</string>
+    <string name="draw_scope_draw_text_change_text_button_label">Change text</string>
+    <string name="draw_scope_draw_text_restart_button_label">Restart values</string>
 </resources>

@@ -106,12 +106,25 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
 
 
     // Backing property and StateFlow for outline height slider position (DrawOutline)
-    private val _outlineHeightSliderPosition = MutableStateFlow(1f)
-    val outlineHeightSliderPosition: StateFlow<Float> = _outlineHeightSliderPosition
+    private val _drawOutlineHeightSliderPosition = MutableStateFlow(1f)
+    val drawOutlineHeightSliderPosition: StateFlow<Float> = _drawOutlineHeightSliderPosition
 
     // Backing property and StateFlow for outline width slider position (DrawOutline)
-    private val _outlineWidthSliderPosition = MutableStateFlow(1f)
-    val outlineWidthSliderPosition: StateFlow<Float> = _outlineWidthSliderPosition
+    private val _drawOutlineWidthSliderPosition = MutableStateFlow(1f)
+    val drawOutlineWidthSliderPosition: StateFlow<Float> = _drawOutlineWidthSliderPosition
+
+
+    // Backing property and StateFlow for text max width slider position (DrawText)
+    private val _drawTextMaxWidthSliderPosition = MutableStateFlow(.75f)
+    val drawTextMaxWidthSliderPosition: StateFlow<Float> = _drawTextMaxWidthSliderPosition
+    
+    // Backing property and StateFlow for text max height slider position (DrawText)
+    private val _drawTextMaxHeightSliderPosition = MutableStateFlow(.75f)
+    val drawTextMaxHeightSliderPosition: StateFlow<Float> = _drawTextMaxHeightSliderPosition
+
+    // Backing property and StateFlow for text example (DrawText)
+    private val _drawTextExampleText = MutableStateFlow(getExampleText())
+    val drawTextExampleText: StateFlow<String> = _drawTextExampleText
 
 
 
@@ -240,12 +253,28 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
 
     // Methods to change outline height slider value (DrawOutline)
     fun changeOutlineHeightSliderPosition(newValue: Float) {
-        _outlineHeightSliderPosition.value = newValue
+        _drawOutlineHeightSliderPosition.value = newValue
     }
 
     // Methods to change outline width slider value (DrawOutline)
     fun changeOutlineWidthSliderPosition(newValue: Float) {
-        _outlineWidthSliderPosition.value = newValue
+        _drawOutlineWidthSliderPosition.value = newValue
+    }
+
+
+    // Methods to change text max width slider value (DrawText)
+    fun changeTextMaxWidthSliderPosition(newValue: Float) {
+        _drawTextMaxWidthSliderPosition.value = newValue
+    }
+
+    // Methods to change text max height slider value (DrawText)
+    fun changeTextMaxHeightSliderPosition(newValue: Float) {
+        _drawTextMaxHeightSliderPosition.value = newValue
+    }
+
+    // Methods to regenerate text example (DrawText)
+    fun regenerateTextExample() {
+        _drawTextExampleText.value = getExampleText()
     }
 }
 
@@ -270,3 +299,13 @@ internal enum class PointModeOption(val pointModeName: String, val pointMode: Po
     Lines("Lines", PointMode.Lines),
     Polygon("Polygon", PointMode.Polygon)
 }
+
+
+internal fun getExampleText(): String {
+    val numDeCaracteres = Random.nextInt(0, exampleString.length)
+
+    return exampleString.substring(0, numDeCaracteres)
+}
+
+private const val exampleString =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."

@@ -206,16 +206,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // drawText example
         item {
             ExampleComponent(
-                title = "drawText",
-                description = "DrawText se usa cuando se busca dibujar un texto con personalizacion. Dibuja un layout de texto existente producido por TextMeasurer.\nEn el ejemplo se muestra un texto que contiene un numero aleatorio de palabras, el cual su tamaño dependera de la cantidad de texto que contenga con un maximo de ancho y alto personalizable.",
-                content = { DrawTextExample() }
+                title = stringResource(R.string.draw_scope_draw_text_title),
+                description = stringResource(R.string.draw_scope_draw_text_description),
+                content = {
+                    DrawTextExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 

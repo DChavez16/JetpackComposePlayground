@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,89 +15,102 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.example.ui.theme.AppTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
+import com.example.drawscope.R
+import com.example.drawscope.getExampleText
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomSlider
-import kotlin.random.Random
 
 
 @Composable
-internal fun DrawTextExample() {
-    // Slider para cambiar el maxWidth y maxHeight
-    var maxWidthSliderPosition by remember { mutableFloatStateOf(7.5f) }
-    var maxHeightSliderPosition by remember { mutableFloatStateOf(7.5f) }
+internal fun DrawTextExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
 
-    // Valor animable de maxWidth y maxHeight
-    val textLayoutMaxWidth by animateFloatAsState(
-        targetValue = maxWidthSliderPosition / 10,
-        label = "Text Layout Max Width Animation"
+    // Slider to change maxWidth and maxHeight
+    val maxWidthSliderPosition by drawScopeViewModel.drawTextMaxWidthSliderPosition.collectAsState()
+    val maxHeightSliderPosition by drawScopeViewModel.drawTextMaxHeightSliderPosition.collectAsState()
+
+    // Text example
+    val textExample by drawScopeViewModel.drawTextExampleText.collectAsState()
+
+    DrawTextExampleContent(
+        maxWidthSliderPosition = { maxWidthSliderPosition },
+        maxHeightSliderPosition = { maxHeightSliderPosition },
+        textExample = { textExample },
+        changeMaxWidthSliderPosition = drawScopeViewModel::changeTextMaxWidthSliderPosition,
+        changeMaxHeightSliderPosition = drawScopeViewModel::changeTextMaxHeightSliderPosition,
+        regenerateTextExample = drawScopeViewModel::regenerateTextExample
     )
-    val textLayoutMaxHeight by animateFloatAsState(
-        targetValue = maxHeightSliderPosition / 10,
-        label = "Text Layout Max Height Animation"
-    )
+}
 
-    var textExample by remember { mutableStateOf(getExampleText()) }
 
+@Composable
+private fun DrawTextExampleContent(
+    maxWidthSliderPosition: () -> Float,
+    maxHeightSliderPosition: () -> Float,
+    textExample: () -> String,
+    changeMaxWidthSliderPosition: (Float) -> Unit,
+    changeMaxHeightSliderPosition: (Float) -> Unit,
+    regenerateTextExample: () -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        // Slider para cambiar el ancho maximo del textLayout
+        // Slider to change maxWidth
         CustomSlider(
-            sliderTextLabel = "Max Width",
-            sliderValue = { maxWidthSliderPosition },
-            sliderValueRange = 2f..10f,
-            onSliderValueChange = { newPosition -> maxWidthSliderPosition = newPosition },
-            onSliderValueReset = { maxWidthSliderPosition = 7.5f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_text_max_width),
+            sliderValue = maxWidthSliderPosition,
+            sliderValueRange = 0.2f..1f,
+            onSliderValueChange = changeMaxWidthSliderPosition,
+            onSliderValueReset = { changeMaxWidthSliderPosition(0.75f) }
         )
 
-        // Slider para cambiar la altura maxima del textLayout
+        // Slider to change maxHeight
         CustomSlider(
-            sliderTextLabel = "Max Height",
-            sliderValue = { maxHeightSliderPosition },
-            sliderValueRange = 2f..10f,
-            onSliderValueChange = { newPosition -> maxHeightSliderPosition = newPosition },
-            onSliderValueReset = { maxHeightSliderPosition = 7.5f }
+            sliderTextLabel = stringResource(R.string.draw_scope_draw_text_max_height),
+            sliderValue = maxHeightSliderPosition,
+            sliderValueRange = 0.2f..1f,
+            onSliderValueChange = changeMaxHeightSliderPosition,
+            onSliderValueReset = { changeMaxHeightSliderPosition(0.75f) }
         )
 
-        // Texto de ejemplo
+        // Example text
         TextExample(
-            textExample = textExample,
-            textLayoutMaxWidth = textLayoutMaxWidth,
-            textLayoutMaxHeight = textLayoutMaxHeight
+            maxWidthSliderPosition = maxWidthSliderPosition,
+            maxHeightSliderPosition = maxHeightSliderPosition,
+            textExample = textExample
         )
 
-        // Botones para cambiar la cantidad de caracteres en el texto de prueba y reinicar el tamaño maximo del textLayout
+        // Buttons to change the number of characters in the text example and reset the maximum text layout size
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 colors = ButtonDefaults.elevatedButtonColors(),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
-                onClick = {
-                    textExample = getExampleText()
-                },
+                onClick = regenerateTextExample,
                 content = {
-                    Text(text = "Cambiar texto")
+                    Text(text = stringResource(R.string.draw_scope_draw_text_change_text_button_label))
                 }
             )
 
@@ -104,23 +118,35 @@ internal fun DrawTextExample() {
                 colors = ButtonDefaults.elevatedButtonColors(),
                 elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
                 onClick = {
-                    maxWidthSliderPosition = 7.5f
-                    maxHeightSliderPosition = 7.5f
+                    changeMaxWidthSliderPosition(0.75f)
+                    changeMaxHeightSliderPosition(0.75f)
                 },
                 content = {
-                    Text(text = "Reiniciar valores")
+                    Text(text = stringResource(R.string.draw_scope_draw_text_restart_button_label))
                 }
             )
         }
     }
 }
 
+
 @Composable
 private fun TextExample(
-    textExample: String,
-    textLayoutMaxWidth: Float,
-    textLayoutMaxHeight: Float
+    maxWidthSliderPosition: () -> Float,
+    maxHeightSliderPosition: () -> Float,
+    textExample: () -> String
 ) {
+
+    // Animated values for maxWidth and maxHeight
+    val textLayoutMaxWidth by animateFloatAsState(
+        targetValue = maxWidthSliderPosition(),
+        label = "Text Layout Max Width Animation"
+    )
+    val textLayoutMaxHeight by animateFloatAsState(
+        targetValue = maxHeightSliderPosition(),
+        label = "Text Layout Max Height Animation"
+    )
+
     val textMeasurer = rememberTextMeasurer()
 
     val backgroundPrimaryColor = MaterialTheme.colorScheme.primary
@@ -135,7 +161,7 @@ private fun TextExample(
     ) {
         val measuredText = textMeasurer.measure(
             // El texto a ser dibujad
-            text = textExample,
+            text = textExample(),
             // El estilo a ser aplicado a el texto
             style = textExampleTypography,
             // Como el desborde visual debe ser tratado: Ellipsis, Clip o Visible
@@ -198,20 +224,21 @@ private fun TextExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun DrawTextExamplePreview() {
-    AppTheme {
-        DrawTextExample()
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        DrawTextExampleContent(
+            maxWidthSliderPosition = { 0.75f },
+            maxHeightSliderPosition = { 0.75f },
+            textExample = { getExampleText() },
+            changeMaxWidthSliderPosition = {},
+            changeMaxHeightSliderPosition = {},
+            regenerateTextExample = {}
+        )
     }
 }
-
-
-private fun getExampleText(): String {
-    val numDeCaracteres = Random.nextInt(0, exampleString.length)
-
-    return exampleString.substring(0, numDeCaracteres)
-}
-
-private const val exampleString =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis ipsum non sapien vulputate aliquet pharetra elementum tortor. Phasellus consectetur posuere erat eu sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. In rutrum cursus tincidunt. Ut lectus erat, dignissim sed turpis quis, varius aliquet eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
