@@ -36,6 +36,8 @@
     <string name="draw_scope_rotate_description">Adds a rotation (in degrees clockwise) to the current transformation at the given pivot point.\nIn the example an image will be rotated clockwise.</string>
     <string name="draw_scope_scale_title">scale</string>
     <string name="draw_scope_scale_description">Increases the size of drawing features by a factor.\nIn the example, an image will be scaled horizontally and vertically with respect to the upper left part of the drawing.</string>
+    <string name="draw_scope_translate_title">traslate</string>
+    <string name="draw_scope_translate_description">Move drawing operations up, down, left, or right.\nThe example consists of moving an image horizontally and vertically.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -124,4 +126,9 @@
     <string name="draw_scope_scale_scale_x">Scale X</string>
     <string name="draw_scope_scale_scale_y">Scale Y</string>
     <string name="draw_scope_scale_restart_button_label">Restart values</string>
+
+    <!-- Translate Example -->
+    <string name="draw_scope_translate_position_x">Position X</string>
+    <string name="draw_scope_translate_position_y">Position Y</string>
+    <string name="draw_scope_translate_restart_button_label">Restart values</string>
 </resources>

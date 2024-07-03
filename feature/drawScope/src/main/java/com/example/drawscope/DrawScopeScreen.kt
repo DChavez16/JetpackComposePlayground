@@ -300,16 +300,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // translate example
         item {
             ExampleComponent(
-                title = "traslate",
-                description = "Mueve las operaciones de dibujo hacia arriba, hacia abajo, hacia la izquierda o hacia la derecha.\nEl ejemplo consiste en mover una imagen horizontal y verticalmente.",
-                content = { TranslateExample() }
+                title = stringResource(R.string.draw_scope_translate_title),
+                description = stringResource(R.string.draw_scope_translate_description),
+                content = {
+                    TranslateExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
