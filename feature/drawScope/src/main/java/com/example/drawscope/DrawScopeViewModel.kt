@@ -172,6 +172,11 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val insetHorizontalScaleSliderPosition: StateFlow<Float> = _insetHorizontalScaleSliderPosition
 
 
+    // Backing property and StateFlow for rotate angle slider position (RotateExample)
+    private val _rotateAngleDegreesSliderPosition = MutableStateFlow(0f)
+    val rotateAngleDegreesSliderPosition: StateFlow<Float> = _rotateAngleDegreesSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -371,9 +376,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
         _insetVerticalScaleSliderPosition.value = newValue
     }
 
-    // Methos to change inset horizontal state slider value (Inset)
+    // Methods to change inset horizontal state slider value (Inset)
     fun changeInsetHorizontalScaleSliderPosition(newValue: Float) {
         _insetHorizontalScaleSliderPosition.value = newValue
+    }
+
+
+    // Methods to change rotate angle slider position (RotateExample)
+    fun changeRotateAngleDegreesSliderPosition(newValue: Float) {
+        _rotateAngleDegreesSliderPosition.value = newValue
     }
 }
 

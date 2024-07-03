@@ -32,6 +32,9 @@
     <string name="draw_scope_clip_rect_description">Reduces the cut region to the intersection of the current cutout and the given rectangle indicated by the left, top, right, and bottom limits.\nThis example applies a clipRect to the image</string>
     <string name="draw_scope_inset_title">inset</string>
     <string name="draw_scope_inset_description">Adjust the default parameters of the current DrawScope, change the drawing boundaries, and move drawings accordingly.\nThe following example adjusts the vertical and horizontal scale of an image.</string>
+    <string name="draw_scope_rotate_title">rotate</string>
+    <string name="draw_scope_rotate_description">Adds a rotation (in degrees clockwise) to the current transformation at the given pivot point.\nIn the example an image will be rotated clockwise.</string>
+
 
     <string name="draw_scope_">_</string>
 
@@ -112,4 +115,7 @@
     <string name="draw_scope_inset_vertical_scale">Vertical Scale</string>
     <string name="draw_scope_inset_horizontal_scale">Horizontal Scale</string>
     <string name="draw_scope_inset_restart_button_label">Restart values</string>
+
+    <!-- Rotate Example -->
+    <string name="draw_scope_rotate_angle_degrees">Angle Degrees</string>
 </resources>

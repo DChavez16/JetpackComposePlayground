@@ -276,16 +276,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // rotate example
         item {
             ExampleComponent(
-                title = "rotate",
-                description = "Agrega una rotacion (en grados con direccion a las agujas del reloj) a la transformacion actual en el punto de pivote dado.\nEn el ejemplo se va a rotar una imagen en el sentido de las agujas del reloj.",
-                content = { RotateExample() }
+                title = stringResource(R.string.draw_scope_rotate_title),
+                description = stringResource(R.string.draw_scope_rotate_description),
+                content = {
+                    RotateExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
