@@ -177,6 +177,15 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     val rotateAngleDegreesSliderPosition: StateFlow<Float> = _rotateAngleDegreesSliderPosition
 
 
+    // Backing property and StateFlow for scaleX slider position (ScaleExample)
+    private val _scaleXSliderPosition = MutableStateFlow(1f)
+    val scaleXSliderPosition: StateFlow<Float> = _scaleXSliderPosition
+
+    // Backing property and StateFlow for scaleY slider position (ScaleExample)
+    private val _scaleYSliderPosition = MutableStateFlow(1f)
+    val scaleYSliderPosition: StateFlow<Float> = _scaleYSliderPosition
+
+
 
     // Methods to change slider value (DrawArc)
     fun changeDrawArcSliderPosition(newValue: Float) {
@@ -385,6 +394,17 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change rotate angle slider position (RotateExample)
     fun changeRotateAngleDegreesSliderPosition(newValue: Float) {
         _rotateAngleDegreesSliderPosition.value = newValue
+    }
+
+
+    // Methods to change scaleX slider value (ScaleExample)
+    fun changeScaleXSliderPosition(newValue: Float) {
+        _scaleXSliderPosition.value = newValue
+    }
+
+    // Methods to change scaleY slider value (ScaleExample)
+    fun changeScaleYSliderPosition(newValue: Float) {
+        _scaleYSliderPosition.value = newValue
     }
 }
 

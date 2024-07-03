@@ -34,7 +34,8 @@
     <string name="draw_scope_inset_description">Adjust the default parameters of the current DrawScope, change the drawing boundaries, and move drawings accordingly.\nThe following example adjusts the vertical and horizontal scale of an image.</string>
     <string name="draw_scope_rotate_title">rotate</string>
     <string name="draw_scope_rotate_description">Adds a rotation (in degrees clockwise) to the current transformation at the given pivot point.\nIn the example an image will be rotated clockwise.</string>
-
+    <string name="draw_scope_scale_title">scale</string>
+    <string name="draw_scope_scale_description">Increases the size of drawing features by a factor.\nIn the example, an image will be scaled horizontally and vertically with respect to the upper left part of the drawing.</string>
 
     <string name="draw_scope_">_</string>
 
@@ -118,4 +119,9 @@
 
     <!-- Rotate Example -->
     <string name="draw_scope_rotate_angle_degrees">Angle Degrees</string>
+
+    <!-- Scale Example -->
+    <string name="draw_scope_scale_scale_x">Scale X</string>
+    <string name="draw_scope_scale_scale_y">Scale Y</string>
+    <string name="draw_scope_scale_restart_button_label">Restart values</string>
 </resources>

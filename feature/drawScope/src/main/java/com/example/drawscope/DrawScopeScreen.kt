@@ -35,8 +35,6 @@ import com.example.drawscope.ui.MultipleTransformExample
 import com.example.drawscope.ui.RotateExample
 import com.example.drawscope.ui.ScaleExample
 import com.example.drawscope.ui.TranslateExample
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
 import com.example.ui.ui.HorizontalListBanner
@@ -289,16 +287,16 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
-        // TODO Improve performance (less recompositions)
         // scale example
         item {
             ExampleComponent(
-                title = "scale",
-                description = "Aumenta el tamaño de las operaciones de dibujo por un factor.\nEn el ejemplo se va a escalar una imagen horizontal y verticalmente con respecto a la parte superior izquierda del dibujo.",
-                content = { ScaleExample() }
+                title = stringResource(R.string.draw_scope_scale_title),
+                description = stringResource(R.string.draw_scope_scale_description),
+                content = {
+                    ScaleExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
 
@@ -327,16 +325,5 @@ private fun DrawScopesList(
                 content = { MultipleTransformExample() }
             )
         }
-    }
-}
-
-
-@CompactSizeScreenThemePreview
-@Composable
-private fun DrawScopeExamplePreview() {
-    AppTheme {
-        DrawScopeScreen(
-            onMenuButtonClick = {}
-        )
     }
 }

@@ -2,6 +2,7 @@ package com.example.drawscope.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,97 +11,119 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.drawscope.DrawScopeViewModel
 import com.example.drawscope.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.CustomSlider
 
 
 @Composable
-internal fun ScaleExample() {
-    // SliderPosition para scaleX y scaleY
-    var scaleXSliderPosition by remember { mutableFloatStateOf(10f) }
-    var scaleYSliderPosition by remember { mutableFloatStateOf(10f) }
+internal fun ScaleExample(
+    drawScopeViewModel: DrawScopeViewModel = hiltViewModel()
+) {
 
-    // Valor animable para scaleX y scaleY
-    val imageScaleX by animateFloatAsState(
-        targetValue = scaleXSliderPosition / 10,
-        label = "Image Scale X Animation"
-    )
-    val imageScaleY by animateFloatAsState(
-        targetValue = scaleYSliderPosition / 10,
-        label = "Image Scale Y Animation"
-    )
+    // SliderPosition for scaleX and scaleY
+    val scaleXSliderPosition by drawScopeViewModel.scaleXSliderPosition.collectAsState()
+    val scaleYSliderPosition by drawScopeViewModel.scaleYSliderPosition.collectAsState()
 
+    ScaleExampleContent(
+        scaleXSliderPosition = { scaleXSliderPosition },
+        scaleYSliderPosition = { scaleYSliderPosition },
+        changeScaleXSliderPosition = drawScopeViewModel::changeScaleXSliderPosition,
+        changeScaleYSliderPosition = drawScopeViewModel::changeScaleYSliderPosition
+    )
+}
+
+
+@Composable
+private fun ScaleExampleContent(
+    scaleXSliderPosition: () -> Float,
+    scaleYSliderPosition: () -> Float,
+    changeScaleXSliderPosition: (Float) -> Unit,
+    changeScaleYSliderPosition: (Float) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Slider para cambiar la posicion vertical de la imagen
+        // Slider for changing the vertical position of the image
         CustomSlider(
-            sliderTextLabel = "Scale X",
-            sliderValue = { scaleXSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> scaleXSliderPosition = newPosition },
-            onSliderValueReset = { scaleXSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_scale_scale_x),
+            sliderValue = scaleXSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeScaleXSliderPosition,
+            onSliderValueReset = { changeScaleXSliderPosition(1f) }
         )
 
-        // Slider para cambiar la posicion horizontal de la imagen
+        // Slider for changing the horizontal position of the image
         CustomSlider(
-            sliderTextLabel = "Scale Y",
-            sliderValue = { scaleYSliderPosition },
-            sliderValueRange = 0f..10f,
-            onSliderValueChange = { newPosition -> scaleYSliderPosition = newPosition },
-            onSliderValueReset = { scaleYSliderPosition = 10f }
+            sliderTextLabel = stringResource(R.string.draw_scope_scale_scale_y),
+            sliderValue = scaleYSliderPosition,
+            sliderValueRange = 0f..1f,
+            onSliderValueChange = changeScaleYSliderPosition,
+            onSliderValueReset = { changeScaleYSliderPosition(1f) }
         )
 
-        // Imagen de ejemplo que se va a recortar usando clipPath
+        // Example image to be scaled
         ImageExample(
-            scaleX = imageScaleX,
-            scaleY = imageScaleY
+            scaleXSliderPosition = scaleXSliderPosition,
+            scaleYSliderPosition = scaleYSliderPosition
         )
 
-        // Boton para reiniciar los valores de los sliders
+        // Button for resetting the slider values
         OutlinedButton(
             colors = ButtonDefaults.elevatedButtonColors(),
             elevation = ButtonDefaults.elevatedButtonElevation(4.dp),
             onClick = {
-                scaleXSliderPosition = 10f
-                scaleYSliderPosition = 10f
+                changeScaleXSliderPosition(1f)
+                changeScaleYSliderPosition(1f)
             },
             content = {
-                Text(text = "Reiniciar valores")
+                Text(text = stringResource(R.string.draw_scope_scale_restart_button_label))
             }
         )
     }
 }
 
+
 @Composable
 private fun ImageExample(
-    scaleX: Float,
-    scaleY: Float,
+    scaleXSliderPosition : () -> Float,
+    scaleYSliderPosition : () -> Float
 ) {
+
+    // Animated values for scaleX and scaleY
+    val imageScaleX by animateFloatAsState(
+        targetValue = scaleXSliderPosition(),
+        label = "ImageScaleXAnimation"
+    )
+    val imageScaleY by animateFloatAsState(
+        targetValue = scaleYSliderPosition(),
+        label = "ImageScaleYAnimation"
+    )
+
     val imageBitmap = ImageBitmap.imageResource(id = R.drawable.jetpack_compose_icon)
 
     Canvas(modifier = Modifier.size(150.dp)) {
         scale(
             // La cantidad de escala en X
-            scaleX = scaleX,
+            scaleX = imageScaleX,
             // La cantidad de escala en Y
-            scaleY = scaleY,
+            scaleY = imageScaleY,
             // Las coordenadas del punto de pivote, por defecto se ubica en el centro del espacio de coordenadas
             pivot = Offset.Zero
         ) {
@@ -113,10 +136,19 @@ private fun ImageExample(
 }
 
 
-@Preview(showBackground = true)
+
+
+@CompactSizeScreenThemePreview
 @Composable
-private fun ScaleExamplePreview() {
-    AppTheme {
-        ScaleExample()
+private fun ScaleExampleContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        ScaleExampleContent(
+            scaleXSliderPosition = { 1f },
+            scaleYSliderPosition = { 1f },
+            changeScaleXSliderPosition = {},
+            changeScaleYSliderPosition = {}
+        )
     }
 }
