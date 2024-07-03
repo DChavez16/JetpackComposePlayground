@@ -313,16 +313,17 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Add DrawScopeViewModel
-        // TODO Refactorize to follow a testable aproach
-        // TODO Change plain text with string resources
         // TODO Improve performance (less recompositions)
         // withTransform (multiple transformations) example
         item {
             ExampleComponent(
-                title = "Multiples transformaciones",
-                description = "Se usa la funcion withTransform() para aplicar varias transformaciones a un elemento al mismo tiempo.\nEn el ejemplo, se va a trasladar una imagen en el eje vertical, mientras que al mismo tiempo cambia su rotacion con respecto a su posicion.",
-                content = { MultipleTransformExample() }
+                title = stringResource(R.string.draw_scope_multiple_transformations_title),
+                description = stringResource(R.string.draw_scope_multiple_transformations_description),
+                content = {
+                    MultipleTransformExample(
+                        drawScopeViewModel = hiltViewModel<DrawScopeViewModel>(viewModelStoreOwner)
+                    )
+                }
             )
         }
     }

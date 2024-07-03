@@ -194,6 +194,10 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     private val _translatePositionYSliderPosition = MutableStateFlow(0f)
     val translatePositionYSliderPosition: StateFlow<Float> = _translatePositionYSliderPosition
 
+    // Backing property and StateFlow for horizontal value slider position (MultipleTransformExample)
+    private val _horizontalValueSliderPosition = MutableStateFlow(0f)
+    val horizontalValueSliderPosition: StateFlow<Float> = _horizontalValueSliderPosition
+
 
 
     // Methods to change slider value (DrawArc)
@@ -425,6 +429,12 @@ internal class DrawScopeViewModel @Inject constructor(): ViewModel() {
     // Methods to change position y slider position (TranslateExample)
     fun changePositionYSliderPosition(newValue: Float) {
         _translatePositionYSliderPosition.value = newValue
+    }
+
+
+    // Methods to change horizontal value slider position (MultipleTransformExample)
+    fun changeHorizontalValueSliderPosition(newValue: Float) {
+        _horizontalValueSliderPosition.value = newValue
     }
 }
 

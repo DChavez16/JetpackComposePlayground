@@ -38,8 +38,8 @@
     <string name="draw_scope_scale_description">Increases the size of drawing features by a factor.\nIn the example, an image will be scaled horizontally and vertically with respect to the upper left part of the drawing.</string>
     <string name="draw_scope_translate_title">traslate</string>
     <string name="draw_scope_translate_description">Move drawing operations up, down, left, or right.\nThe example consists of moving an image horizontally and vertically.</string>
-
-    <string name="draw_scope_">_</string>
+    <string name="draw_scope_multiple_transformations_title">Multiple transformations</string>
+    <string name="draw_scope_multiple_transformations_description">The withTransform() function is used to apply several transformations to an element at the same time.\nIn the example, we are going to translate an image on the vertical axis, while at the same time changing its rotation with respect to its position.</string>
 
 
     <!-- DrawArc Example -->
@@ -131,4 +131,7 @@
     <string name="draw_scope_translate_position_x">Position X</string>
     <string name="draw_scope_translate_position_y">Position Y</string>
     <string name="draw_scope_translate_restart_button_label">Restart values</string>
+
+    <!-- MultipleTransform Example -->
+    <string name="draw_scope_multiple_transformations_horizontal_value">Horizontal Value</string>
 </resources>
