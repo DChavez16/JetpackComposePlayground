@@ -4,9 +4,14 @@
     <string name="lazy_layouts_list_banner_1">Vertical and horizontal lists</string>
     <string name="lazy_layouts_lazy_row_title">LazyRow</string>
     <string name="lazy_layouts_lazy_row_description">A LazyRow is a horizontal scrolling list that only renders the elements that are visible.</string>
+    <string name="lazy_layouts_lazy_column_title">LazyColumn</string>
+    <string name="lazy_layouts_lazy_column_description">A LazyColumn is a vertical scrolling list that only renders the elements that are visible.</string>
 
     <string name="lazy_layouts_">_</string>
 
 
-    <!--  -->
+    <!-- LazyColumn Example -->
+    <string name="lazy_layouts_lazy_column_first_item_label">Individual element number 1, press to scroll to element 100</string>
+    <string name="lazy_layouts_lazy_column_intemediate_items_label">Element in group number %d</string>
+    <string name="lazy_layouts_lazy_column_last_item_label">Individual element number 100, press to animate a scroll to element 1</string>
 </resources>

@@ -73,9 +73,6 @@ private fun LazyLayoutsList(
             HorizontalListBanner(title = stringResource(R.string.lazy_layouts_list_banner_1))
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyRow example
         item {
             ExampleComponent(
@@ -85,14 +82,11 @@ private fun LazyLayoutsList(
             )
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyColumn example
         item {
             ExampleComponent(
-                title = "LazyColumn",
-                description = "Un LazyColumn es una lista desplazable vertical que solo renderiza los elementos que se encuentran visibles.",
+                title = stringResource(R.string.lazy_layouts_lazy_column_title),
+                description = stringResource(R.string.lazy_layouts_lazy_column_description),
                 content = { LazyColumnExample() }
             )
         }

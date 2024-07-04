@@ -2,9 +2,9 @@ package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,9 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.lazyLayouts.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 /**
@@ -29,9 +31,11 @@ Funcion Composable que muestra como usar el componente LazyColumn y todas sus fu
  **/
 @Composable
 internal fun LazyColumnExample() {
+
     // El estado de la lista nos permite acceder a sus funciones de scroll
     val lazyColumnState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
     LazyColumn(
         // El modifier para personalizar el LazyColumn
         modifier = Modifier.fillMaxWidth().height(200.dp),
@@ -56,7 +60,7 @@ internal fun LazyColumnExample() {
                 /* Al presionar el elemento de la lista, este realizara un scroll SIN animacion
                 hacia el final de la lista */
                 LazyColumnItem(
-                    texto = "Elemento individual numero 1, persiona para hacer un scroll al elemento 100",
+                    texto = stringResource(R.string.lazy_layouts_lazy_column_first_item_label),
                     onClick = { coroutineScope.launch { lazyColumnState.scrollToItem(101) } })
             }
 
@@ -65,7 +69,9 @@ internal fun LazyColumnExample() {
                 items = (2..99).toList(),
                 key = { numero -> numero }
             ) { numero ->
-                LazyColumnItem(texto = "Elemento en grupo numero $numero")
+                LazyColumnItem(
+                    texto = stringResource(R.string.lazy_layouts_lazy_column_intemediate_items_label, numero)
+                )
             }
 
             // Elemento individual de la lista
@@ -73,12 +79,13 @@ internal fun LazyColumnExample() {
                 /* Al presionar el elemento de la lista, este realizara un scroll CON animacion
                 hacia el inicio de la lista */
                 LazyColumnItem(
-                    texto = "Elemento individual numero 100, persiona para animar un scroll al elemento 1",
+                    texto = stringResource(R.string.lazy_layouts_lazy_column_last_item_label),
                     onClick = { coroutineScope.launch { lazyColumnState.animateScrollToItem(0) } })
             }
         }
     )
 }
+
 
 @Composable
 private fun LazyColumnItem(texto: String, onClick: () -> Unit = {}) {
@@ -92,10 +99,14 @@ private fun LazyColumnItem(texto: String, onClick: () -> Unit = {}) {
     }
 }
 
-@Preview
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyColumnExamplePreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyColumnExample()
     }
 }
