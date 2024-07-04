@@ -13,7 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.lazyLayouts.R
 import com.example.lazylayouts.ui.LazyColumnExample
 import com.example.lazylayouts.ui.LazyHorizontalGridExample
 import com.example.lazylayouts.ui.LazyHorizontalStaggeredGridExample
@@ -68,18 +70,24 @@ private fun LazyLayoutsList(
     ) {
         // Lazy lists horizontal banner
         stickyHeader(key = 1) {
-            HorizontalListBanner(title = "Listas verticales y horizontales")
+            HorizontalListBanner(title = stringResource(R.string.lazy_layouts_list_banner_1))
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyRow example
         item {
             ExampleComponent(
-                title = "LazyRow",
-                description = "Un LazyRow es una lista desplazable horizontal que solo renderiza los elementos que se encuentran visibles.",
+                title = stringResource(R.string.lazy_layouts_lazy_row_title),
+                description = stringResource(R.string.lazy_layouts_lazy_row_description),
                 content = { LazyRowExample() }
             )
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyColumn example
         item {
             ExampleComponent(
@@ -89,11 +97,15 @@ private fun LazyLayoutsList(
             )
         }
 
+        // TODO Replace all plain text with string resources
         // Lazy grids horizontal banner
         stickyHeader(key = 2) {
             HorizontalListBanner(title = "Parrillas horizontales y verticales")
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyHorizontalGrid example
         item {
             ExampleComponent(
@@ -103,6 +115,9 @@ private fun LazyLayoutsList(
             )
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyerticalGrid example
         item {
             ExampleComponent(
@@ -112,11 +127,15 @@ private fun LazyLayoutsList(
             )
         }
 
+        // TODO Replace all plain text with string resources
         // Lazy staggered grids horizontal banner
         stickyHeader(key = 3) {
             HorizontalListBanner(title = "Parrillas escalonadas horizontales y verticales")
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyHorizontalStaggeredGrid example
         item {
             ExampleComponent(
@@ -126,6 +145,9 @@ private fun LazyLayoutsList(
             )
         }
 
+        // TODO Replace all plain text with string resources
+        // TODO Refactorize the screen so it follows a testable approach
+        // TODO Refactorize to be more performant (less recompositions)
         // LazyVerticalStaggeredGrid example
         item {
             ExampleComponent(

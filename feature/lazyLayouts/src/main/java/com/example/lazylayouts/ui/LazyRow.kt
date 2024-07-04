@@ -2,10 +2,13 @@ package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,9 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 
@@ -28,6 +32,7 @@ Funcion Composable que muestra como usar el componente LazyRow y todas sus funci
  **/
 @Composable
 internal fun LazyRowExample() {
+
     // El estado de la lista nos permite acceder a sus funciones de scroll
     val lazyRowState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -57,7 +62,8 @@ internal fun LazyRowExample() {
                 hacia el final de la lista */
                 LazyRowItem(
                     numero = 1,
-                    onClick = { coroutineScope.launch { lazyRowState.scrollToItem(101) } })
+                    onClick = { coroutineScope.launch { lazyRowState.scrollToItem(101) } }
+                )
             }
 
             // Conjunto de elementos que se mostraran en la lista
@@ -74,28 +80,42 @@ internal fun LazyRowExample() {
                 hacia el inicio de la lista */
                 LazyRowItem(
                     numero = 100,
-                    onClick = { coroutineScope.launch { lazyRowState.animateScrollToItem(0) } })
+                    onClick = { coroutineScope.launch { lazyRowState.animateScrollToItem(0) } }
+                )
             }
         }
     )
 }
 
+
 @Composable
-private fun LazyRowItem(numero: Int, onClick: () -> Unit = {}) {
+private fun LazyRowItem(
+    numero: Int,
+    onClick: () -> Unit = {}
+) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(size = 4.dp),
         shadowElevation = 4.dp,
-        modifier = Modifier.clickable(enabled = onClick != {}) { onClick() })
+        modifier = Modifier.width(48.dp).clickable(enabled = onClick != {}) { onClick() })
     {
-        Text("$numero", Modifier.padding(8.dp))
+        Text(
+            text = "$numero",
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(8.dp).fillMaxWidth()
+        )
     }
 }
 
-@Preview
+
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyRowExamplePreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyRowExample()
     }
 }
