@@ -6,6 +6,9 @@
     <string name="lazy_layouts_lazy_row_description">A LazyRow is a horizontal scrolling list that only renders the elements that are visible.</string>
     <string name="lazy_layouts_lazy_column_title">LazyColumn</string>
     <string name="lazy_layouts_lazy_column_description">A LazyColumn is a vertical scrolling list that only renders the elements that are visible.</string>
+    <string name="lazy_layouts_list_banner_2">Vertical and horizontal grids</string>
+    <string name="lazy_layouts_lazy_horizontal_grid_title">LazyHorizontalGrid</string>
+    <string name="lazy_layouts_lazy_horizontal_grid_description">To sort a list of elements in a mesh horizontally, this component gives us the option to define the approximate height of the elements within it.</string>
 
     <string name="lazy_layouts_">_</string>
 
@@ -14,4 +17,7 @@
     <string name="lazy_layouts_lazy_column_first_item_label">Individual element number 1, press to scroll to element 100</string>
     <string name="lazy_layouts_lazy_column_intemediate_items_label">Element in group number %d</string>
     <string name="lazy_layouts_lazy_column_last_item_label">Individual element number 100, press to animate a scroll to element 1</string>
+
+    <!-- LazyHorizontalGrid Example -->
+    <string name="lazy_layouts_lazy_horizontal_grid_header">Numbers from %d to %d</string>
 </resources>

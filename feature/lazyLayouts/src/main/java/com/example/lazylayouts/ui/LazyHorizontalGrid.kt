@@ -1,6 +1,7 @@
 package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,9 +18,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.lazyLayouts.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -27,6 +30,7 @@ import com.example.ui.theme.AppTheme
  */
 @Composable
 internal fun LazyHorizontalGridExample() {
+
     // El estado de la lista nos permite acceder a sus funciones de scroll
     val lazyHorizontalGridState = rememberLazyGridState()
 
@@ -60,7 +64,10 @@ internal fun LazyHorizontalGridExample() {
                 // este elemento en especifico. Al usar maxLineSpan se asigna al tamaño del elemento
                 // el maximo de lineas posibles
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    LazyHorizontalGridHeader(initialNumber = (i * 10) - 9, finalNumber = (i * 10))
+                    LazyHorizontalGridHeader(
+                        initialNumber = (i * 10) - 9,
+                        finalNumber = (i * 10)
+                    )
                 }
                 items(((i * 10) - 9..(i * 10)).toList()) { numero ->
                     LazyHorizontalGridItem(numero = numero)
@@ -71,7 +78,10 @@ internal fun LazyHorizontalGridExample() {
 }
 
 @Composable
-private fun LazyHorizontalGridHeader(initialNumber: Int, finalNumber: Int) {
+private fun LazyHorizontalGridHeader(
+    initialNumber: Int,
+    finalNumber: Int
+) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(size = 4.dp),
@@ -79,7 +89,10 @@ private fun LazyHorizontalGridHeader(initialNumber: Int, finalNumber: Int) {
         modifier = Modifier
     ) {
         Column(verticalArrangement = Arrangement.Center) {
-            Text("Numeros del $initialNumber al $finalNumber", Modifier.padding(8.dp))
+            Text(
+                text = stringResource(R.string.lazy_layouts_lazy_horizontal_grid_header, initialNumber, finalNumber),
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
@@ -99,10 +112,12 @@ private fun LazyHorizontalGridItem(numero: Int) {
 }
 
 
-@Preview
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyHorizontalGridExamplePreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyHorizontalGridExample()
     }
 }

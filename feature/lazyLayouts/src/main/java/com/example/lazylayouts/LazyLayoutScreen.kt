@@ -91,20 +91,16 @@ private fun LazyLayoutsList(
             )
         }
 
-        // TODO Replace all plain text with string resources
         // Lazy grids horizontal banner
         stickyHeader(key = 2) {
-            HorizontalListBanner(title = "Parrillas horizontales y verticales")
+            HorizontalListBanner(title = stringResource(R.string.lazy_layouts_list_banner_2))
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyHorizontalGrid example
         item {
             ExampleComponent(
-                title = "LazyHorizontalGrid",
-                description = "Para ordenar una lista de elementos en una malla de forma horizontal, este componente nos da la opción de definir la altura aproximado de los elementos dentro de él",
+                title = stringResource(R.string.lazy_layouts_lazy_horizontal_grid_title),
+                description = stringResource(R.string.lazy_layouts_lazy_horizontal_grid_description),
                 content = { LazyHorizontalGridExample() }
             )
         }
