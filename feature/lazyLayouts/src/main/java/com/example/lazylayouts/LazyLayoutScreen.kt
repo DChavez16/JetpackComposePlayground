@@ -105,14 +105,11 @@ private fun LazyLayoutsList(
             )
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyerticalGrid example
         item {
             ExampleComponent(
-                title = "LazyVerticalGrid",
-                description = "Para ordenar una lista de elementos en una malla de forma vertical, este componente nos da la opción de definir el ancho aproximado de los elementos dentro de él.",
+                title = stringResource(R.string.lazy_layouts_lazy_vertical_grid_title),
+                description = stringResource(R.string.lazy_layouts_lazy_vertical_grid_description),
                 content = { LazyVerticalGridExample() }
             )
         }

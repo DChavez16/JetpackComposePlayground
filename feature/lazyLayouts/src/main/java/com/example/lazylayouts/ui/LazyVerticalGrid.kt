@@ -1,12 +1,12 @@
 package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,9 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.lazyLayouts.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -31,6 +33,7 @@ import com.example.ui.theme.AppTheme
  */
 @Composable
 internal fun LazyVerticalGridExample() {
+    
     // El estado de la lista nos permite acceder a sus funciones de scroll
     val lazyVerticalGridState = rememberLazyGridState()
 
@@ -42,7 +45,7 @@ internal fun LazyVerticalGridExample() {
         // Para este parametro se usa un tamaño minimo para las columnas
         columns = GridCells.Adaptive(80.dp),
         // El modifier para personalizar el LazyVerticalGrid
-        modifier = Modifier.fillMaxHeight().height(200.dp),
+        modifier = Modifier.fillMaxWidth().height(200.dp),
         // Asigna el estado a la lista para interactuar con sus funciones
         state = lazyVerticalGridState,
         // Para poder ajustar la separacion entre los elementos de la lista, acepta varios valores
@@ -64,7 +67,10 @@ internal fun LazyVerticalGridExample() {
                 // este elemento en especifico. Al usar maxLineSpan se asigna al tamaño del elemento
                 // el maximo de lineas posibles
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    LazyVerticalGridHeader(initialNumber = (i * 10) - 9, finalNumber = (i * 10))
+                    LazyVerticalGridHeader(
+                        initialNumber = (i * 10) - 9,
+                        finalNumber = (i * 10)
+                    )
                 }
                 items(((i * 10) - 9..(i * 10)).toList()) { numero ->
                     LazyVerticalGridItem(numero = numero)
@@ -75,7 +81,10 @@ internal fun LazyVerticalGridExample() {
 }
 
 @Composable
-private fun LazyVerticalGridHeader(initialNumber: Int, finalNumber: Int) {
+private fun LazyVerticalGridHeader(
+    initialNumber: Int,
+    finalNumber: Int
+) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(size = 4.dp),
@@ -85,7 +94,10 @@ private fun LazyVerticalGridHeader(initialNumber: Int, finalNumber: Int) {
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            Text("Numeros del $initialNumber al $finalNumber", Modifier.padding(8.dp))
+            Text(
+                text = stringResource(R.string.lazy_layouts_lazy_vertical_grid_header, initialNumber, finalNumber),
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
@@ -108,10 +120,14 @@ private fun LazyVerticalGridItem(numero: Int) {
 }
 
 
-@Preview
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyVerticalGridExamplePreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyVerticalGridExample()
     }
 }

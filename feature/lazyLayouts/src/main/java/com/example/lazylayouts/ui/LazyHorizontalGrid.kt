@@ -112,6 +112,8 @@ private fun LazyHorizontalGridItem(numero: Int) {
 }
 
 
+
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun LazyHorizontalGridExamplePreview() {

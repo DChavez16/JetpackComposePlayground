@@ -9,6 +9,8 @@
     <string name="lazy_layouts_list_banner_2">Vertical and horizontal grids</string>
     <string name="lazy_layouts_lazy_horizontal_grid_title">LazyHorizontalGrid</string>
     <string name="lazy_layouts_lazy_horizontal_grid_description">To sort a list of elements in a mesh horizontally, this component gives us the option to define the approximate height of the elements within it.</string>
+    <string name="lazy_layouts_lazy_vertical_grid_title">LazyVerticalGrid</string>
+    <string name="lazy_layouts_lazy_vertical_grid_description">To sort a list of elements in a mesh vertically, this component gives us the option to define the approximate width of the elements within it.</string>
 
     <string name="lazy_layouts_">_</string>
 
@@ -20,4 +22,7 @@
 
     <!-- LazyHorizontalGrid Example -->
     <string name="lazy_layouts_lazy_horizontal_grid_header">Numbers from %d to %d</string>
+
+    <!-- LazyVerticalGrid Example -->
+    <string name="lazy_layouts_lazy_vertical_grid_header">Numbers from %d to %d</string>
 </resources>

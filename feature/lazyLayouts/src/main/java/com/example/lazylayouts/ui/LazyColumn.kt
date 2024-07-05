@@ -101,6 +101,8 @@ private fun LazyColumnItem(texto: String, onClick: () -> Unit = {}) {
 
 
 
+
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun LazyColumnExamplePreview() {
