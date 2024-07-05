@@ -95,7 +95,7 @@ private fun LazyVerticalGridHeader(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.lazy_layouts_lazy_vertical_grid_header, initialNumber, finalNumber),
+                text = stringResource(R.string.lazy_layouts_lazy_vertical_grid_header_label, initialNumber, finalNumber),
                 modifier = Modifier.padding(8.dp)
             )
         }

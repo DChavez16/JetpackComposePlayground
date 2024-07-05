@@ -2,6 +2,7 @@ package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,8 +19,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,11 +30,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.lazyLayouts.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -43,6 +46,7 @@ import kotlin.random.Random
  */
 @Composable
 internal fun LazyHorizontalStaggeredGridExample() {
+
     val lazyHorizontalStaggeredGridState = rememberLazyStaggeredGridState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -74,7 +78,7 @@ internal fun LazyHorizontalStaggeredGridExample() {
             // Elemento individual de la lista
             item(key = 0, span = StaggeredGridItemSpan.FullLine) {
                 LazyHorizontalStaggeredGridBanner(
-                    texto = "Desplazate al ultimo elemento del grid CON una animacion",
+                    texto = stringResource(R.string.lazy_layouts_lazy_horizontal_staggered_grid_first_header_label),
                     onClick = {
                         coroutineScope.launch {
                             lazyHorizontalStaggeredGridState.animateScrollToItem(101)
@@ -92,7 +96,7 @@ internal fun LazyHorizontalStaggeredGridExample() {
             // Elemento individual de la lista
             item(key = 101, span = StaggeredGridItemSpan.FullLine) {
                 LazyHorizontalStaggeredGridBanner(
-                    texto = "Desplazate al primer elemento del grid SIN animacion",
+                    texto = stringResource(R.string.lazy_layouts_lazy_horizontal_staggered_grid_last_header_label),
                     onClick = {
                         coroutineScope.launch {
                             lazyHorizontalStaggeredGridState.scrollToItem(0)
@@ -124,7 +128,11 @@ private fun LazyHorizontalStaggeredGridItem(listItem: HorizontalListItem) {
 }
 
 @Composable
-private fun LazyHorizontalStaggeredGridBanner(texto: String, onClick: () -> Unit, isToTheEnd: Boolean) {
+private fun LazyHorizontalStaggeredGridBanner(
+    texto: String,
+    onClick: () -> Unit,
+    isToTheEnd: Boolean
+) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(4.dp),
@@ -144,7 +152,7 @@ private fun LazyHorizontalStaggeredGridBanner(texto: String, onClick: () -> Unit
             )
             Spacer(modifier = Modifier.height(16.dp))
             Icon(
-                imageVector = with(Icons.Filled) {
+                imageVector = with(Icons.AutoMirrored.Filled) {
                     if (isToTheEnd) ArrowForward else ArrowBack
                 },
                 contentDescription = null
@@ -153,13 +161,21 @@ private fun LazyHorizontalStaggeredGridBanner(texto: String, onClick: () -> Unit
     }
 }
 
-@Preview(showBackground = true)
+
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyHorizontalStaggeredGridItemPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyHorizontalStaggeredGridExample()
     }
 }
+
+
+
 
 private data class HorizontalListItem(
     val number: Int,

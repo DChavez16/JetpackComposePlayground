@@ -11,6 +11,9 @@
     <string name="lazy_layouts_lazy_horizontal_grid_description">To sort a list of elements in a mesh horizontally, this component gives us the option to define the approximate height of the elements within it.</string>
     <string name="lazy_layouts_lazy_vertical_grid_title">LazyVerticalGrid</string>
     <string name="lazy_layouts_lazy_vertical_grid_description">To sort a list of elements in a mesh vertically, this component gives us the option to define the approximate width of the elements within it.</string>
+    <string name="lazy_layouts_list_banner_3">Vertical and horizontal staggered grids</string>
+    <string name="lazy_layouts_lazy_horizontal_staggered_grid_title">LazyHorizontalStaggeredGrid</string>
+    <string name="lazy_layouts_lazy_horizontal_staggered_grid_description">This API displays the elements in the same way as a LazyHorizontalGrid, with the difference that it allows each element to have a width independent of the other elements in the list.</string>
 
     <string name="lazy_layouts_">_</string>
 
@@ -21,8 +24,12 @@
     <string name="lazy_layouts_lazy_column_last_item_label">Individual element number 100, press to animate a scroll to element 1</string>
 
     <!-- LazyHorizontalGrid Example -->
-    <string name="lazy_layouts_lazy_horizontal_grid_header">Numbers from %d to %d</string>
+    <string name="lazy_layouts_lazy_horizontal_grid_header_label">Numbers from %d to %d</string>
 
     <!-- LazyVerticalGrid Example -->
-    <string name="lazy_layouts_lazy_vertical_grid_header">Numbers from %d to %d</string>
+    <string name="lazy_layouts_lazy_vertical_grid_header_label">Numbers from %d to %d</string>
+
+    <!-- LazyHorizontalStaggeredGrid Example -->
+    <string name="lazy_layouts_lazy_horizontal_staggered_grid_first_header_label">Move to the last element of the grid WITH an animation</string>
+    <string name="lazy_layouts_lazy_horizontal_staggered_grid_last_header_label">Move to the first element of the grid WITHOUT an animation</string>
 </resources>

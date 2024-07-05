@@ -4,6 +4,7 @@ package com.example.lazylayouts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,11 +23,11 @@ import com.example.lazylayouts.ui.LazyHorizontalStaggeredGridExample
 import com.example.lazylayouts.ui.LazyRowExample
 import com.example.lazylayouts.ui.LazyVerticalGridExample
 import com.example.lazylayouts.ui.LazyVerticalStaggeredGridExample
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
 import com.example.ui.ui.HorizontalListBanner
-import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 /**
@@ -114,20 +115,16 @@ private fun LazyLayoutsList(
             )
         }
 
-        // TODO Replace all plain text with string resources
         // Lazy staggered grids horizontal banner
         stickyHeader(key = 3) {
-            HorizontalListBanner(title = "Parrillas escalonadas horizontales y verticales")
+            HorizontalListBanner(title = stringResource(R.string.lazy_layouts_list_banner_3))
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyHorizontalStaggeredGrid example
         item {
             ExampleComponent(
-                title = "LazyHorizontalStaggeredGrid",
-                description = "Esta API muestra los elementos de igual forma que una LazyHorizontalGrid, con la diferencia de que permite que cada elemento pueda tener un ancho independiente al de los demás elementos de la lista.",
+                title = stringResource(R.string.lazy_layouts_lazy_horizontal_staggered_grid_title),
+                description = stringResource(R.string.lazy_layouts_lazy_horizontal_staggered_grid_description),
                 content = { LazyHorizontalStaggeredGridExample() }
             )
         }
@@ -148,10 +145,13 @@ private fun LazyLayoutsList(
 
 
 
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun LazyListScreenPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyLayoutScreen(
             onMenuButtonClick = {}
         )
