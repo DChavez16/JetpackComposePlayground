@@ -2,6 +2,7 @@ package com.example.lazylayouts.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,11 +29,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.lazyLayouts.R
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -42,6 +45,7 @@ import kotlin.random.Random
  */
 @Composable
 internal fun LazyVerticalStaggeredGridExample() {
+
     val lazyVerticalStaggeredGridState = rememberLazyStaggeredGridState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,7 +77,7 @@ internal fun LazyVerticalStaggeredGridExample() {
             // Elemento individual de la lista
             item(key = 0, span = StaggeredGridItemSpan.FullLine) {
                 LazyVerticalStaggeredGridBanner(
-                    texto = "Desplazate al ultimo elemento del grid CON una animacion",
+                    texto = stringResource(R.string.lazy_layouts_lazy_vertical_staggered_grid_first_header_label),
                     onClick = {
                         coroutineScope.launch {
                             lazyVerticalStaggeredGridState.animateScrollToItem(101)
@@ -91,7 +95,7 @@ internal fun LazyVerticalStaggeredGridExample() {
             // Elemento individual de la lista
             item(key = 101, span = StaggeredGridItemSpan.FullLine) {
                 LazyVerticalStaggeredGridBanner(
-                    texto = "Desplazate al primer elemento del grid SIN animacion",
+                    texto = stringResource(R.string.lazy_layouts_lazy_vertical_staggered_grid_last_header_label),
                     onClick = {
                         coroutineScope.launch {
                             lazyVerticalStaggeredGridState.scrollToItem(0)
@@ -152,13 +156,21 @@ private fun LazyVerticalStaggeredGridBanner(texto: String, onClick: () -> Unit, 
     }
 }
 
-@Preview(showBackground = true)
+
+
+
+@CompactSizeScreenThemePreview
 @Composable
 private fun LazyVerticalStaggeredGridItemPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         LazyVerticalStaggeredGridExample()
     }
 }
+
+
+
 
 private data class VerticalListItem(
     val number: Int,

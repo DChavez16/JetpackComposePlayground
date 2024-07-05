@@ -129,14 +129,11 @@ private fun LazyLayoutsList(
             )
         }
 
-        // TODO Replace all plain text with string resources
-        // TODO Refactorize the screen so it follows a testable approach
-        // TODO Refactorize to be more performant (less recompositions)
         // LazyVerticalStaggeredGrid example
         item {
             ExampleComponent(
-                title = "LazyVerticalStaggeredGrid",
-                description = "Esta API muestra los elementos de igual forma que una LazyVerticalGrid, con la diferencia de que permite que cada elemento pueda tener una altura independiente a la de los demás elementos de la lista.",
+                title = stringResource(R.string.lazy_layouts_lazy_vertical_staggered_grid_title),
+                description = stringResource(R.string.lazy_layouts_lazy_vertical_staggered_grid_description),
                 content = { LazyVerticalStaggeredGridExample() }
             )
         }
