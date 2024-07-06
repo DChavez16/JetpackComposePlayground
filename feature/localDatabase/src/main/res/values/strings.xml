@@ -8,4 +8,14 @@
     <!-- Product List Screen -->
     <string name="local_database_products_list_error_message">Error:</string>
     <string name="local_database_products_list_empty_list_message">The list is empty, press the + button to add a new product</string>
+
+    <!-- Add/Edit Product Screen -->
+    <string name="local_database_add_edit_save_button_text">Save</string>
+    <string name="local_database_add_edit_clear_button_text">Clear</string>
+    <string name="local_database_add_edit_product_name_label">Product Name:</string>
+    <string name="local_database_add_edit_quantity_label">Quantity:</string>
+    <string name="local_database_add_edit_decrease_quantity_content_description">Decrease quantity</string>
+    <string name="local_database_add_edit_increase_quantity_content_description">Increase quantity</string>
+    <string name="local_database_add_edit_description_label">Description:</string>
+    <string name="local_database_add_edit_availability_label">Availability:</string>
 </resources>

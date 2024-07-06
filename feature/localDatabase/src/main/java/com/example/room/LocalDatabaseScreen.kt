@@ -11,6 +11,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,12 +43,14 @@ fun LocalDatabaseScreen(
     // Creates a viewModel instance binded to viewModelStoreOwner
     val productsViewModel: ProductsViewModel = hiltViewModel(viewModelStoreOwner)
 
+    val currentProductName by productsViewModel.currentProductName.collectAsState()
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
                 // If the current route is the EditProduct screen, display the name of the product,
                 // otherwise display the title of the screen
-                title = if (currentRoute == LocalDatabaseDestinations.EditProduct.screenRouteName) productsViewModel.currentProductName
+                title = if (currentRoute == LocalDatabaseDestinations.EditProduct.screenRouteName) currentProductName
                 else stringResource(id = getNavigationDestinarionFromRoute(currentRoute).screenTitle),
                 onMenuButtonClick = onMenuButtonClick,
                 onBackButtonPressed = { localDatabaseNavController.popBackStack() },

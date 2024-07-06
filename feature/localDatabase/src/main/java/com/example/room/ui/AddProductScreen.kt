@@ -1,5 +1,6 @@
 package com.example.room.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,9 +24,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +39,7 @@ import com.example.model.Product
 import com.example.model.isValidForSave
 import com.example.room.ProductsViewModel
 import com.example.room.R
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
 /**
@@ -47,6 +51,38 @@ internal fun AddProductScreen(
     modifier: Modifier = Modifier,
     productsViewModel: ProductsViewModel = hiltViewModel()
 ) {
+
+    val currentProduct by productsViewModel.currentProduct.collectAsState()
+
+    AddProductScreenContent(
+        onSaveProduct = onSaveProduct,
+        currentProduct = { currentProduct },
+        onProductNameChange = productsViewModel::updateProductName,
+        onProductQuantityChange = productsViewModel::updateProductQuantity,
+        onProductDescriptionChange = productsViewModel::updateProductDescription,
+        onProductAvailabilityChange = productsViewModel::updateProductAvailability,
+        clearProductFields = productsViewModel::clearProductFields,
+        isSaveButtonEnabled = { currentProduct.isValidForSave() },
+        modifier = modifier
+    )
+}
+
+
+/**
+ * Add Product screen content
+ */
+@Composable
+private fun AddProductScreenContent(
+    onSaveProduct: () -> Unit,
+    currentProduct: () -> Product,
+    onProductNameChange: (String) -> Unit,
+    onProductQuantityChange: (Int) -> Unit,
+    onProductDescriptionChange: (String) -> Unit,
+    onProductAvailabilityChange: (Boolean) -> Unit,
+    clearProductFields: () -> Unit,
+    isSaveButtonEnabled: () -> Boolean,
+    modifier: Modifier = Modifier
+) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
@@ -54,17 +90,17 @@ internal fun AddProductScreen(
             .padding(12.dp),
     ) {
         ProductInputFields(
-            currentProduct = productsViewModel.currentProduct,
-            onProductNameChange = productsViewModel::updateProductName,
-            onProductQuantityChange = productsViewModel::updateProductQuantity,
-            onProductDescriptionChange = productsViewModel::updateProductDescription,
-            onProductAvailabilityChange = productsViewModel::updateProductAvailability
+            currentProduct = currentProduct,
+            onProductNameChange = onProductNameChange,
+            onProductQuantityChange = onProductQuantityChange,
+            onProductDescriptionChange = onProductDescriptionChange,
+            onProductAvailabilityChange = onProductAvailabilityChange
         )
 
         AddProductScreenButtons(
             onSaveProduct = onSaveProduct,
-            onClearFields = productsViewModel::clearProductFields,
-            isSaveButtonEnabled = productsViewModel.currentProduct.isValidForSave()
+            onClearFields = clearProductFields,
+            isSaveButtonEnabled = isSaveButtonEnabled
         )
     }
 }
@@ -75,7 +111,7 @@ internal fun AddProductScreen(
  */
 @Composable
 private fun ProductInputFields(
-    currentProduct: Product,
+    currentProduct: () -> Product,
     onProductNameChange: (String) -> Unit,
     onProductQuantityChange: (Int) -> Unit,
     onProductDescriptionChange: (String) -> Unit,
@@ -85,22 +121,22 @@ private fun ProductInputFields(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ProductNameField(
-            productName = currentProduct.name,
+            productName = { currentProduct().name },
             onProductNameChange = onProductNameChange
         )
 
         ProductQuantityField(
-            productQuantity = currentProduct.quantity,
+            productQuantity = { currentProduct().quantity },
             onProductQuantityChange = onProductQuantityChange
         )
 
         ProductDescriptionField(
-            productDescription = currentProduct.description,
+            productDescription = { currentProduct().description },
             onProductDescriptionChange = onProductDescriptionChange
         )
 
         ProductAvailabilityField(
-            productAvailability = currentProduct.isAvailable,
+            productAvailability = { currentProduct().isAvailable },
             onProductAvailabilityChange = onProductAvailabilityChange
         )
     }
@@ -114,7 +150,7 @@ private fun ProductInputFields(
 private fun AddProductScreenButtons(
     onSaveProduct: () -> Unit,
     onClearFields: () -> Unit,
-    isSaveButtonEnabled: Boolean
+    isSaveButtonEnabled: () -> Boolean
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -122,31 +158,29 @@ private fun AddProductScreenButtons(
     ) {
         // Button to save the product
         Button(
-            onClick = {
-                onSaveProduct()
-            },
-            enabled = isSaveButtonEnabled,
+            onClick = onSaveProduct,
+            enabled = isSaveButtonEnabled(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
             Text(
-                text = "Save",
+                text = stringResource(R.string.local_database_add_edit_save_button_text),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
 
         // Button to clear the fields
         OutlinedButton(
-            onClick = { onClearFields() },
+            onClick = onClearFields,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.background,
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         ) {
             Text(
-                text = "Clear",
+                text = stringResource(R.string.local_database_add_edit_clear_button_text),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -159,7 +193,7 @@ private fun AddProductScreenButtons(
  */
 @Composable
 private fun ProductNameField(
-    productName: String,
+    productName: () -> String,
     onProductNameChange: (String) -> Unit
 ) {
     Row(
@@ -168,7 +202,7 @@ private fun ProductNameField(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Product Name:",
+            text = stringResource(R.string.local_database_add_edit_product_name_label),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(5f)
         )
@@ -176,8 +210,8 @@ private fun ProductNameField(
         Spacer(modifier = Modifier.weight(1f))
 
         OutlinedTextField(
-            value = productName,
-            onValueChange = { onProductNameChange(it) },
+            value = productName(),
+            onValueChange = onProductNameChange,
             modifier = Modifier
                 .weight(8f)
                 .semantics { testTag = "ProductNameTextField" }
@@ -191,7 +225,7 @@ private fun ProductNameField(
  */
 @Composable
 private fun ProductQuantityField(
-    productQuantity: Int,
+    productQuantity: () -> Int,
     onProductQuantityChange: (Int) -> Unit
 ) {
     Row(
@@ -200,7 +234,7 @@ private fun ProductQuantityField(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Quantity:",
+            text = stringResource(R.string.local_database_add_edit_quantity_label),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(5f)
         )
@@ -213,24 +247,24 @@ private fun ProductQuantityField(
             modifier = Modifier.weight(8f)
         ) {
             IconButton(
-                onClick = { onProductQuantityChange(productQuantity - 1) }
+                onClick = { onProductQuantityChange(productQuantity() - 1) }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.remove_icon),
-                    contentDescription = "Decrease quantity"
+                    contentDescription = stringResource(R.string.local_database_add_edit_decrease_quantity_content_description)
                 )
             }
 
             Text(
-                text = "$productQuantity",
+                text = productQuantity().toString(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(64.dp)
             )
 
             IconButton(
-                onClick = { onProductQuantityChange(productQuantity + 1) }
+                onClick = { onProductQuantityChange(productQuantity() + 1) }
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Increase quantity")
+                Icon(imageVector = Icons.Filled.Add, contentDescription = stringResource(R.string.local_database_add_edit_increase_quantity_content_description))
             }
         }
     }
@@ -242,7 +276,7 @@ private fun ProductQuantityField(
  */
 @Composable
 private fun ProductDescriptionField(
-    productDescription: String,
+    productDescription: () -> String,
     onProductDescriptionChange: (String) -> Unit
 ) {
     Column(
@@ -251,7 +285,7 @@ private fun ProductDescriptionField(
     ) {
         Row(Modifier.fillMaxWidth()) {
             Text(
-                text = "Description:",
+                text = stringResource(R.string.local_database_add_edit_description_label),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(5f)
             )
@@ -262,8 +296,8 @@ private fun ProductDescriptionField(
         Spacer(modifier = Modifier.height(4.dp))
 
         OutlinedTextField(
-            value = productDescription,
-            onValueChange = { onProductDescriptionChange(it) },
+            value = productDescription(),
+            onValueChange = onProductDescriptionChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(124.dp)
@@ -279,7 +313,7 @@ private fun ProductDescriptionField(
  */
 @Composable
 private fun ProductAvailabilityField(
-    productAvailability: Boolean,
+    productAvailability: () -> Boolean,
     onProductAvailabilityChange: (Boolean) -> Unit
 ) {
     Row(
@@ -288,7 +322,7 @@ private fun ProductAvailabilityField(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Availability:",
+            text = stringResource(R.string.local_database_add_edit_availability_label),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(5f)
         )
@@ -296,8 +330,8 @@ private fun ProductAvailabilityField(
         Spacer(modifier = Modifier.weight(1f))
 
         Checkbox(
-            checked = productAvailability,
-            onCheckedChange = { onProductAvailabilityChange(it) },
+            checked = productAvailability(),
+            onCheckedChange = onProductAvailabilityChange,
             colors = CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
                 uncheckedColor = MaterialTheme.colorScheme.primary,
@@ -309,12 +343,30 @@ private fun ProductAvailabilityField(
 }
 
 
+
+
 @CompactSizeScreenThemePreview
 @Composable
-private fun AddProductScreenPreview() {
-    AppTheme {
-        AddProductScreen(
-            onSaveProduct = {}
+private fun AddProductScreenContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        val currentProduct = Product(
+            name = "Product name",
+            description = "Product description",
+            quantity = 5,
+            isAvailable = true
+        )
+
+        AddProductScreenContent(
+            onSaveProduct = {},
+            currentProduct = { currentProduct },
+            onProductNameChange = {},
+            onProductQuantityChange = {},
+            onProductDescriptionChange = {},
+            onProductAvailabilityChange = {},
+            clearProductFields = {},
+            isSaveButtonEnabled = { currentProduct.isValidForSave() }
         )
     }
 }

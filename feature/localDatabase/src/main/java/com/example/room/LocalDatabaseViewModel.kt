@@ -1,8 +1,5 @@
 package com.example.room
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Product
@@ -32,16 +29,18 @@ class ProductsViewModel @Inject constructor(
 
     // Backing property to avoid state updates from other classes
     private val _productsUiState = MutableStateFlow<ProductsUiState>(ProductsUiState.Loading)
-
     // The UI collects from this StateFlow to get its state updates
     internal val productsUiState: StateFlow<ProductsUiState> = _productsUiState
 
-    // State that represents the current product focused in the app
-    var currentProduct by mutableStateOf(emptyProduct)
-        private set
+    // Backing property for the current product to avoid state updates from other classes
+    private val _currentProduct = MutableStateFlow(emptyProduct)
+    // The UI collects from this StateFlow to get its state updates
+    internal val currentProduct: StateFlow<Product> = _currentProduct
 
-    var currentProductName by mutableStateOf("")
-        private set
+    // Backing property for the current product's name to avoid state updates from other classes
+    private val _currentProductName = MutableStateFlow("")
+    // The UI collects from this StateFlow to get its state updates
+    internal val currentProductName: StateFlow<String> = _currentProductName
 
 
     // Block of code executed at ViewModel creation
@@ -69,20 +68,20 @@ class ProductsViewModel @Inject constructor(
             val newProduct = productRepository.getProduct(productId)
 
             // Sets the currentProduct as the obtained product
-            currentProduct = newProduct
+            _currentProduct.value = newProduct
             // Sets the currentProductName as the name of the obtained product
-            currentProductName = newProduct.name
+            _currentProductName.value = newProduct.name
         }
     }
 
     // Method that fully clears the current product
     fun setNewProduct() {
-        currentProduct = emptyProduct
+        _currentProduct.value = emptyProduct
     }
 
     // Method that clears the current product fields and leaves the ID intact
     fun clearProductFields() {
-        currentProduct = currentProduct.copy(
+        _currentProduct.value = _currentProduct.value.copy(
             name = "",
             description = "",
             quantity = 0,
@@ -93,41 +92,41 @@ class ProductsViewModel @Inject constructor(
     // Method that inserts a new product in the database
     fun insertProduct() {
         viewModelScope.launch {
-            productRepository.insertProduct(currentProduct)
+            productRepository.insertProduct(currentProduct.value)
         }
     }
 
     // Method that updates a product in the database
     fun updateProduct() {
         viewModelScope.launch {
-            productRepository.updateProduct(currentProduct)
+            productRepository.updateProduct(currentProduct.value)
         }
     }
 
     // Method that deletes a product in the database
     fun deleteProduct() {
         viewModelScope.launch {
-            productRepository.deleteProduct(currentProduct)
+            productRepository.deleteProduct(currentProduct.value)
         }
     }
 
     // Method that changes the name of the current product
     fun updateProductName(newName: String) {
-        currentProduct = currentProduct.copy(name = newName)
+        _currentProduct.value = currentProduct.value.copy(name = newName)
     }
 
     // Method that changes the quantity of the current product
     fun updateProductQuantity(newQuantity: Int) {
-        currentProduct = currentProduct.copy(quantity = newQuantity)
+        _currentProduct.value = currentProduct.value.copy(quantity = newQuantity)
     }
 
     // Method that changes the description of the current product
     fun updateProductDescription(newDescription: String) {
-        currentProduct = currentProduct.copy(description = newDescription)
+        _currentProduct.value = currentProduct.value.copy(description = newDescription)
     }
 
     // Method that changes the availability of the current product
     fun updateProductAvailability(newAvailability: Boolean) {
-        currentProduct = currentProduct.copy(isAvailable = newAvailability)
+        _currentProduct.value = currentProduct.value.copy(isAvailable = newAvailability)
     }
 }
