@@ -19,15 +19,15 @@ internal enum class LocalDatabaseDestinations(
     val screenRouteName: String
 ) {
     ProductsList(
-        screenTitle = R.string.products_list_screen_title,
+        screenTitle = R.string.local_database_products_list_screen_title,
         screenRouteName = "productsList"
     ),
     AddProduct(
-        screenTitle = R.string.add_product_screen_title,
+        screenTitle = R.string.local_database_add_product_screen_title,
         screenRouteName = "addProduct"
     ),
     EditProduct(
-        screenTitle = R.string.edit_product_screen_title,
+        screenTitle = R.string.local_database_edit_product_screen_title,
         screenRouteName = "editProduct"
     )
 }
