@@ -15,14 +15,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.room.util.LocalDatabaseDestinations
 import com.example.room.util.LocalDatabaseNavHost
-import com.example.ui.theme.AppTheme
 import com.example.ui.ui.DefaultTopAppBar
 
 
@@ -45,38 +45,68 @@ fun LocalDatabaseScreen(
 
     val currentProductName by productsViewModel.currentProductName.collectAsState()
 
+    LocalDatabaseScreenContent(
+        currentRoute = { currentRoute },
+        currentProductName = { currentProductName },
+        onMenuButtonClick = onMenuButtonClick,
+        localDatabaseNavController = { localDatabaseNavController },
+        viewModelStoreOwner = viewModelStoreOwner,
+        deleteProduct = productsViewModel::deleteProduct,
+        setNewProduct = productsViewModel::setNewProduct,
+        changeCurrentProductByID = productsViewModel::changeCurrentProductByID,
+        insertProduct = productsViewModel::insertProduct,
+        updateProduct = productsViewModel::updateProduct
+    )
+}
+
+
+@Composable
+private fun LocalDatabaseScreenContent(
+    currentRoute: () -> String?,
+    currentProductName: () -> String,
+    onMenuButtonClick: () -> Unit,
+    localDatabaseNavController: () -> NavHostController,
+    viewModelStoreOwner: ViewModelStoreOwner,
+    deleteProduct: () -> Unit,
+    setNewProduct: () -> Unit,
+    changeCurrentProductByID: (Long) -> Unit,
+    insertProduct: () -> Unit,
+    updateProduct: () -> Unit
+) {
     Scaffold(
         topBar = {
             DefaultTopAppBar(
                 // If the current route is the EditProduct screen, display the name of the product,
                 // otherwise display the title of the screen
-                title = if (currentRoute == LocalDatabaseDestinations.EditProduct.screenRouteName) currentProductName
-                else stringResource(id = getNavigationDestinarionFromRoute(currentRoute).screenTitle),
+                title = if (currentRoute() == LocalDatabaseDestinations.EditProduct.screenRouteName) currentProductName()
+                else stringResource(id = getNavigationDestinarionFromRoute(currentRoute()).screenTitle),
                 onMenuButtonClick = onMenuButtonClick,
-                onBackButtonPressed = { localDatabaseNavController.popBackStack() },
-                isPrincipalScreen = currentRoute == LocalDatabaseDestinations.ProductsList.screenRouteName,
+                onBackButtonPressed = { localDatabaseNavController().popBackStack() },
+                isPrincipalScreen = currentRoute() == LocalDatabaseDestinations.ProductsList.screenRouteName,
                 // Show the delete action button icon only when the current route is the EditProduct screen
-                actionButtonIcon = if (currentRoute == LocalDatabaseDestinations.EditProduct.screenRouteName) Icons.Default.Delete else null,
+                actionButtonIcon = if (currentRoute() == LocalDatabaseDestinations.EditProduct.screenRouteName) Icons.Default.Delete else null,
                 onActionButtonClick = {
                     // Deletes the current product
-                    productsViewModel.deleteProduct()
+                    deleteProduct()
                     // Returns to the previous screen
-                    localDatabaseNavController.popBackStack()
+                    localDatabaseNavController().popBackStack()
                 },
-                actionButtonContentDescription = "Delete the product ${productsViewModel.currentProductName}"
+                actionButtonContentDescription = "Delete the product ${currentProductName()}"
             )
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = currentRoute == "productsList",
+                visible = currentRoute() == "productsList",
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
-                FloatingActionButton(onClick = {
-                    // Fully clears the current product
-                    productsViewModel.setNewProduct()
-                    localDatabaseNavController.navigate("addProduct")
-                }) {
+                FloatingActionButton(
+                    onClick = {
+                        // Fully clears the current product
+                        setNewProduct()
+                        localDatabaseNavController().navigate("addProduct")
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add new product"
@@ -87,45 +117,37 @@ fun LocalDatabaseScreen(
     ) { innerPadding ->
         // LocalDatabase screen NavHost
         LocalDatabaseNavHost(
-            navController = localDatabaseNavController,
-            viewModelStoreOwner = viewModelStoreOwner,
+            navController = { localDatabaseNavController() },
+            viewModelStoreOwner = { viewModelStoreOwner },
             navigateToProduct = { selectedProductId ->
                 // Changes the current product based in the ID
-                productsViewModel.changeCurrentProductByID(selectedProductId)
+                changeCurrentProductByID(selectedProductId)
                 // Navigates to the Add Product screen
-                localDatabaseNavController.navigate(
+                localDatabaseNavController().navigate(
                     route = LocalDatabaseDestinations.EditProduct.screenRouteName
                 )
             },
             onAddProductClick = {
                 // Insert a new product in the database
-                productsViewModel.insertProduct()
+                insertProduct()
                 // Returns to the previous screen
-                localDatabaseNavController.popBackStack()
+                localDatabaseNavController().popBackStack()
             },
             onUpdateProductClick = {
                 // Update the current product in the database
-                productsViewModel.updateProduct()
+                updateProduct()
                 // Returns to the previous screen
-                localDatabaseNavController.popBackStack()
+                localDatabaseNavController().popBackStack()
             },
-            modifier = Modifier.padding(innerPadding)
+            modifier = { Modifier.padding(innerPadding) }
         )
     }
 }
+
+
+
 
 private fun getNavigationDestinarionFromRoute(route: String?) =
     LocalDatabaseDestinations.entries.find {
         it.screenRouteName == route
     } ?: LocalDatabaseDestinations.ProductsList
-
-
-@Preview
-@Composable
-private fun LocalDatabaseExamplePreview() {
-    AppTheme {
-        LocalDatabaseScreen(
-            onMenuButtonClick = {}
-        )
-    }
-}

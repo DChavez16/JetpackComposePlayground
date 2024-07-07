@@ -61,6 +61,9 @@ fun DefaultTopAppBar(
     actionButtonContentDescription: String? = null,
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
+
+    // TODO Deffer read state
+
     CenterAlignedTopAppBar(
         title = {
             // Handles TopAppBar's title content animation

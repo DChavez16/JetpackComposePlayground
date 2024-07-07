@@ -36,15 +36,15 @@ internal enum class LocalDatabaseDestinations(
 // Local Database NavHost Composable function
 @Composable
 internal fun LocalDatabaseNavHost(
-    navController: NavHostController,
-    viewModelStoreOwner: ViewModelStoreOwner,
+    navController: () -> NavHostController,
+    viewModelStoreOwner: () -> ViewModelStoreOwner,
     navigateToProduct: (Long) -> Unit,
     onAddProductClick: () -> Unit,
     onUpdateProductClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: () -> Modifier = { Modifier }
 ) {
     NavHost(
-        navController = navController,
+        navController = navController(),
         startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName
     ) {
         // Products List destination
@@ -53,9 +53,9 @@ internal fun LocalDatabaseNavHost(
         ) {
             ProductListScreen(
                 navigateToProduct = navigateToProduct,
-                modifier = modifier,
+                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
-                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner)
+                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
         }
 
@@ -65,9 +65,9 @@ internal fun LocalDatabaseNavHost(
         ) {
             AddProductScreen(
                 onSaveProduct = onUpdateProductClick,
-                modifier = modifier,
+                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
-                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner)
+                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
         }
 
@@ -77,9 +77,9 @@ internal fun LocalDatabaseNavHost(
         ) {
             AddProductScreen(
                 onSaveProduct = onAddProductClick,
-                modifier = modifier,
+                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
-                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner)
+                productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
         }
     }
