@@ -59,12 +59,12 @@ fun LocalDatabaseScreen(
         localDatabaseNavHost = { innerPadding ->
             // LocalDatabase screen NavHost
             LocalDatabaseNavHost(
-                navController = { localDatabaseNavController },
+                navController = localDatabaseNavController,
                 viewModelStoreOwner = { viewModelStoreOwner },
                 navigateToProduct = { selectedProductId ->
                     // Changes the current product based in the ID
                     productsViewModel.changeCurrentProductByID(selectedProductId)
-                    // Navigates to the Add Product screen
+                    // Navigates to the Add Product screen in edit mode
                     localDatabaseNavController.navigate(LocalDatabaseDestinations.EditProduct.screenRouteName)
                 },
                 onAddProductClick = {

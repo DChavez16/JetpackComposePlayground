@@ -54,9 +54,6 @@ internal fun ProductListScreen(
     modifier: Modifier = Modifier,
     productsViewModel: ProductsViewModel = hiltViewModel()
 ) {
-
-    Log.i("ProductListScreen", "ProductListScreen created")
-
     // Products UI state obtained from the ViewModel
     val productsUiState by productsViewModel.productsUiState.collectAsState()
 

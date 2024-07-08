@@ -1,5 +1,6 @@
 package com.example.room.util
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -38,7 +39,7 @@ internal enum class LocalDatabaseDestinations(
 // Local Database NavHost Composable function
 @Composable
 internal fun LocalDatabaseNavHost(
-    navController: () -> NavHostController,
+    navController: NavHostController,
     viewModelStoreOwner: () -> ViewModelStoreOwner,
     navigateToProduct: (Long) -> Unit,
     onAddProductClick: () -> Unit,
@@ -46,7 +47,7 @@ internal fun LocalDatabaseNavHost(
     innerPadding: () -> PaddingValues
 ) {
     NavHost(
-        navController = navController(),
+        navController = navController,
         startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName,
         modifier = Modifier.padding(innerPadding())
     ) {
@@ -54,6 +55,9 @@ internal fun LocalDatabaseNavHost(
         composable(
             route = LocalDatabaseDestinations.ProductsList.screenRouteName
         ) {
+
+            Log.i("ProductListScreen", "ProductListScreen created")
+
             ProductListScreen(
                 navigateToProduct = navigateToProduct,
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
@@ -65,6 +69,9 @@ internal fun LocalDatabaseNavHost(
         composable(
             route = LocalDatabaseDestinations.EditProduct.screenRouteName
         ) {
+
+            Log.i("AddProductScreen", "Screen created in edit mode")
+
             AddProductScreen(
                 onSaveProduct = onUpdateProductClick,
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
@@ -76,6 +83,9 @@ internal fun LocalDatabaseNavHost(
         composable(
             route = LocalDatabaseDestinations.AddProduct.screenRouteName
         ) {
+
+            Log.i("AddProductScreen", "Screen created in add mode")
+
             AddProductScreen(
                 onSaveProduct = onAddProductClick,
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
