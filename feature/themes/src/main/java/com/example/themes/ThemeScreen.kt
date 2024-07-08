@@ -31,7 +31,7 @@ fun ThemeScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Themes",
+                title = { "Themes" },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}

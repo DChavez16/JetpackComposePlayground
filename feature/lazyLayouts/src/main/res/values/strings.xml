@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--- Lazy Layout Screen -->
+    <string name="lazy_layouts_title">Lazy Layouts</string>
     <string name="lazy_layouts_list_banner_1">Vertical and horizontal lists</string>
     <string name="lazy_layouts_lazy_row_title">LazyRow</string>
     <string name="lazy_layouts_lazy_row_description">A LazyRow is a horizontal scrolling list that only renders the elements that are visible.</string>

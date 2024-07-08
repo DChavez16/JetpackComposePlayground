@@ -62,10 +62,12 @@ fun DataPersistenceScreen(
     // Collect the color value as a Flow
     val color by dataPersistenceViewModel.colorFlow.collectAsState()
 
+    val topBarTitle = stringResource(R.string.data_persistence_screen_top_bar_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = stringResource(R.string.data_persistence_screen_top_bar_title),
+                title = { topBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}

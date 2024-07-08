@@ -14,6 +14,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,7 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
 
 
 /**
@@ -52,18 +53,15 @@ import com.example.ui.theme.AppTheme
  */
 @Composable
 fun DefaultTopAppBar(
-    title: String,
+    title: () -> String,
     onMenuButtonClick: () -> Unit,
     onBackButtonPressed: () -> Unit,
-    isPrincipalScreen: Boolean = true,
-    actionButtonIcon: ImageVector? = null,
+    isPrincipalScreen: () -> Boolean = { true },
+    actionButtonIcon: () -> ImageVector? = { null },
     onActionButtonClick: () -> Unit = {},
-    actionButtonContentDescription: String? = null,
+    actionButtonContentDescription: () -> String? = { null },
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
-
-    // TODO Deffer read state
-
     CenterAlignedTopAppBar(
         title = {
             // Handles TopAppBar's title content animation
@@ -96,7 +94,7 @@ fun DefaultTopAppBar(
             ActionIconButton(
                 icon = actionButtonIcon,
                 onClick = onActionButtonClick,
-                contentDescription = actionButtonContentDescription
+                contentDescription = actionButtonContentDescription()
             )
         },
         colors = TopAppBarColors(
@@ -115,7 +113,7 @@ fun DefaultTopAppBar(
 
 @Composable
 private fun TopAppBarTitle(
-    title: String
+    title: () -> String
 ) {
     // Changes the content based on the provided title, with an transition animation with each change
     AnimatedContent(
@@ -148,7 +146,7 @@ private fun TopAppBarTitle(
         label = "TopAppBar Title Animated Content"
     ) { topAppBarTitle ->
         Text(
-            text = topAppBarTitle,
+            text = topAppBarTitle(),
             style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             modifier = Modifier.semantics { testTag = "TopAppBarTitle" }
@@ -158,7 +156,7 @@ private fun TopAppBarTitle(
 
 @Composable
 private fun MenuIconButton(
-    isPrincipalScreen: Boolean,
+    isPrincipalScreen: () -> Boolean,
     onMenuButtonClick: () -> Unit
 ) {
     /*
@@ -167,7 +165,7 @@ private fun MenuIconButton(
      and slides from the left to the right while fading in when is being showed
      */
     AnimatedVisibility(
-        visible = isPrincipalScreen,
+        visible = isPrincipalScreen(),
         enter = slideInHorizontally(
             animationSpec = tween(
                 durationMillis = 500
@@ -196,7 +194,7 @@ private fun MenuIconButton(
 
 @Composable
 private fun BackIconButton(
-    isPrincipalScreen: Boolean,
+    isPrincipalScreen: () -> Boolean,
     onBackButtonClick: () -> Unit
 ) {
     /*
@@ -205,7 +203,7 @@ private fun BackIconButton(
      and slides from the left to the right while fading in when is being showed
      */
     AnimatedVisibility(
-        visible = !isPrincipalScreen,
+        visible = !isPrincipalScreen(),
         enter = slideInHorizontally(
             animationSpec = tween(
                 durationMillis = 500
@@ -234,7 +232,7 @@ private fun BackIconButton(
 
 @Composable
 private fun ActionIconButton(
-    icon: ImageVector? = null,
+    icon: () -> ImageVector? = { null },
     onClick: () -> Unit = {},
     contentDescription: String? = null
 ) {
@@ -244,7 +242,7 @@ private fun ActionIconButton(
      and slides from the right to the left while fading in when is being showed
      */
     AnimatedVisibility(
-        visible = icon != null,
+        visible = icon() != null,
         enter = slideInHorizontally(
             animationSpec = tween(
                 durationMillis = 500
@@ -259,10 +257,10 @@ private fun ActionIconButton(
         ) + fadeOut(),
         label = "Action Button Animated Visibility"
     ) {
-        if (icon != null) {
+        if (icon() != null) {
             IconButton(onClick = { onClick() }) {
                 Icon(
-                    imageVector = icon,
+                    imageVector = icon()!!,
                     contentDescription = contentDescription
                 )
             }
@@ -276,13 +274,15 @@ private fun ActionIconButton(
 @CompactSizeScreenThemePreview
 @Composable
 private fun DefaultTopAppBarOnPrincipalScreenPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         DefaultTopAppBar(
-            title = "Principal Screen Title",
+            title = { "Principal Screen Title" },
             onMenuButtonClick = {},
             onBackButtonPressed = {},
-            isPrincipalScreen = true,
-            actionButtonIcon = null,
+            isPrincipalScreen = { true },
+            actionButtonIcon = { null },
             onActionButtonClick = {}
         )
     }
@@ -291,13 +291,15 @@ private fun DefaultTopAppBarOnPrincipalScreenPreview() {
 @CompactSizeScreenThemePreview
 @Composable
 private fun DefaultTopAppBarOnSecondaryScreenPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         DefaultTopAppBar(
-            title = "Secondary Screen Title",
+            title = { "Secondary Screen Title" },
             onMenuButtonClick = {},
             onBackButtonPressed = {},
-            isPrincipalScreen = false,
-            actionButtonIcon = Icons.Default.Delete,
+            isPrincipalScreen = { false },
+            actionButtonIcon = { Icons.Default.Delete },
             onActionButtonClick = {}
         )
     }

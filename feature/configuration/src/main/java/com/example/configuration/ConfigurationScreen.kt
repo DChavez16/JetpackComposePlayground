@@ -38,13 +38,15 @@ fun ConfigurationScreen(
 
     val isDynamicTheme by configurationViewModel.dynamicThemeFlow.collectAsState()
 
+    val topAppBarTitle = stringResource(R.string.configuration_screen_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = stringResource(R.string.configuration_screen_title),
+                title = { topAppBarTitle },
                 onMenuButtonClick = {},
                 onBackButtonPressed = onBackButtonClick,
-                isPrincipalScreen = false
+                isPrincipalScreen = { false }
             )
         }
     ) { innerPadding ->

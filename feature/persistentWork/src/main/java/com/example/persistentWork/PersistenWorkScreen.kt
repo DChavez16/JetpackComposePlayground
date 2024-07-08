@@ -33,7 +33,7 @@ fun PersistentWorkScreen(
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Persistent Work",
+                title = { "Persistent Work" },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {})

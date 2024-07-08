@@ -1,5 +1,6 @@
 package com.example.room.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +55,8 @@ internal fun ProductListScreen(
     productsViewModel: ProductsViewModel = hiltViewModel()
 ) {
 
+    Log.i("ProductListScreen", "ProductListScreen created")
+
     // Products UI state obtained from the ViewModel
     val productsUiState by productsViewModel.productsUiState.collectAsState()
 
@@ -106,6 +109,9 @@ private fun ProductListScreenContent(
 private fun ProductsListLoadingScreen(
     modifier: Modifier = Modifier
 ) {
+
+    Log.i("ProductListScreen", "Loading products screen showed")
+
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,6 +130,9 @@ private fun ProductsListErrorScreen(
     errorMessage: () -> String,
     modifier: Modifier = Modifier
 ) {
+
+    Log.i("ProductListScreen", "Error products screen showed")
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxSize()
@@ -155,6 +164,9 @@ private fun ProductsListSuccessScreen(
     modifier: Modifier = Modifier
 ) {
     if (productsList().isEmpty()) {
+
+        Log.i("ProductListScreen", "Success products screen showed with empty list")
+
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier.fillMaxSize()
@@ -167,6 +179,9 @@ private fun ProductsListSuccessScreen(
             )
         }
     } else {
+
+        Log.i("ProductListScreen", "Success products screen showed with filled list")
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(12.dp),

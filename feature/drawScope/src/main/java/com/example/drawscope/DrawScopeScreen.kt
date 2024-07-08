@@ -47,10 +47,13 @@ import com.example.ui.ui.HorizontalListBanner
 fun DrawScopeScreen(
     onMenuButtonClick: () -> Unit,
 ) {
+
+    val topAppBarTitle = stringResource(R.string.draw_scope_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = stringResource(R.string.draw_scope_title),
+                title = { topAppBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}

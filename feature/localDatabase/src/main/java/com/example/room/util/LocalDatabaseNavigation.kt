@@ -1,6 +1,8 @@
 package com.example.room.util
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,11 +43,12 @@ internal fun LocalDatabaseNavHost(
     navigateToProduct: (Long) -> Unit,
     onAddProductClick: () -> Unit,
     onUpdateProductClick: () -> Unit,
-    modifier: () -> Modifier = { Modifier }
+    innerPadding: () -> PaddingValues
 ) {
     NavHost(
         navController = navController(),
-        startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName
+        startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName,
+        modifier = Modifier.padding(innerPadding())
     ) {
         // Products List destination
         composable(
@@ -53,7 +56,6 @@ internal fun LocalDatabaseNavHost(
         ) {
             ProductListScreen(
                 navigateToProduct = navigateToProduct,
-                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
                 productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
@@ -65,7 +67,6 @@ internal fun LocalDatabaseNavHost(
         ) {
             AddProductScreen(
                 onSaveProduct = onUpdateProductClick,
-                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
                 productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
@@ -77,7 +78,6 @@ internal fun LocalDatabaseNavHost(
         ) {
             AddProductScreen(
                 onSaveProduct = onAddProductClick,
-                modifier = modifier(),
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
                 productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )

@@ -36,10 +36,13 @@ import com.example.ui.ui.HorizontalListBanner
 fun AnimationScreen(
     onMenuButtonClick: () -> Unit
 ) {
+
+    val topAppBarTitle = stringResource(R.string.animations_screen_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = stringResource(R.string.animations_screen_title),
+                title = { topAppBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}

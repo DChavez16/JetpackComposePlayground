@@ -1,5 +1,6 @@
 package com.example.room
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Product
@@ -49,12 +50,15 @@ class ProductsViewModel @Inject constructor(
         viewModelScope.launch {
             productRepository.getProductsFlow()
                 .onStart {
+                    Log.i("LocalDatabaseViewModel", "Collecting products from local database")
                     _productsUiState.value = ProductsUiState.Loading
                 }
                 .catch { error ->
+                    Log.e("LocalDatabaseViewModel", "Error collecting products: ${error.message}")
                     _productsUiState.value = ProductsUiState.Error(error.message.toString())
                 }
                 .collect { products ->
+                    Log.i("LocalDatabaseViewModel", "Products collected succesfully")
                     _productsUiState.value = ProductsUiState.Success(products)
                 }
         }

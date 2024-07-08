@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
 package com.example.lazylayouts
 
@@ -37,10 +37,13 @@ import com.example.ui.ui.HorizontalListBanner
 fun LazyLayoutScreen(
     onMenuButtonClick: () -> Unit,
 ) {
+
+    val topAppBarTitle = stringResource(R.string.lazy_layouts_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Lazy Layouts",
+                title = { topAppBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {  }
