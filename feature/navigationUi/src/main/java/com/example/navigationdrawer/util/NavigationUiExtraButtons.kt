@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,16 +26,16 @@ import com.example.navigationdrawer.R
 
 @Composable
 internal fun NavigationUiExtraButtons(
-    isDarkTheme: Boolean,
-    enableConfigurationButton: Boolean,
+    isDarkTheme: () -> Boolean,
+    enableConfigurationButton: () -> Boolean,
     onConfigurationButtonClick: () -> Unit,
     onThemeButtonClick: (Boolean) -> Unit,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    windowSizeClass: () -> WindowSizeClass
 ) {
 
     // If the Window Width Class is Medium, arrange the buttons vertically
     // Else, arrange the buttons horizontally
-    if(windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {
+    if(windowSizeClass().windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,7 +80,7 @@ internal fun NavigationUiExtraButtons(
 
 @Composable
 private fun ConfigurationExtraButton(
-    enableConfigurationButton: Boolean,
+    enableConfigurationButton: () -> Boolean,
     onConfigurationButtonClick: () -> Unit
 ) {
     // Configuration button
@@ -90,7 +89,7 @@ private fun ConfigurationExtraButton(
             onConfigurationButtonClick()
         },
         // Disable when the current destination is the configuration screen
-        enabled = enableConfigurationButton,
+        enabled = enableConfigurationButton(),
         modifier = Modifier.semantics(
             mergeDescendants = true
         ) {
@@ -102,7 +101,7 @@ private fun ConfigurationExtraButton(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.alpha(
-                if (enableConfigurationButton) 1f else 0.5f
+                if (enableConfigurationButton()) 1f else 0.5f
             )
         )
     }
@@ -111,15 +110,15 @@ private fun ConfigurationExtraButton(
 
 @Composable
 private fun ThemeExtraButton(
-    isDarkTheme: Boolean,
+    isDarkTheme: () -> Boolean,
     onThemeButtonClick: (Boolean) -> Unit
 ) {
-    val iconContentDescription = "Change to ${if (isDarkTheme) "light" else "dark"} theme"
+    val iconContentDescription = "Change to ${if (isDarkTheme()) "light" else "dark"} theme"
 
     // Theme button
     IconButton(
         onClick = {
-            onThemeButtonClick(!isDarkTheme)
+            onThemeButtonClick(!isDarkTheme())
         },
         modifier = Modifier.semantics(
             mergeDescendants = true
@@ -130,7 +129,7 @@ private fun ThemeExtraButton(
     ) {
         Icon(
             painter = painterResource(
-                id = if (isDarkTheme) R.drawable.night_mode
+                id = if (isDarkTheme()) R.drawable.night_mode
                 else R.drawable.light_mode
             ),
             contentDescription = null,

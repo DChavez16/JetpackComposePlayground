@@ -28,10 +28,9 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
-    // TODO Change the aproach when calling screens, where the screen called dont direclty contain the content, but references to it as state less composables, change ui testing with this new approach
+    // TODO Change the aproach when calling screens, where the screen called dont direclty contain the content, but references to it as stateless composables, change ui testing with this new approach
     // TODO Finish convention plugins documentation
-    // TODO Improve accesibility (Talkback) and performance for all screens
-    // TODO Implement Retrofit using a test API
+    // TODO Implement Retrofit using a test API created with Ktor (A local volatile server)
 
     // Defines a coroutine scope
     val scope = rememberCoroutineScope()
@@ -60,7 +59,7 @@ fun ComposePlaygroundApp(
                 drawerContent = {
                     CustomNavigationDrawer(
                         // Returns a RootNavigationDestination that matches with the rootNavBackStackEntry's route
-                        currentSelectedItem = getNavigationDestinationFromRoute(currentRoute),
+                        currentSelectedItem = { getNavigationDestinationFromRoute(currentRoute) },
                         onDrawerItemClick = { selectedDestination ->
                             // Changes the current destination when an item is clicked, navigates to that
                             // destination and closes the drawer
@@ -115,7 +114,7 @@ fun ComposePlaygroundApp(
             Row {
                 // Navigation Rail
                 CustomNavigationRail(
-                    currentSelectedItem = getNavigationDestinationFromRoute(currentRoute),
+                    currentSelectedItem = { getNavigationDestinationFromRoute(currentRoute) },
                     onRailItemClick = { selectedDestination ->
                         // Changes the current destination when an item is clicked, navigates to that
                         // destination and closes the drawer
@@ -169,8 +168,8 @@ fun ComposePlaygroundApp(
                 drawerContent = {
                     CustomNavigationDrawer(
                         // Returns a RootNavigationDestination that matches with the rootNavBackStackEntry's route
-                        currentSelectedItem = getNavigationDestinationFromRoute(currentRoute),
-                        isWidthScreenExpanded = true,
+                        currentSelectedItem = { getNavigationDestinationFromRoute(currentRoute) },
+                        isWidthScreenExpanded = { true },
                         onDrawerItemClick = { selectedDestination ->
                             // Changes the current destination when an item is clicked, navigates to that
                             // destination and closes the drawer
