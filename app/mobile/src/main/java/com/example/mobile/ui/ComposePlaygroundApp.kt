@@ -28,7 +28,6 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
-    // TODO Change the aproach when calling screens, where the screen called dont direclty contain the content, but references to it as stateless composables, change ui testing with this new approach
     // TODO Finish convention plugins documentation
     // TODO Implement Retrofit using a test API created with Ktor (A local volatile server)
 
@@ -169,7 +168,6 @@ fun ComposePlaygroundApp(
                     CustomNavigationDrawer(
                         // Returns a RootNavigationDestination that matches with the rootNavBackStackEntry's route
                         currentSelectedItem = { getNavigationDestinationFromRoute(currentRoute) },
-                        isWidthScreenExpanded = { true },
                         onDrawerItemClick = { selectedDestination ->
                             // Changes the current destination when an item is clicked, navigates to that
                             // destination and closes the drawer
@@ -223,12 +221,3 @@ private fun getNavigationDestinationFromRoute(route: String?) =
     RootNavigationDestination.entries.find {
         it.itemRouteName == route
     } ?: RootNavigationDestination.LazyLayouts
-
-
-@CompactSizeScreenThemePreview
-@Composable
-private fun ComposePlaygroundAppPreview() {
-    AppTheme {
-        ComposePlaygroundApp()
-    }
-}
