@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="persistent_work_title">Persistent Work</string>
+    <string name="persistent_work_show_notification_button_text">Show notification</string>
+    <string name="persistent_work_cancel_notification_button_text">Cancel notification</string>
+</resources>

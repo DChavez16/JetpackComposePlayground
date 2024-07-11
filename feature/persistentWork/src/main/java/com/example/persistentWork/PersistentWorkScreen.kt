@@ -1,5 +1,6 @@
 package com.example.persistentWork
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -15,12 +16,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.DefaultTopAppBar
+import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 
 
 @Composable
@@ -28,21 +30,42 @@ fun PersistentWorkScreen(
     onMenuButtonClick: () -> Unit,
     persistentWorkViewModel: PersistentWorkViewModel = hiltViewModel()
 ) {
+
     val isWorkRunning by persistentWorkViewModel.isWorkRunning.collectAsState()
+
+    PersistentWorkScreenContent(
+        isWorkRunning = { isWorkRunning },
+        onMenuButtonClick = onMenuButtonClick,
+        showNotification = persistentWorkViewModel::showNotification,
+        cancelNotification = persistentWorkViewModel::cancelNotification
+    )
+}
+
+
+@Composable
+private fun PersistentWorkScreenContent(
+    isWorkRunning: () -> Boolean,
+    onMenuButtonClick: () -> Unit,
+    showNotification: () -> Unit,
+    cancelNotification: () -> Unit
+) {
+
+    val topAppBarTitle = stringResource(R.string.persistent_work_title)
 
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = { "Persistent Work" },
+                title = { topAppBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
-                onBackButtonPressed = {})
+                onBackButtonPressed = {}
+            )
         }
     ) { innerPadding ->
         NotificationActions(
-            showNotification = persistentWorkViewModel::showNotification,
-            cancelNotification = persistentWorkViewModel::cancelNotification,
             isWorkRunning = isWorkRunning,
+            showNotification = showNotification,
+            cancelNotification = cancelNotification,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -51,9 +74,9 @@ fun PersistentWorkScreen(
 
 @Composable
 private fun NotificationActions(
+    isWorkRunning: () -> Boolean,
     showNotification: () -> Unit,
     cancelNotification: () -> Unit,
-    isWorkRunning: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -68,35 +91,42 @@ private fun NotificationActions(
             // Start notification button
             Button(
                 onClick = { showNotification() },
-                enabled = !isWorkRunning,
+                enabled = !isWorkRunning(),
                 modifier = Modifier.semantics {
                     testTag = "ShowNotificationButton"
                 }
             ) {
-                Text(text = "Show Notification")
+                Text(text = stringResource(R.string.persistent_work_show_notification_button_text))
             }
 
             // Cancel notification button
             OutlinedButton(
                 onClick = { cancelNotification() },
-                enabled = isWorkRunning,
+                enabled = isWorkRunning(),
                 modifier = Modifier.semantics {
                     testTag = "CancelNotificationButton"
                 }
             ) {
-                Text(text = "Cancel Notification")
+                Text(text = stringResource(R.string.persistent_work_cancel_notification_button_text))
             }
         }
     }
 }
 
 
+
+
 @CompactSizeScreenThemePreview
 @Composable
-private fun WorkManagerExamplePreview() {
-    AppTheme {
-        PersistentWorkScreen(
-            onMenuButtonClick = {}
+private fun PersistentWorkScreenContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        PersistentWorkScreenContent(
+            isWorkRunning = { false },
+            onMenuButtonClick = {},
+            showNotification = {},
+            cancelNotification = {}
         )
     }
 }

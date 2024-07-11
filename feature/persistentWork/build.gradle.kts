@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.workmanager"
+    namespace = "com.example.persistentWork"
 }
 
 dependencies {
