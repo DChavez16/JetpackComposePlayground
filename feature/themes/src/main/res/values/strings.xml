@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_title">Themes</string>
+    <string name="theme_surface_title">Surface</string>
+    <string name="theme_surface_description">Composables that represent layouts (Row, Column, LazyRow, LazyColumn, etc.) can be assigned a color as part of the background parameter of the Layout\'s Modifier parameter.\nThis example shows a Row of 5 numbers with a ColorScheme surfaceVariant applied as a background</string>
+    <string name="theme_fab_title">FloatingActionButton</string>
+    <string name="theme_fab_description">FloatingActionButtons are assigned a color scheme through their parameters containerColor (for the button element that represents the container) and contentColor (for elements inside the container such as icons or text). As for colors, the colorScheme primary or primaryContainer is applied to SmallFAB and ExtendedFAB, secondary or secondaryContainer is applied to FAB and tertiary or tertiaryContainer is applied to LargeFAB</string>
+    <string name="theme_card_title">Card</string>
+    <string name="theme_card_description">Cards are assigned a color scheme through their colors parameter, which receives information of type cardColors, in which the Color container and contentColor of the component can be defined.</string>
+
+
+    <!-- FAB Screen -->
+    <string name="theme_fab_extended_fab_label">Add</string>
+
+    <!-- Card Screen -->
+    <string name="theme_card_example_title">Example title</string>
+    <string name="theme_card_example_body">Example body</string>
+</resources>

@@ -1,6 +1,7 @@
 package com.example.themes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +11,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.themes.ui.CardExample
 import com.example.themes.ui.FABExample
 import com.example.themes.ui.SurfaceExample
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExampleComponent
-import com.example.ui.ui.CompactSizeScreenThemePreview
 
 /**
  * This example displays some components with a ColorScheme set, as the visualization of a DynamicTheme
@@ -28,10 +30,13 @@ import com.example.ui.ui.CompactSizeScreenThemePreview
 fun ThemeScreen(
     onMenuButtonClick: () -> Unit
 ) {
+
+    val topAppBarTitle = stringResource(R.string.theme_title)
+
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = { "Themes" },
+                title = { topAppBarTitle },
                 onMenuButtonClick = onMenuButtonClick,
                 // Empty since no seconday screen is used
                 onBackButtonPressed = {}
@@ -64,8 +69,8 @@ private fun ThemesList(
         // Surface and layouts example
         item {
             ExampleComponent(
-                title = "Surface",
-                description = "A los Composable que representan layouts (Row, Column, LazyRow, LazyColumn, etc.) se les puede asignar un color como parte del parametro background del parametro Modifier del Layout.\nEn este ejemplo se muestra un Row de 5 numeros con un ColorScheme surfaceVariant aplicado como background",
+                title = stringResource(R.string.theme_surface_title),
+                description = stringResource(R.string.theme_surface_description),
                 content = { SurfaceExample() }
             )
         }
@@ -73,8 +78,8 @@ private fun ThemesList(
         // FloatingActionButton example
         item {
             ExampleComponent(
-                title = "FloatingActionButton",
-                description = "A los FloatingActionButton se les asigna un esquema de color por medio de sus parametros containerColor (Para el elemento del boton que representa el contenedor) y contentColor(Para los elementos dentro del contenedor como iconos o texto). En cuanto a colores se aplica el colorScheme primary o primaryContainer a SmallFAB y ExtendedFAB, se aplica secondary o secondaryContainer a FAB y tertiary o tertiaryContainer a LargeFAB",
+                title = stringResource(R.string.theme_fab_title),
+                description = stringResource(R.string.theme_fab_description),
                 content = { FABExample() }
             )
         }
@@ -82,8 +87,8 @@ private fun ThemesList(
         // Card example
         item {
             ExampleComponent(
-                title = "Card",
-                description = "A las Card se les asigna un esquema de color por medio de su parametro colors, el cual recibe informacion de tipo cardColors, en el que se puede definir el container Color y contentColor del componente.",
+                title = stringResource(R.string.theme_card_title),
+                description = stringResource(R.string.theme_card_description),
                 content = { CardExample() }
             )
         }
@@ -92,10 +97,13 @@ private fun ThemesList(
 
 
 
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun AppThemeExamplePreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         ThemeScreen(
             onMenuButtonClick = {}
         )
