@@ -17,8 +17,6 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.mobile.util.RootNavHost
 import com.example.navigationdrawer.CustomNavigationDrawer
 import com.example.navigationdrawer.CustomNavigationRail
-import com.example.ui.theme.AppTheme
-import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.example.util.RootNavigationDestination
 import kotlinx.coroutines.launch
 
@@ -28,7 +26,6 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
-    // TODO Finish convention plugins documentation
     // TODO Implement Retrofit using a test API created with Ktor (A local volatile server)
 
     // Defines a coroutine scope

@@ -1,7 +1,6 @@
 
 import com.android.build.api.dsl.LibraryExtension
 import com.example.apps.configureAndroid
-import com.example.apps.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

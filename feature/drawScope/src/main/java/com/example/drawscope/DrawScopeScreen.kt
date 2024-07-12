@@ -316,7 +316,6 @@ private fun DrawScopesList(
             )
         }
 
-        // TODO Improve performance (less recompositions)
         // withTransform (multiple transformations) example
         item {
             ExampleComponent(
