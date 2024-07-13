@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.retrofit"
+    namespace = "com.example.remotedatabase"
 }
 
 dependencies {

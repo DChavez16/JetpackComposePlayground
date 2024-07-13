@@ -38,6 +38,7 @@
             <option value="$PROJECT_DIR$/core/util" />
             <option value="$PROJECT_DIR$/core/workManager" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/data/notes" />
             <option value="$PROJECT_DIR$/data/notification" />
             <option value="$PROJECT_DIR$/data/preferences" />
             <option value="$PROJECT_DIR$/data/product" />
