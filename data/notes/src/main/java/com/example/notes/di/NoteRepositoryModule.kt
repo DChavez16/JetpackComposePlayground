@@ -1,8 +1,12 @@
 package com.example.notes.di
 
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 
-// @Module
-// @InstallIn(ViewModelComponent::class)
+
+@Module
+ @InstallIn(ViewModelComponent::class)
 abstract class NoteRepositoryModule {
 
     /**

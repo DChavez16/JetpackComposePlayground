@@ -1,6 +1,10 @@
 plugins {
     // Android Library
     alias(libs.plugins.playground.android.library)
+    // Retrofit
+    // TODO Implement Retrofit convention plugin
+    // Hilt
+    alias(libs.plugins.playground.hilt)
 }
 
 android {
@@ -8,5 +12,6 @@ android {
 }
 
 dependencies {
-
+    // Dependencies
+    implementation(projects.core.model)
 }
