@@ -5,8 +5,9 @@ interface NoteRepository {
     // TODO Add interface methods
 }
 
+
 class RemoteNoteRepository(
     // TODO Add NoteApiService
-): NoteRepository {
+) : NoteRepository {
     // TODO Implement interface methods
 }

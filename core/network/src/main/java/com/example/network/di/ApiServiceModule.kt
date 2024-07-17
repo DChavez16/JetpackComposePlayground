@@ -18,4 +18,9 @@ object ApiServiceModule {
      * Provides a retrofitService instance as a NoteApiService
      */
     // TODO Provide a retrofitService instance as a NoteApiService
+
+    /**
+     * Provides a retrofitService instance as a UserTagApiService
+     */
+    // TODO Provide a retrofitService instance as a UserTagApiService
 }

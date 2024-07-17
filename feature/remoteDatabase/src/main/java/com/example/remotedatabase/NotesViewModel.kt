@@ -8,6 +8,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     // TODO Add NoteRepository
+    // TODO Add UserTagRepository
 ): ViewModel() {
 
 }
