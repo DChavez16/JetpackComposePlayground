@@ -58,5 +58,10 @@ gradlePlugin {
             id = "playground.room"
             implementationClass = "RoomConventionPlugin"
         }
+        // Retrofit Convention Plugin
+        register("retrofit") {
+            id = "playground.retrofit"
+            implementationClass = "RetrofitConventionPlugin"
+        }
     }
 }

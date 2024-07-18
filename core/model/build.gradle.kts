@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.playground.hilt)
     // Room
     alias(libs.plugins.playground.room)
+    // Serialization
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -12,5 +14,6 @@ android {
 }
 
 dependencies {
-
+    // Dependencies
+    implementation(libs.kotlinx.serialization.json)
 }

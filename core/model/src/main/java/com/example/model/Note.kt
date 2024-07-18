@@ -1,10 +1,15 @@
 package com.example.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class Note(
     val id: Long = -1,
     val title: String = "",
     val body: String = "",
-    val userTags: List<UserTag> = emptyList()
+    @SerialName("user_tags") val userTags: List<UserTag> = emptyList()
 )
 
 

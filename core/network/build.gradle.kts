@@ -2,7 +2,7 @@ plugins {
     // Android Library
     alias(libs.plugins.playground.android.library)
     // Retrofit
-    // TODO Implement Retrofit convention plugin
+    alias(libs.plugins.playground.retrofit)
     // Hilt
     alias(libs.plugins.playground.hilt)
 }

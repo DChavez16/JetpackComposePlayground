@@ -1,8 +1,13 @@
 package com.example.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class UserTag(
     val id: Long = -1,
-    val tagText: String = ""
+    @SerialName("tag_text") val tagText: String = ""
 )
 
 

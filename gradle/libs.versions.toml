@@ -6,14 +6,14 @@ kotlin = "1.9.22"
 # Core
 coreKtx = "1.13.1"
 # Lifecycle
-lifecycle = "2.8.2"
+lifecycle = "2.8.3"
 # Compose & UI
 composeBom = "2024.06.00"
 activityCompose = "1.9.0"
 composeCompiler = "1.5.8"
 compose = "1.6.8"
 material = "1.2.1"
-materialAdaptative = "1.0.0-beta03"
+materialAdaptative = "1.0.0-beta04"
 # Navigation
 navigationCompose = "2.7.7"
 # KSP
@@ -23,6 +23,14 @@ hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 # Room
 room = "2.6.1"
+# Retrofit
+retrofit = "2.9.0"
+kotlinSerializationConverter = "1.0.0"
+okhttp = "4.11.0"
+# Serialization
+serialization = "2.0.0"
+# Kotlin serialization
+kotlinSerialization = "1.5.1"
 # Datastore
 dataStore = "1.1.1"
 # WorkManager
@@ -34,7 +42,7 @@ coroutines = "1.8.0"
 # Unit Test
 junitTest = "4.13.2"
 # Implementatnion Test
-androidXTest = "1.5.2"
+androidXTest = "1.6.1"
 junit = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
@@ -81,6 +89,12 @@ room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref 
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+# Retrofit
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlinSerializationConverter" }
+okhttp = { module = "com.sqareup.okhttp3:okhttp", version.ref = "okhttp" }
+# Kotlin Serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 # Datastore
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore" }
 # WorkManager
@@ -117,6 +131,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 # Room
 room = { id = "androidx.room", version.ref = "room" }
+# Serialization
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
 
 # Project plugins
 playground-android-application = { id = "playground.android.application", version = "unspecified" }
@@ -126,6 +142,7 @@ playground-hilt = { id = "playground.hilt", version = "unspecified" }
 playground-application-compose = { id = "playground.application.compose", version = "unspecified" }
 playground-library-compose = { id = "playground.library.compose", version = "unspecified" }
 playground-room = { id = "playground.room", version = "unspecified" }
+playground-retrofit = { id = "playground.retrofit", version = "unspecified" }
 
 
 
@@ -149,6 +166,11 @@ compose = [
 room = [
     "room-ktx",
     "room-runtime"
+]
+retrofit = [
+    "retrofit",
+    "retrofit-kotlinx-serialization-converter",
+    "okhttp"
 ]
 colorPicker = [
     "compose-color-picker",
