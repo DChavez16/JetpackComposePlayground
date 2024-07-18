@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.playground.retrofit)
     // Hilt
     alias(libs.plugins.playground.hilt)
+    // Serialization
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -14,4 +16,5 @@ android {
 dependencies {
     // Dependencies
     implementation(projects.core.model)
+    implementation(libs.kotlinx.serialization.json)
 }

@@ -1,8 +1,15 @@
 package com.example.network.di
 
+import com.example.network.api.NoteApiService
+import com.example.network.api.UserTagApiService
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Retrofit
 
 
 @Module
@@ -12,15 +19,30 @@ object ApiServiceModule {
     /**
      * Provides a Retrofit object
      */
-    // TODO Provide a Retrofit object
+    @Provides
+    fun providesRetrofit(): Retrofit {
+        // Base URL to be used by retrofit
+        val baseUrl = "192.168.0.16:8080/"
+
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .build()
+    }
 
     /**
      * Provides a retrofitService instance as a NoteApiService
      */
-    // TODO Provide a retrofitService instance as a NoteApiService
+    @Provides
+    fun providesNoteApiService(
+        retrofit: Retrofit
+    ): NoteApiService = retrofit.create(NoteApiService::class.java)
 
     /**
      * Provides a retrofitService instance as a UserTagApiService
      */
-    // TODO Provide a retrofitService instance as a UserTagApiService
+    @Provides
+    fun provideUserTagApiService(
+        retrofit: Retrofit
+    ): UserTagApiService = retrofit.create(UserTagApiService::class.java)
 }
