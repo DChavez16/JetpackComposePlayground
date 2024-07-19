@@ -1,7 +1,6 @@
 package com.example.network.api
 
 import com.example.model.MessageResponse
-import com.example.model.Note
 import com.example.model.UserTag
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -35,16 +34,6 @@ interface UserTagApiService {
     @GET("tags")
     fun getUserTags(): Flow<List<UserTag>>
 
-    /**
-     * Read the notes of the [UserTag]
-     * @param userTagId Id from the [UserTag] to get the notes
-     * @return List of [Note] related to the [UserTag], the list can be empty
-     */
-    @GET("tags/{id}/notes")
-    fun getUserTagNotes(
-        @Path("id") userTagId: Long
-    ): List<Note>
-
 
     /**
      * Update given user tag
@@ -52,7 +41,7 @@ interface UserTagApiService {
      * @return [MessageResponse] containg the operation results
      */
     @PUT("tags")
-    fun deleteUserTag(
+    fun updateUserTag(
         @Body userTag: UserTag
     ): MessageResponse
 
