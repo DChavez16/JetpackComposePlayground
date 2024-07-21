@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.feature.drawScope)
     implementation(projects.feature.themes)
     implementation(projects.feature.localDatabase)
+    implementation(projects.feature.remoteDatabase)
     implementation(projects.feature.dataPersistence)
     implementation(projects.feature.persistentWork)
 

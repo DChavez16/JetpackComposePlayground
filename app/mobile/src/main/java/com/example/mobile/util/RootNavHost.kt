@@ -10,6 +10,7 @@ import com.example.datapersistence.DataPersistenceScreen
 import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen
 import com.example.persistentWork.PersistentWorkScreen
+import com.example.remotedatabase.NotesScreen
 import com.example.room.LocalDatabaseScreen
 import com.example.themes.ThemeScreen
 import com.example.util.RootNavigationDestination
@@ -67,6 +68,15 @@ internal fun RootNavHost(
             route = RootNavigationDestination.LocalDatabase.itemRouteName
         ) {
             LocalDatabaseScreen(
+                onMenuButtonClick = onMenuButtonClick
+            )
+        }
+
+        // Remote database destination
+        composable(
+            route = RootNavigationDestination.RemoteDatabase.itemRouteName
+        ) {
+            NotesScreen(
                 onMenuButtonClick = onMenuButtonClick
             )
         }
