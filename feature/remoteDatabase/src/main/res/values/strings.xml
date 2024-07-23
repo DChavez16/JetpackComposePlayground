@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Remote Database Screen -->
+    <string name="remote_database_notes_list_screen_title">Notes</string>
+    <string name="remote_database_add_note_screen_title">New Note</string>
+    <string name="remote_database_edit_note_screen_title">Edit Note</string>
+</resources>
