@@ -1,6 +1,15 @@
 package com.example.remotedatabase.util
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.remotedatabase.R
 
 
@@ -21,4 +30,21 @@ internal enum class RemoteDatabaseDestinations(
         screenTitle = R.string.remote_database_edit_note_screen_title,
         screenRouteName = ""
     )
+}
+
+
+// Remote database NavHost Composable function
+@Composable
+internal fun RemoteDatabaseNavHost(
+    navController: NavHostController,
+    viewModelStoreOwner: () -> ViewModelStoreOwner,
+    innerPadding: () -> PaddingValues
+) {
+    NavHost(
+        navController = navController,
+        startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
+        modifier = Modifier.padding(innerPadding())
+    ) {
+
+    }
 }
