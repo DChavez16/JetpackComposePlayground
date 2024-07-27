@@ -1,5 +1,6 @@
 package com.example.remotedatabase.util
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.remotedatabase.R
+import com.example.remotedatabase.ui.NotesList
 
 
 // Remote database destination enum class
@@ -45,6 +47,14 @@ internal fun RemoteDatabaseNavHost(
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
         modifier = Modifier.padding(innerPadding())
     ) {
+        // Notes List destination
+        composable(
+            route = RemoteDatabaseDestinations.NotesList.screenRouteName
+        ) {
+            Log.i("NotesListScreen", "NotesListScreen created")
 
+            // TODO Change the name of the screens to add screen
+            NotesList()
+        }
     }
 }
