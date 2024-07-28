@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.remotedatabase.R
+import com.example.remotedatabase.ui.NotesDetail
 import com.example.remotedatabase.ui.NotesList
 
 
@@ -22,15 +22,15 @@ internal enum class RemoteDatabaseDestinations(
 ) {
     NotesList(
         screenTitle = R.string.remote_database_notes_list_screen_title,
-        screenRouteName = ""
+        screenRouteName = "notesList"
     ),
-    AddNote(
-        screenTitle = R.string.remote_database_add_note_screen_title,
-        screenRouteName = ""
+    NewNote(
+        screenTitle = R.string.remote_database_new_note_screen_title,
+        screenRouteName = "newNote"
     ),
     EditNote(
         screenTitle = R.string.remote_database_edit_note_screen_title,
-        screenRouteName = ""
+        screenRouteName = "editNote"
     )
 }
 
@@ -55,6 +55,15 @@ internal fun RemoteDatabaseNavHost(
 
             // TODO Change the name of the screens to add screen
             NotesList()
+        }
+
+        // New Note destination
+        composable(
+            route = RemoteDatabaseDestinations.NewNote.screenRouteName
+        ) {
+            Log.i("NoteDetalScreen", "NoteDetalScreen as 'new note' variant created")
+
+            NotesDetail()
         }
     }
 }
