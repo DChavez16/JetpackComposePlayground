@@ -11,8 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.remotedatabase.R
-import com.example.remotedatabase.ui.NotesDetail
-import com.example.remotedatabase.ui.NotesList
+import com.example.remotedatabase.ui.NotesDetailScreen
+import com.example.remotedatabase.ui.NotesListScreen
 
 
 // Remote database destination enum class
@@ -54,7 +54,7 @@ internal fun RemoteDatabaseNavHost(
             Log.i("NotesListScreen", "NotesListScreen created")
 
             // TODO Change the name of the screens to add screen
-            NotesList()
+            NotesListScreen()
         }
 
         // New Note destination
@@ -63,7 +63,7 @@ internal fun RemoteDatabaseNavHost(
         ) {
             Log.i("NoteDetalScreen", "NoteDetalScreen as 'new note' variant created")
 
-            NotesDetail()
+            NotesDetailScreen()
         }
     }
 }

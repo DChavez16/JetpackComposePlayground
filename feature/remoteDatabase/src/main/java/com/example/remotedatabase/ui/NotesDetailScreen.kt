@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 
 
 @Composable
-internal fun NotesList(
+internal fun NotesDetailScreen(
 
 ) {
 
