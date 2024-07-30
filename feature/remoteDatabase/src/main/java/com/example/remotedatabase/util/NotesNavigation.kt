@@ -61,7 +61,16 @@ internal fun RemoteDatabaseNavHost(
         composable(
             route = RemoteDatabaseDestinations.NewNote.screenRouteName
         ) {
-            Log.i("NoteDetalScreen", "NoteDetalScreen as 'new note' variant created")
+            Log.i("NoteDetailScreen", "NoteDetalScreen as 'new note' variant created")
+
+            NotesDetailScreen()
+        }
+
+        // Edit Note destination
+        composable(
+            route = RemoteDatabaseDestinations.EditNote.screenRouteName
+        ) {
+            Log.i("NoteDetailScreen", "NoteDetalScreen as 'edit note' variant created")
 
             NotesDetailScreen()
         }
