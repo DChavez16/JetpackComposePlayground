@@ -53,7 +53,6 @@ internal fun RemoteDatabaseNavHost(
         ) {
             Log.i("NotesListScreen", "NotesListScreen created")
 
-            // TODO Change the name of the screens to add screen
             NotesListScreen()
         }
 
