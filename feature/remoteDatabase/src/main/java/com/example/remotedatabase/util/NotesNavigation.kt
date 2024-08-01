@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
 import com.example.remotedatabase.ui.NotesDetailScreen
 import com.example.remotedatabase.ui.NotesListScreen
@@ -42,6 +44,10 @@ internal fun RemoteDatabaseNavHost(
     viewModelStoreOwner: () -> ViewModelStoreOwner,
     innerPadding: () -> PaddingValues
 ) {
+
+    // Creates a ViewModel instance binded to viewModelStoreOwner
+    val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
+
     NavHost(
         navController = navController,
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
