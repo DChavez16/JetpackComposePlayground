@@ -1,5 +1,6 @@
 package com.example.remotedatabase
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +31,13 @@ fun NotesScreen(
 
 @Composable
 private fun NotesScreenContent(
-
+    currentRoute: () -> String?,
+    onMenuButtonClick: () -> Unit,
+    setNoteToEditById: (Long) -> Unit,
+    setNewNote: () -> Unit,
+    returnToPreviousScreen: () -> Unit,
+    navigateToAddNoteScreen: () -> Unit,
+    remoteDatabaseNavHost: @Composable (PaddingValues) -> Unit
 ) {
 
 }
