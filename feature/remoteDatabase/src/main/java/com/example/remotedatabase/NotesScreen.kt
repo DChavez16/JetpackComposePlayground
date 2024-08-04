@@ -26,3 +26,11 @@ fun NotesScreen(
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner)
 
 }
+
+
+@Composable
+private fun NotesScreenContent(
+
+) {
+
+}
