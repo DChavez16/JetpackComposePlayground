@@ -26,6 +26,16 @@ fun NotesScreen(
     // Create a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner)
 
+    NotesScreenContent(
+        currentRoute = { currentRoute },
+        onMenuButtonClick = onMenuButtonClick,
+        setNoteToEditById = {},
+        setNewNote = {},
+        returnToPreviousScreen = {},
+        navigateToAddNoteScreen = {}
+    ) {
+
+    }
 }
 
 
