@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.remotedatabase.util.RemoteDatabaseNavHost
 
 
 @Composable
@@ -33,8 +34,12 @@ fun NotesScreen(
         setNewNote = {},
         returnToPreviousScreen = {},
         navigateToAddNoteScreen = {}
-    ) {
-
+    ) { innerPadding ->
+        RemoteDatabaseNavHost(
+            navController = notesNavController,
+            viewModelStoreOwner = { viewModelStoreOwner },
+            innerPadding = { innerPadding }
+        )
     }
 }
 
