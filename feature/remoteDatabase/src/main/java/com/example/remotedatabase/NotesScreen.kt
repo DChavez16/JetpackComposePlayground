@@ -3,10 +3,12 @@ package com.example.remotedatabase
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.remotedatabase.util.RemoteDatabaseDestinations
 import com.example.remotedatabase.util.RemoteDatabaseNavHost
 
 
@@ -55,4 +57,9 @@ private fun NotesScreenContent(
     remoteDatabaseNavHost: @Composable (PaddingValues) -> Unit
 ) {
 
+    val topAppBarTitle = stringResource(
+        if (currentRoute() == RemoteDatabaseDestinations.NotesList.screenRouteName) RemoteDatabaseDestinations.NotesList.screenTitle
+        else if (currentRoute() == RemoteDatabaseDestinations.NewNote.screenRouteName) RemoteDatabaseDestinations.NewNote.screenTitle
+        else RemoteDatabaseDestinations.EditNote.screenTitle
+    )
 }
