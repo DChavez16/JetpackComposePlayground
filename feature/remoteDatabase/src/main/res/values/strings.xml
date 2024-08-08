@@ -4,4 +4,30 @@
     <string name="remote_database_notes_list_screen_title">Notes</string>
     <string name="remote_database_new_note_screen_title">New Note</string>
     <string name="remote_database_edit_note_screen_title">Edit Note</string>
+    <string name="remote_database_edit_note_delete_note_button">Delete current note</string>
+    <string name="remote_database_edit_note_delete_note_alert_dialog_header">Delete Note?</string>
+    <string name="remote_database_edit_note_delete_note_alert_dialog_message">This action cannot be reverted, are you sure you want to delete this note?</string>
+    <string name="remote_database_edit_note_delete_note_alert_dialog_confirm_button_label">Delete</string>
+    <string name="remote_database_edit_note_delete_note_alert_dialog_cancel_button_label">Cancel</string>
+
+    <!-- Notes List Screen -->
+    <string name="remote_database_notes_list_search_tab_label">Search note</string>
+    <string name="remote_database_notes_list_change_to_grid_layout">Change to grid layout</string>
+    <string name="remote_database_notes_list_change_to_list_layout">Change to list layout</string>
+    <string name="remote_database_notes_list_open_tags_filter">Open tags filter</string>
+    <string name="remote_database_notes_list_write_new_note_button_label">Write new note</string>
+
+    <!-- Notes Detail Screen -->
+    <string name="remote_database_tags_bottom_sheet_header">Tags</string>
+    <string name="remote_database_tags_bottom_sheet_edit_label">(Click to edit)</string>
+    <string name="remote_database_tags_bottom_sheet_new_tag_header">New Tag</string>
+    <string name="remote_database_tags_bottom_sheet_edit_tags">Edit tags</string>
+    <string name="remote_database_tags_bottom_sheet_create_new_tag">Create new tag</string>
+    <string name="remote_database_tags_bottom_sheet_filter_button_label">Filter</string>
+    <string name="remote_database_tags_bottom_sheet_save_button_label">Save</string>
+    <string name="remote_database_tags_bottom_sheet_tag_text_label">Text</string>
+
+    <!-- Notes Detail Screen -->
+    <string name="remote_database_notes_detail_add_tag">Add tags to note</string>
+    <string name="remote_database_notes_detail_save_note_button_label">Save note</string>
 </resources>
