@@ -2,13 +2,16 @@ package com.example.remotedatabase.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.remotedatabase.NotesViewModel
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 @Composable
 internal fun TagsBottomSheet(
-
+    notesViewModel: NotesViewModel = viewModel()
 ) {
 
 }
