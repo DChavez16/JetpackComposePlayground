@@ -27,5 +27,21 @@ val fakeUserTagsList = listOf(
     UserTag(
         id = 3,
         tagText = "House"
+    ),
+    UserTag(
+        id = 4,
+        tagText = "Phone"
+    ),
+    UserTag(
+        id = 5,
+        tagText = "Food"
+    ),
+    UserTag(
+        id = 6,
+        tagText = "Work"
+    ),
+    UserTag(
+        id = 7,
+        tagText = "Sports"
     )
 )

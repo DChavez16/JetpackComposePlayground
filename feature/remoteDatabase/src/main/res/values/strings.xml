@@ -17,13 +17,15 @@
     <string name="remote_database_notes_list_open_tags_filter">Open tags filter</string>
     <string name="remote_database_notes_list_write_new_note_button_label">Write new note</string>
 
-    <!-- Notes Detail Screen -->
+    <!-- Tags Bottom Sheet -->
     <string name="remote_database_tags_bottom_sheet_header">Tags</string>
-    <string name="remote_database_tags_bottom_sheet_edit_label">(Click to edit)</string>
+    <string name="remote_database_tags_bottom_sheet_edit_label">(Click tag to edit)</string>
     <string name="remote_database_tags_bottom_sheet_new_tag_header">New Tag</string>
     <string name="remote_database_tags_bottom_sheet_edit_tags">Edit tags</string>
+    <string name="remote_database_tags_bottom_sheet_delete_tag">Delete tag</string>
     <string name="remote_database_tags_bottom_sheet_create_new_tag">Create new tag</string>
     <string name="remote_database_tags_bottom_sheet_filter_button_label">Filter</string>
+    <string name="remote_database_tags_bottom_sheet_add_tags_button_label">Add tags</string>
     <string name="remote_database_tags_bottom_sheet_save_button_label">Save</string>
     <string name="remote_database_tags_bottom_sheet_tag_text_label">Text</string>
 
