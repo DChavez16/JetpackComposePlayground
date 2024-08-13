@@ -27,7 +27,8 @@
     <string name="remote_database_tags_bottom_sheet_filter_button_label">Filter</string>
     <string name="remote_database_tags_bottom_sheet_add_tags_button_label">Add tags</string>
     <string name="remote_database_tags_bottom_sheet_save_button_label">Save</string>
-    <string name="remote_database_tags_bottom_sheet_tag_text_label">Text</string>
+    <string name="remote_database_tags_bottom_sheet_create_tag_label">Create tag</string>
+    <string name="remote_database_tags_bottom_sheet_tag_text_label">Tag Text</string>
 
     <!-- Notes Detail Screen -->
     <string name="remote_database_notes_detail_add_tag">Add tags to note</string>

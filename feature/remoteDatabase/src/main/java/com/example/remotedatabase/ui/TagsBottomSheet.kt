@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
@@ -29,9 +30,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -120,7 +129,7 @@ private fun TagsBottomSheetStart(
             }
         }
 
-        // Actions Flow Row
+        // Tags Flow Row
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -166,7 +175,7 @@ private fun TagsBottomSheetStart(
             }
 
             // IF NOT in edit mode, include de add icon button
-            if(!editMode()) {
+            if (!editMode()) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
                     contentDescription = stringResource(R.string.remote_database_tags_bottom_sheet_create_new_tag),
@@ -213,9 +222,103 @@ private fun TagsBottomSheetStart(
 
 @Composable
 private fun TagsBottomSheetEditTag(
-
+    userTagToEdit: UserTag,
+    onReturnButtonClick: () -> Unit,
+    onMainButtonClick: (UserTag) -> Unit
 ) {
 
+    // Text from the tag text to edit
+    var userTagText by rememberSaveable { mutableStateOf(userTagToEdit.tagText) }
+
+    // Edit tag bottom sheet content column
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
+    ) {
+        // Header row
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Return icon button
+            IconButton(
+                onClick = onReturnButtonClick,
+                colors = IconButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.size(18.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.remote_database_tags_bottom_sheet_edit_tags)
+                )
+            }
+
+            // Header title
+            Text(
+                // If the user tag to edit ID is -1, set "New Tag", otherwise set the tag text
+                text = if (userTagToEdit.id == -1L)
+                    stringResource(R.string.remote_database_tags_bottom_sheet_new_tag_header) else userTagToEdit.tagText,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        // Input text field
+        OutlinedTextField(
+            value = userTagText,
+            onValueChange = { newUserTagText -> userTagText = newUserTagText },
+            label = { Text(
+                text = stringResource(R.string.remote_database_tags_bottom_sheet_tag_text_label)
+            ) },
+            maxLines = 1,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Button row
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ElevatedButton(
+                onClick = { onMainButtonClick(userTagToEdit.copy(tagText = userTagText)) },
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    disabledContentColor = MaterialTheme.colorScheme.primary
+                ),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 2.dp,
+                    pressedElevation = 1.dp
+                )
+            ) {
+                Text(
+                    text = stringResource(
+                        // If the user tag to edit ID is -1, set "Create Tag", otherwise set "Save"
+                        if (userTagToEdit.id == -1L) R.string.remote_database_tags_bottom_sheet_create_tag_label
+                        else R.string.remote_database_tags_bottom_sheet_save_button_label
+                    )
+                )
+            }
+        }
+    }
 }
 
 
@@ -295,7 +398,12 @@ private fun TagsBottomSheetEditTagPreview() {
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
         ) {
-            TagsBottomSheetEditTag()
+            TagsBottomSheetEditTag(
+//                userTagToEdit = UserTag(-1, ""),
+                userTagToEdit = fakeUserTagsList[0],
+                onReturnButtonClick = {},
+                onMainButtonClick = {}
+            )
         }
     }
 }
