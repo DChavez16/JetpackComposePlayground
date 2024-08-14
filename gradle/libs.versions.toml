@@ -41,6 +41,8 @@ colorPicker = "0.7.0"
 coroutines = "1.8.0"
 # Unit Test
 junitTest = "4.13.2"
+# Google fonts
+googleFonts = "1.6.8"
 # Implementatnion Test
 androidXTest = "1.6.1"
 junit = "1.2.1"
@@ -103,6 +105,8 @@ work-testing = { module = "androidx.work:work-testing", version.ref = "workManag
 # Android Jetpack Compose Color Picker
 compose-color-picker = { module = "com.godaddy.android.colorpicker:compose-color-picker", version.ref = "colorPicker" }
 compose-color-picker-android = { module = "com.godaddy.android.colorpicker:compose-color-picker-android", version.ref = "colorPicker" }
+# Google fonts
+ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
 # Unit Test
 junit = { module = "junit:junit", version.ref = "junitTest" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

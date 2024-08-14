@@ -14,6 +14,7 @@ dependencies {
 
     // Dependencies
     implementation(libs.core.ktx)
+    implementation(libs.ui.text.google.fonts)
 
     implementation(libs.bundles.lifecycle)
 }
