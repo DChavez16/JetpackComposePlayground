@@ -77,12 +77,12 @@ class ProductsViewModelUnitTest {
         // Assert the currentProduct is empty besides de ID
         assertEquals(
             /* expected = */ emptyProduct,
-            /* actual = */ viewModel.currentProduct.copy(id = null)
+            /* actual = */ viewModel.currentProduct.value.copy(id = null)
         )
 
         // Assert the currentProduct ID is the same as the second product in the list
         assertEquals(
-            /* expected = */ viewModel.currentProduct.id,
+            /* expected = */ viewModel.currentProduct.value.id,
             /* actual = */ (viewModel.productsUiState.value as ProductsUiState.Success).products[1].id
         )
     }
@@ -95,7 +95,7 @@ class ProductsViewModelUnitTest {
         // Assert the current product's name is "Product 4"
         assertEquals(
             /* expected = */ "Product 4",
-            /* actual = */ viewModel.currentProduct.name
+            /* actual = */ viewModel.currentProduct.value.name
         )
     }
 
@@ -107,7 +107,7 @@ class ProductsViewModelUnitTest {
         // Assert the current product's quantity is 40
         assertEquals(
             /* expected = */ 40,
-            /* actual = */ viewModel.currentProduct.quantity
+            /* actual = */ viewModel.currentProduct.value.quantity
         )
     }
 
@@ -119,7 +119,7 @@ class ProductsViewModelUnitTest {
         // Assert the current product's description is "Product 4 description"
         assertEquals(
             /* expected = */ "Product 4 description",
-            /* actual = */ viewModel.currentProduct.description
+            /* actual = */ viewModel.currentProduct.value.description
         )
     }
 
@@ -131,7 +131,7 @@ class ProductsViewModelUnitTest {
         // Assert the current product's availability is false
         assertEquals(
             /* expected = */ false,
-            /* actual = */ viewModel.currentProduct.isAvailable
+            /* actual = */ viewModel.currentProduct.value.isAvailable
         )
     }
 
@@ -155,7 +155,7 @@ class ProductsViewModelUnitTest {
 
         // Assert the current product's name is the same as the last in the list
         assertEquals(
-            /* expected = */ viewModel.currentProduct.copy(id = null),
+            /* expected = */ viewModel.currentProduct.value.copy(id = null),
             /* actual = */
             (viewModel.productsUiState.value as ProductsUiState.Success).products.last().copy(id = null)
         )

@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     // KSP
     alias(libs.plugins.ksp) apply false
+    // Compose compiler
+    alias(libs.plugins.compose.compiler) apply false
     // Hilt
     alias(libs.plugins.dagger.hilt.android) apply false
     // Room

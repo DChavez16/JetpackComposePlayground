@@ -2,22 +2,21 @@
 # Android Gradle
 agp = "8.4.2"
 # Kotlin
-kotlin = "1.9.22"
+kotlin = "2.0.10"
 # Core
 coreKtx = "1.13.1"
 # Lifecycle
-lifecycle = "2.8.3"
+lifecycle = "2.8.4"
 # Compose & UI
 composeBom = "2024.06.00"
-activityCompose = "1.9.0"
-composeCompiler = "1.5.8"
+activityCompose = "1.9.1"
 compose = "1.6.8"
 material = "1.2.1"
 materialAdaptative = "1.0.0-beta04"
 # Navigation
 navigationCompose = "2.7.7"
 # KSP
-ksp = "1.9.22-1.0.18"
+ksp = "2.0.10-1.0.24"
 # Hilt
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
@@ -34,7 +33,7 @@ kotlinSerialization = "1.5.1"
 # Datastore
 dataStore = "1.1.1"
 # WorkManager
-workManager = "2.9.0"
+workManager = "2.9.1"
 # Android Jetpack Compose Color Picker
 colorPicker = "0.7.0"
 # Coroutines
@@ -131,6 +130,8 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 # KSP
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# Compose compiler
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # Hilt
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 # Room

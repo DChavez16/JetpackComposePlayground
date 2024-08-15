@@ -4,6 +4,7 @@ import com.example.model.MessageResponse
 import com.example.model.UserTag
 import com.example.network.api.UserTagApiService
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
 interface UserTagRepository {
@@ -14,7 +15,7 @@ interface UserTagRepository {
 }
 
 
-class RemoteUserTagRepository(
+class RemoteUserTagRepository @Inject constructor(
     private val userTagApiService: UserTagApiService
 ) : UserTagRepository {
 

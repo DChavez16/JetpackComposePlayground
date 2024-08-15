@@ -5,6 +5,7 @@ import com.example.model.Note
 import com.example.network.api.NoteApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 
 interface NoteRepository {
@@ -15,7 +16,7 @@ interface NoteRepository {
 }
 
 
-class RemoteNoteRepository(
+class RemoteNoteRepository @Inject constructor(
     private val noteApiService: NoteApiService
 ) : NoteRepository {
 

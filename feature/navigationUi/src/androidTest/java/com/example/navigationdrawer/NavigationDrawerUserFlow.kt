@@ -34,8 +34,7 @@ class NavigationDrawerUserFlow {
         composeTestRule.setContent {
             // Shows the NavigationDrawerContent screen using the ViewModel with fake repository
             CustomNavigationDrawer(
-                currentSelectedItem = RootNavigationDestination.LazyLayouts,
-                isWidthScreenExpanded = true,
+                currentSelectedItem = { RootNavigationDestination.LazyLayouts },
                 onDrawerItemClick = { },
                 onConfigurationButtonClick = { },
                 navigationDrawerViewModel = navigationDrawerViewModel

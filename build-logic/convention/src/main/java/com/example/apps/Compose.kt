@@ -9,13 +9,17 @@ internal fun Project.configureCompose(
     commonExtension: CommonExtension<*, *, *, *, *, *>
 ) {
     commonExtension.apply {
+        pluginManager.apply {
+            apply("org.jetbrains.kotlin.plugin.compose")
+        }
+
         buildFeatures {
             compose = true
         }
 
-        composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
-        }
+//        composeOptions {
+//            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
+//        }
 
         // Dependencies
         dependencies {
