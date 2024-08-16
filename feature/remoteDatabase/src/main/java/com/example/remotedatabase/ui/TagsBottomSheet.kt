@@ -6,11 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -22,8 +22,10 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +37,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,15 +52,110 @@ import com.example.model.UserTag
 import com.example.model.fakeUserTagsList
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
+import com.example.remotedatabase.UserTagUiState
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
 @Composable
 internal fun TagsBottomSheet(
-    notesViewModel: NotesViewModel = viewModel()
+    notesViewModel: NotesViewModel = viewModel(),
+    selectedUserTags: () -> List<UserTag>,
+    filterMode: () -> Boolean,
+    onMainButtonClick: (List<UserTag>) -> Unit
 ) {
 
+    /**
+     * State that holds the list of selected tags. It'll recieve updates and will be send to the
+     * caller via onMainButtonClick() method
+     */
+    var drawerSelectedUserTags by rememberSaveable { mutableStateOf(selectedUserTags()) }
+
+    /**
+     * State that holds the current TagsBottomSheetVariant instance. The starting variant is Start
+     */
+    var currentTagBottomSheetVariant by rememberSaveable {
+        mutableStateOf<TagsBottomSheetVariant>(
+            TagsBottomSheetVariant.Start
+        )
+    }
+
+    /**
+     * State that holds the current UserTagUiState
+     */
+    val userTagsUiState by notesViewModel.userTags.collectAsState()
+
+    when (userTagsUiState) {
+        is UserTagUiState.Loading -> {
+            LoadingContent()
+        }
+
+        is UserTagUiState.Success -> {
+            when (currentTagBottomSheetVariant) {
+                is TagsBottomSheetVariant.Start -> {
+                    /**
+                     * State that holds if this Variant is in edit mode or not
+                     */
+                    var editMode by rememberSaveable { mutableStateOf(false) }
+
+                    TagsBottomSheetStart(
+                        userTagsList = { (userTagsUiState as UserTagUiState.Success).userTags },
+                        selectedUserTags = { drawerSelectedUserTags },
+                        editMode = { editMode },
+                        filterMode = filterMode,
+                        onEditTagIconButtonClick = { editMode = !editMode },
+                        onTagElementClick = { selectedTag ->
+                            // IF NOT in edit mode, add the selected tag to drawerSelectedUserTags if its not in the list, remove otherwise
+                            if (!editMode) {
+                                drawerSelectedUserTags =
+                                    drawerSelectedUserTags.addRemoveUserTag(selectedTag)
+                            }
+                            // IF in edit mode, change currentTagBottomSheetVariant to EditTag with the selected tag
+                            else {
+                                currentTagBottomSheetVariant =
+                                    TagsBottomSheetVariant.EditTag(selectedTag)
+                            }
+                        },
+                        onTagElementCloseClick = { userTagToDelete ->
+                            // Delete user tag from the server
+                            notesViewModel.deleteUserTag(userTagToDelete.id)
+                        },
+                        onAddTagIconButtonClick = {
+                            // Change currentTagBottomSheetVariant to EditTag with an empty UserTag (defined by default in the constructor)
+                            currentTagBottomSheetVariant = TagsBottomSheetVariant.EditTag()
+                        },
+                        onMainButtonClick = { onMainButtonClick(drawerSelectedUserTags) }
+                    )
+                }
+
+                is TagsBottomSheetVariant.EditTag -> {
+                    TagsBottomSheetEditTag(
+                        userTagToEdit = (currentTagBottomSheetVariant as TagsBottomSheetVariant.EditTag).tagToEdit,
+                        onReturnButtonClick = {
+                            // Change currentTagBottomSheetVariant to Start
+                            currentTagBottomSheetVariant = TagsBottomSheetVariant.Start
+                        },
+                        onMainButtonClick = { newUserTag ->
+                            // If the newUserTag ID id -1, add the user tag to the server
+                            if (newUserTag.id == -1L) {
+                                notesViewModel.createUserTag(newUserTag)
+                            }
+                            // If the newUserTag ID is not -1, update the user tag in the server
+                            else {
+                                notesViewModel.updateUserTag(newUserTag)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        is UserTagUiState.Error -> {
+            ErrorContent(
+                errorMessage = (userTagsUiState as UserTagUiState.Error).errorMessage
+            )
+        }
+    }
 }
 
 
@@ -65,9 +163,9 @@ internal fun TagsBottomSheet(
 private fun TagsBottomSheetStart(
     userTagsList: () -> List<UserTag>,
     selectedUserTags: () -> List<UserTag>,
-    filterMode: () -> Boolean,
     editMode: () -> Boolean,
-    onEditModeIconButtonClick: () -> Unit,
+    filterMode: () -> Boolean,
+    onEditTagIconButtonClick: () -> Unit,
     onTagElementClick: (UserTag) -> Unit,
     onTagElementCloseClick: (UserTag) -> Unit,
     onAddTagIconButtonClick: () -> Unit,
@@ -99,7 +197,7 @@ private fun TagsBottomSheetStart(
             if (!editMode()) {
                 // Edit icon button
                 IconButton(
-                    onClick = onEditModeIconButtonClick,
+                    onClick = onEditTagIconButtonClick,
                     colors = IconButtonColors(
                         containerColor = Color.Transparent,
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -270,9 +368,11 @@ private fun TagsBottomSheetEditTag(
         OutlinedTextField(
             value = userTagText,
             onValueChange = { newUserTagText -> userTagText = newUserTagText },
-            label = { Text(
-                text = stringResource(R.string.remote_database_tags_bottom_sheet_tag_text_label)
-            ) },
+            label = {
+                Text(
+                    text = stringResource(R.string.remote_database_tags_bottom_sheet_tag_text_label)
+                )
+            },
             maxLines = 1,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -317,6 +417,57 @@ private fun TagsBottomSheetEditTag(
 }
 
 
+@Composable
+private fun LoadingContent() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(160.dp)
+            .padding(12.dp)
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+
+@Composable
+private fun ErrorContent(
+    errorMessage: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(160.dp)
+            .padding(12.dp)
+    ) {
+        // Error icon
+        Icon(
+            imageVector = Icons.Rounded.Error,
+            tint = MaterialTheme.colorScheme.error,
+            contentDescription = null
+        )
+
+        // Error message header
+        Text(
+            text = "An error has ocurred",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        // Error message
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelMedium
+        )
+    }
+}
+
+
 /*
 Previews
  */
@@ -328,7 +479,7 @@ private fun TagsBottomSheetStartPreview() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
         ) {
             TagsBottomSheetStart(
@@ -338,9 +489,9 @@ private fun TagsBottomSheetStartPreview() {
                         fakeUserTagsList[0], fakeUserTagsList[2]
                     )
                 },
-                filterMode = { true },
                 editMode = { false },
-                onEditModeIconButtonClick = {},
+                filterMode = { true },
+                onEditTagIconButtonClick = {},
                 onTagElementClick = {},
                 onTagElementCloseClick = {},
                 onAddTagIconButtonClick = {},
@@ -359,7 +510,7 @@ private fun TagsBottomSheetStartEditModePreview() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
         ) {
             TagsBottomSheetStart(
@@ -369,9 +520,9 @@ private fun TagsBottomSheetStartEditModePreview() {
                         fakeUserTagsList[0], fakeUserTagsList[2]
                     )
                 },
-                filterMode = { false },
                 editMode = { true },
-                onEditModeIconButtonClick = {},
+                filterMode = { false },
+                onEditTagIconButtonClick = {},
                 onTagElementClick = {},
                 onTagElementCloseClick = {},
                 onAddTagIconButtonClick = {},
@@ -390,7 +541,7 @@ private fun TagsBottomSheetEditTagPreview() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
         ) {
             TagsBottomSheetEditTag(
@@ -404,10 +555,57 @@ private fun TagsBottomSheetEditTagPreview() {
 }
 
 
+@CompactSizeScreenThemePreview
+@Composable
+private fun LoadingContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            LoadingContent()
+        }
+    }
+}
+
+
+@CompactSizeScreenThemePreview
+@Composable
+private fun ErrorContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            ErrorContent(
+                errorMessage = "Preview error message"
+            )
+        }
+    }
+}
+
+
 /*
 Util
  */
 private sealed interface TagsBottomSheetVariant {
     data object Start : TagsBottomSheetVariant
     data class EditTag(val tagToEdit: UserTag = UserTag()) : TagsBottomSheetVariant
+}
+
+/**
+ * Add the given user tag to the list if its not in the list, remove otherwise
+ */
+private fun List<UserTag>.addRemoveUserTag(userTag: UserTag): List<UserTag> {
+    val newList = this.toMutableList()
+
+    if (newList.contains(userTag)) newList.remove(userTag) else newList.add(userTag)
+
+    return newList
 }
