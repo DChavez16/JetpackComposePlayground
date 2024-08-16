@@ -35,8 +35,6 @@ internal class NotesViewModel @Inject constructor(
     private val userTagRepository: UserTagRepository
 ) : ViewModel() {
 
-    // TODO Change Create, Update and Delete methods to suspend funcionts
-
     // Backing property of the NotesUiState to avoid state updates from other classes
     private val _notesUiState = MutableStateFlow<NotesUiState>(NotesUiState.Loading)
 
@@ -98,10 +96,12 @@ internal class NotesViewModel @Inject constructor(
      * @param newNote [Note] to be send to the server for storage
      */
     fun createNote(newNote: Note) {
-        Log.i("NotesViewModel", "Uploading a note to the remote database...")
-        val messageResponse = noteRepository.createNote(newNote)
+        viewModelScope.launch {
+            Log.i("NotesViewModel", "Uploading a note to the remote database...")
+            val messageResponse = noteRepository.createNote(newNote)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 
     /**
@@ -109,10 +109,12 @@ internal class NotesViewModel @Inject constructor(
      * @param newUserTag [UserTag] to be send to the server for storage
      */
     fun createUserTag(newUserTag: UserTag) {
-        Log.i("NotesViewModel", "Uploading an user tag to the remote database...")
-        val messageResponse = userTagRepository.createUserTag(newUserTag)
+        viewModelScope.launch {
+            Log.i("NotesViewModel", "Uploading an user tag to the remote database...")
+            val messageResponse = userTagRepository.createUserTag(newUserTag)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 
 
@@ -121,13 +123,15 @@ internal class NotesViewModel @Inject constructor(
      * @param updatedNote [Note] to be updated in the server
      */
     fun updateNote(updatedNote: Note) {
-        Log.i(
-            "NotesViewModel",
-            "Sending the note with id ${updatedNote.id} to be updated in the remote database..."
-        )
-        val messageResponse = noteRepository.updateNote(updatedNote)
+        viewModelScope.launch {
+            Log.i(
+                "NotesViewModel",
+                "Sending the note with id ${updatedNote.id} to be updated in the remote database..."
+            )
+            val messageResponse = noteRepository.updateNote(updatedNote)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 
     /**
@@ -135,13 +139,15 @@ internal class NotesViewModel @Inject constructor(
      * @param updatedUserTag [UserTag] to be updated in the server
      */
     fun updateUserTag(updatedUserTag: UserTag) {
-        Log.i(
-            "NotesViewModel",
-            "Sending the user tag with id ${updatedUserTag.id} to be updated in the remote database..."
-        )
-        val messageResponse = userTagRepository.updateUserTag(updatedUserTag)
+        viewModelScope.launch {
+            Log.i(
+                "NotesViewModel",
+                "Sending the user tag with id ${updatedUserTag.id} to be updated in the remote database..."
+            )
+            val messageResponse = userTagRepository.updateUserTag(updatedUserTag)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 
 
@@ -150,10 +156,12 @@ internal class NotesViewModel @Inject constructor(
      * @param noteId [Note.id] from the [Note] to delete from the server
      */
     fun deleteNote(noteId: Long) {
-        Log.i("NotesViewModel", "Deleting the note with id $noteId from the remote database...")
-        val messageResponse = noteRepository.deleteNote(noteId)
+        viewModelScope.launch {
+            Log.i("NotesViewModel", "Deleting the note with id $noteId from the remote database...")
+            val messageResponse = noteRepository.deleteNote(noteId)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 
     /**
@@ -161,12 +169,14 @@ internal class NotesViewModel @Inject constructor(
      * @param userTagId [UserTag.id] from the [UserTag] to delete from the server
      */
     fun deleteUserTag(userTagId: Long) {
-        Log.i(
-            "NotesViewModel",
-            "Deleting the user tag with id $userTagId from the remote database..."
-        )
-        val messageResponse = noteRepository.deleteNote(userTagId)
+        viewModelScope.launch {
+            Log.i(
+                "NotesViewModel",
+                "Deleting the user tag with id $userTagId from the remote database..."
+            )
+            val messageResponse = noteRepository.deleteNote(userTagId)
 
-        Log.i("NotesViewModel", messageResponse.message)
+            Log.i("NotesViewModel", messageResponse.message)
+        }
     }
 }

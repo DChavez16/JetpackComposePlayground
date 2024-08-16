@@ -22,7 +22,7 @@ interface UserTagApiService {
      * @return [MessageResponse] containg the operation results
      */
     @POST("tags")
-    fun createUserTag(
+    suspend fun createUserTag(
         @Body userTag: UserTag
     ): MessageResponse
 
@@ -41,7 +41,7 @@ interface UserTagApiService {
      * @return [MessageResponse] containg the operation results
      */
     @PUT("tags")
-    fun updateUserTag(
+    suspend fun updateUserTag(
         @Body userTag: UserTag
     ): MessageResponse
 
@@ -52,7 +52,7 @@ interface UserTagApiService {
      * @return [MessageResponse] containg the operation results
      */
     @DELETE("tags/{id}")
-    fun deleteUserTag(
+    suspend fun deleteUserTag(
         @Path("id") userTagId: Long
     ): MessageResponse
 }

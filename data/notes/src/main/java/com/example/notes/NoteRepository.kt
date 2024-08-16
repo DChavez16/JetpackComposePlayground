@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 
 interface NoteRepository {
-    fun createNote(note: Note): MessageResponse
+    suspend fun createNote(note: Note): MessageResponse
     fun getNotes(): Flow<List<Note>>
-    fun updateNote(note: Note): MessageResponse
-    fun deleteNote(noteId: Long): MessageResponse
+    suspend fun updateNote(note: Note): MessageResponse
+    suspend fun deleteNote(noteId: Long): MessageResponse
 }
 
 
@@ -25,7 +25,7 @@ class RemoteNoteRepository @Inject constructor(
      * @param note Note to be sent to the server for storage
      * @return [MessageResponse] containg the operation results
      */
-    override fun createNote(note: Note): MessageResponse = noteApiService.createNote(note)
+    override suspend fun createNote(note: Note): MessageResponse = noteApiService.createNote(note)
 
     /**
      * Calls the Api Service to get a [Flow] of a [List] of [Note]
@@ -49,12 +49,12 @@ class RemoteNoteRepository @Inject constructor(
      * @param note Note to be updated with the new parameters
      * @return [MessageResponse] containg the operation results
      */
-    override fun updateNote(note: Note): MessageResponse = noteApiService.updateNote(note)
+    override suspend fun updateNote(note: Note): MessageResponse = noteApiService.updateNote(note)
 
     /**
      * Calls the Api Service to update the [Note] with the given [noteId] from the remote database
      * @param noteId Id from the [Note] to delete
      * @return [MessageResponse] containg the operation results
      */
-    override fun deleteNote(noteId: Long): MessageResponse = noteApiService.deleteNote(noteId)
+    override suspend fun deleteNote(noteId: Long): MessageResponse = noteApiService.deleteNote(noteId)
 }

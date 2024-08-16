@@ -64,6 +64,7 @@ internal fun TagsBottomSheet(
     filterMode: () -> Boolean,
     onMainButtonClick: (List<UserTag>) -> Unit
 ) {
+    // TODO Add info logs
 
     /**
      * State that holds the list of selected tags. It'll recieve updates and will be send to the

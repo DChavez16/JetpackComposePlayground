@@ -23,7 +23,7 @@ interface NoteApiService {
      * @return [MessageResponse] containg the operation results
      */
     @POST("notes")
-    fun createNote(
+    suspend fun createNote(
         @Body note: Note
     ): MessageResponse
 
@@ -52,7 +52,7 @@ interface NoteApiService {
      * @return [MessageResponse] containg the operation results
      */
     @PUT("notes")
-    fun updateNote(
+    suspend fun updateNote(
         @Body note: Note
     ): MessageResponse
 
@@ -63,7 +63,7 @@ interface NoteApiService {
      * @return [MessageResponse] containg the operation results
      */
     @DELETE("notes/{id}")
-    fun deleteNote(
+    suspend fun deleteNote(
         @Path("id") noteId: Long
     ): MessageResponse
 }

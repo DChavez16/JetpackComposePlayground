@@ -8,10 +8,10 @@ import javax.inject.Inject
 
 
 interface UserTagRepository {
-    fun createUserTag(userTag: UserTag): MessageResponse
+    suspend fun createUserTag(userTag: UserTag): MessageResponse
     fun getUserTags(): Flow<List<UserTag>>
-    fun updateUserTag(userTag: UserTag): MessageResponse
-    fun deleteUserTag(userTagId: Long): MessageResponse
+    suspend fun updateUserTag(userTag: UserTag): MessageResponse
+    suspend fun deleteUserTag(userTagId: Long): MessageResponse
 }
 
 
@@ -24,7 +24,7 @@ class RemoteUserTagRepository @Inject constructor(
      * @param userTag UserTag to be send to the server for storage
      * @return [MessageResponse] containg the operation results
      */
-    override fun createUserTag(userTag: UserTag): MessageResponse =
+    override suspend fun createUserTag(userTag: UserTag): MessageResponse =
         userTagApiService.createUserTag(userTag)
 
     /**
@@ -38,7 +38,7 @@ class RemoteUserTagRepository @Inject constructor(
      * @param userTag UserTag to be updated with the new parameters
      * @return [MessageResponse] containg the operation results
      */
-    override fun updateUserTag(userTag: UserTag): MessageResponse =
+    override suspend fun updateUserTag(userTag: UserTag): MessageResponse =
         userTagApiService.updateUserTag(userTag)
 
     /**
@@ -46,6 +46,6 @@ class RemoteUserTagRepository @Inject constructor(
      * @param userTagId Id from the [UserTag] to delete
      * @return [MessageResponse] containg the operation results
      */
-    override fun deleteUserTag(userTagId: Long): MessageResponse =
+    override suspend fun deleteUserTag(userTagId: Long): MessageResponse =
         userTagApiService.deleteUserTag(userTagId)
 }
