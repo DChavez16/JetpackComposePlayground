@@ -2,6 +2,7 @@
 
 package com.example.remotedatabase.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -57,6 +58,8 @@ import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
 
+private const val LOG_TAG = "TagsBottomSheet"
+
 @Composable
 internal fun TagsBottomSheet(
     notesViewModel: NotesViewModel = viewModel(),
@@ -64,7 +67,6 @@ internal fun TagsBottomSheet(
     filterMode: () -> Boolean,
     onMainButtonClick: (List<UserTag>) -> Unit
 ) {
-    // TODO Add info logs
 
     /**
      * State that holds the list of selected tags. It'll recieve updates and will be send to the
@@ -86,12 +88,18 @@ internal fun TagsBottomSheet(
      */
     val userTagsUiState by notesViewModel.userTags.collectAsState()
 
+    Log.i(LOG_TAG, "TagsBottomSheet started")
+
     when (userTagsUiState) {
         is UserTagUiState.Loading -> {
+            Log.i(LOG_TAG, "Retrieving user tags content from the server...")
+
             LoadingContent()
         }
 
         is UserTagUiState.Success -> {
+            Log.i(LOG_TAG, "User tags content succesfully retrieved from the server")
+
             when (currentTagBottomSheetVariant) {
                 is TagsBottomSheetVariant.Start -> {
                     /**
@@ -104,8 +112,14 @@ internal fun TagsBottomSheet(
                         selectedUserTags = { drawerSelectedUserTags },
                         editMode = { editMode },
                         filterMode = filterMode,
-                        onEditTagIconButtonClick = { editMode = !editMode },
+                        onEditTagIconButtonClick = {
+                            editMode = !editMode
+
+                            Log.i(LOG_TAG, if(editMode) "Enabled EditMode" else "Disabled EditMode")
+                        },
                         onTagElementClick = { selectedTag ->
+                            Log.i(LOG_TAG, "UserTag element with id ${selectedTag.id} clicked")
+
                             // IF NOT in edit mode, add the selected tag to drawerSelectedUserTags if its not in the list, remove otherwise
                             if (!editMode) {
                                 drawerSelectedUserTags =
@@ -118,14 +132,22 @@ internal fun TagsBottomSheet(
                             }
                         },
                         onTagElementCloseClick = { userTagToDelete ->
+                            Log.i(LOG_TAG, "Started deletion of UserTag with id ${userTagToDelete.id} from the server")
+
                             // Delete user tag from the server
                             notesViewModel.deleteUserTag(userTagToDelete.id)
                         },
                         onAddTagIconButtonClick = {
+                            Log.i(LOG_TAG, "Add tag icon button clicked")
+
                             // Change currentTagBottomSheetVariant to EditTag with an empty UserTag (defined by default in the constructor)
                             currentTagBottomSheetVariant = TagsBottomSheetVariant.EditTag()
                         },
-                        onMainButtonClick = { onMainButtonClick(drawerSelectedUserTags) }
+                        onMainButtonClick = {
+                            Log.i(LOG_TAG, "Main button clicked, returning list of selected UserTags")
+
+                            onMainButtonClick(drawerSelectedUserTags)
+                        }
                     )
                 }
 
@@ -133,16 +155,22 @@ internal fun TagsBottomSheet(
                     TagsBottomSheetEditTag(
                         userTagToEdit = (currentTagBottomSheetVariant as TagsBottomSheetVariant.EditTag).tagToEdit,
                         onReturnButtonClick = {
+                            Log.i(LOG_TAG, "Returning from the EditTag to the Start variant")
+
                             // Change currentTagBottomSheetVariant to Start
                             currentTagBottomSheetVariant = TagsBottomSheetVariant.Start
                         },
                         onMainButtonClick = { newUserTag ->
                             // If the newUserTag ID id -1, add the user tag to the server
                             if (newUserTag.id == -1L) {
+                                Log.i(LOG_TAG, "Creating a new UserTag in the server...")
+
                                 notesViewModel.createUserTag(newUserTag)
                             }
                             // If the newUserTag ID is not -1, update the user tag in the server
                             else {
+                                Log.i(LOG_TAG, "Updating UserTag with id ${newUserTag.id} in the server...")
+
                                 notesViewModel.updateUserTag(newUserTag)
                             }
                         }
@@ -152,8 +180,12 @@ internal fun TagsBottomSheet(
         }
 
         is UserTagUiState.Error -> {
+            val errorMessage = (userTagsUiState as UserTagUiState.Error).errorMessage
+
+            Log.e(LOG_TAG, "Error at retrieving user tags content from the server: $errorMessage")
+
             ErrorContent(
-                errorMessage = (userTagsUiState as UserTagUiState.Error).errorMessage
+                errorMessage = errorMessage
             )
         }
     }
@@ -172,6 +204,9 @@ private fun TagsBottomSheetStart(
     onAddTagIconButtonClick: () -> Unit,
     onMainButtonClick: () -> Unit
 ) {
+
+    Log.i(LOG_TAG, "Started TagBottomSheet in Start variant")
+
     // Start tags bottom sheet content column
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -320,6 +355,8 @@ private fun TagsBottomSheetEditTag(
     onReturnButtonClick: () -> Unit,
     onMainButtonClick: (UserTag) -> Unit
 ) {
+
+    Log.i(LOG_TAG, "Started TagBottomSheet in EditTag variant")
 
     // Text from the tag text to edit
     var userTagText by rememberSaveable { mutableStateOf(userTagToEdit.tagText) }
@@ -606,7 +643,16 @@ private sealed interface TagsBottomSheetVariant {
 private fun List<UserTag>.addRemoveUserTag(userTag: UserTag): List<UserTag> {
     val newList = this.toMutableList()
 
-    if (newList.contains(userTag)) newList.remove(userTag) else newList.add(userTag)
+    if (newList.contains(userTag)) {
+        Log.i(LOG_TAG, "Removed UserTag with id ${userTag.id} from the selected user tags list")
+
+        newList.remove(userTag)
+    }
+    else {
+        Log.i(LOG_TAG, "Added UserTag with id ${userTag.id} to the selected user tags list")
+
+        newList.add(userTag)
+    }
 
     return newList
 }
