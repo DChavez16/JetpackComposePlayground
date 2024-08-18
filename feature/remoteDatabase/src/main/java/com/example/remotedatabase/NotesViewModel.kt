@@ -10,9 +10,8 @@ import com.example.usertag.UserTagRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -47,47 +46,50 @@ internal class NotesViewModel @Inject constructor(
     // The UI collects from this StateFlow to get its state updates
     val userTags: StateFlow<UserTagUiState> = _userTags
 
-
     // Block of code executed at ViewModel creation
     init {
-        // Observe a flow of notes list obtained from the repository
+        // TODO Fix error: "Unable to parse TLS packet header"
+        // Get a list of notes from the repository
         viewModelScope.launch {
-            noteRepository.getNotes()
-                .onStart {
-                    // Sets the _notesUiState to its Loading state
-                    Log.i("NotesViewModel", "Collecting notes from the remote database")
-                    _notesUiState.value = NotesUiState.Loading
-                }
-                .catch { error ->
-                    // Sets the _notesUiState to its Error state containing the error message text
-                    Log.e("NotesViewModel", "Error collecting notes ${error.message}")
-                    _notesUiState.value = NotesUiState.Error(error.message.toString())
-                }
-                .collect { notes ->
-                    // Sets the _notesUiState to its Success state containing the list of Note
-                    Log.i("NotesViewModel", "Notes collected succesfully")
-                    _notesUiState.value = NotesUiState.Success(notes)
-                }
+            // Sets the _notesUiState to its Loading state
+            _notesUiState.value = NotesUiState.Loading
+            Log.i("NotesViewModel", "Collecting notes from the remote database")
+
+            try {
+                // Try to get a list of notes from the repository and assign it to the _notesUiState Success state
+                _notesUiState.value = NotesUiState.Success(noteRepository.getNotes())
+                Log.i("NotesViewModel", "Notes collected succesfully")
+            } catch (e: IOException) {
+                // Sets the _notesUiState to its Error state containing the IO error message text
+                _notesUiState.value = NotesUiState.Error(e.message.toString())
+                Log.e("NotesViewModel", "IO Error collecting notes: ${e.message}")
+            } catch (e: Exception) {
+                // Sets the _notesUiState to its Error state containing the error message text
+                _notesUiState.value = NotesUiState.Error(e.message.toString())
+                Log.e("NotesViewModel", "Error collecting notes: ${e.message}")
+            }
         }
 
-        // Observe a flow of user tag list obtainded from the repository
+        // TODO Fix error: "Unable to parse TLS packet header"
+        // Get a list of user notes from the repository
         viewModelScope.launch {
-            userTagRepository.getUserTags()
-                .onStart {
-                    // Sets the _userTags to its Loading state
-                    Log.i("NotesViewModel", "Collecting user tags from the remote database")
-                    _userTags.value = UserTagUiState.Loading
-                }
-                .catch { error ->
-                    // Sets the _userTags to its Error state containing the error message text
-                    Log.e("NotesViewModel", "Error collecting user tags ${error.message}")
-                    _userTags.value = UserTagUiState.Error(error.message.toString())
-                }
-                .collect { userTags ->
-                    // Sets the _userTags to its Success state containing the list of UserTag
-                    Log.i("NotesViewModel", "User tags collected succesfully")
-                    _userTags.value = UserTagUiState.Success(userTags)
-                }
+            // Sets the _userTags to its Loading state
+            _userTags.value = UserTagUiState.Loading
+            Log.i("NotesViewModel", "Collecting user tags from the remote database")
+
+            try {
+                // Try to get a list of user tags from the repository and assign it to the _userTags Success state
+                _userTags.value = UserTagUiState.Success(userTagRepository.getUserTags())
+                Log.i("NotesViewModel", "User tags collected succesfully")
+            } catch (e: IOException) {
+                // Sets the _userTags to its Error state containing the IO error message text
+                _userTags.value = UserTagUiState.Error(e.message.toString())
+                Log.e("NotesViewModel", "IO Error collecting user tags: ${e.message}")
+            } catch (e: Exception) {
+                // Sets the _userTags to its Error state containing the error message text
+                _userTags.value = UserTagUiState.Error(e.message.toString())
+                Log.e("NotesViewModel", "Error collecting user tags: ${e.message}")
+            }
         }
     }
 

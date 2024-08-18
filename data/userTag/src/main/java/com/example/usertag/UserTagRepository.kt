@@ -3,13 +3,12 @@ package com.example.usertag
 import com.example.model.MessageResponse
 import com.example.model.UserTag
 import com.example.network.api.UserTagApiService
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
 interface UserTagRepository {
     suspend fun createUserTag(userTag: UserTag): MessageResponse
-    fun getUserTags(): Flow<List<UserTag>>
+    suspend fun getUserTags(): List<UserTag>
     suspend fun updateUserTag(userTag: UserTag): MessageResponse
     suspend fun deleteUserTag(userTagId: Long): MessageResponse
 }
@@ -28,10 +27,10 @@ class RemoteUserTagRepository @Inject constructor(
         userTagApiService.createUserTag(userTag)
 
     /**
-     * Call the Api service to get a [Flow] of a [List] of [UserTag]
-     * @return Flow of a List of UserTag
+     * Call the Api service to get a [List] of [UserTag]
+     * @return List of UserTag
      */
-    override fun getUserTags(): Flow<List<UserTag>> = userTagApiService.getUserTags()
+    override suspend fun getUserTags(): List<UserTag> = userTagApiService.getUserTags()
 
     /**
      * Calls the Api service to update the given [UserTag] in the remote database

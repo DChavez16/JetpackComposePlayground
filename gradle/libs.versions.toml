@@ -43,7 +43,7 @@ junitTest = "4.13.2"
 # Google fonts
 googleFonts = "1.6.8"
 # Implementatnion Test
-androidXTest = "1.6.1"
+androidXTest = "1.6.2"
 junit = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"

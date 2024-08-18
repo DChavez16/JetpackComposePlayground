@@ -3,14 +3,12 @@ package com.example.notes
 import com.example.model.MessageResponse
 import com.example.model.Note
 import com.example.network.api.NoteApiService
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
 interface NoteRepository {
     suspend fun createNote(note: Note): MessageResponse
-    fun getNotes(): Flow<List<Note>>
+    suspend fun getNotes(): List<Note>
     suspend fun updateNote(note: Note): MessageResponse
     suspend fun deleteNote(noteId: Long): MessageResponse
 }
@@ -28,20 +26,14 @@ class RemoteNoteRepository @Inject constructor(
     override suspend fun createNote(note: Note): MessageResponse = noteApiService.createNote(note)
 
     /**
-     * Calls the Api Service to get a [Flow] of a [List] of [Note]
-     * @return Flow of a List of Note
+     * Calls the Api Service to get a [List] of [Note]
+     * @return List of Note
      */
-    override fun getNotes(): Flow<List<Note>> =
-        noteApiService.getNotes().map { notesList ->
-            notesList.map { note ->
-                val noteUserTags = noteApiService.getNoteUserTags(note.id)
-
-                note.copy(userTags = noteUserTags)
-
-//                val newNote = note.copy(userTags = noteUserTags)
-
-//                newNote
-            }
+    override suspend fun getNotes(): List<Note> =
+        noteApiService.getNotes().map { note ->
+            note.copy(
+                userTags = noteApiService.getNoteUserTags(note.id)
+            )
         }
 
     /**

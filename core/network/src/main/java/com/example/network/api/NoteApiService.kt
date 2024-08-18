@@ -30,10 +30,10 @@ interface NoteApiService {
 
     /**
      * Read all notes
-     * @return [Flow] of a [List] of [Note]
+     * @return [List] of [Note]
      */
     @GET("notes")
-    fun getNotes(): Flow<List<Note>>
+    suspend fun getNotes(): List<Note>
 
     /**
      * Read the user tags of the [Note]
@@ -41,7 +41,7 @@ interface NoteApiService {
      * @return List of [UserTag] related to the [Note], the list can be empty
      */
     @GET("notes/{id}/userTags")
-    fun getNoteUserTags(
+    suspend fun getNoteUserTags(
         @Path("id") noteId: Long
     ): List<UserTag>
 

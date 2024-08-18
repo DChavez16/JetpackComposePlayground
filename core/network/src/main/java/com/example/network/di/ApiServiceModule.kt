@@ -22,7 +22,7 @@ object ApiServiceModule {
     @Provides
     fun providesRetrofit(): Retrofit {
         // Base URL to be used by retrofit
-        val baseUrl = "192.168.0.16:8080/"
+        val baseUrl = "https://192.168.0.16:8080/"
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)

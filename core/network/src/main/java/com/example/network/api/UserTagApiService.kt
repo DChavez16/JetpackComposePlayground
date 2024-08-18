@@ -2,7 +2,6 @@ package com.example.network.api
 
 import com.example.model.MessageResponse
 import com.example.model.UserTag
-import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -29,10 +28,10 @@ interface UserTagApiService {
 
     /**
      * Read all user tags
-     * @return [Flow] of a [List] of [UserTag]
+     * @return [List] of [UserTag]
      */
     @GET("tags")
-    fun getUserTags(): Flow<List<UserTag>>
+    suspend fun getUserTags(): List<UserTag>
 
 
     /**
