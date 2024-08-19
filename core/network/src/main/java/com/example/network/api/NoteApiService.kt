@@ -22,7 +22,7 @@ interface NoteApiService {
      * @param note [Note] to be sent to the server for storage
      * @return [MessageResponse] containg the operation results
      */
-    @POST("notes")
+    @POST("/notes")
     suspend fun createNote(
         @Body note: Note
     ): MessageResponse
@@ -32,7 +32,7 @@ interface NoteApiService {
      * Read all notes
      * @return [List] of [Note]
      */
-    @GET("notes")
+    @GET("/notes")
     suspend fun getNotes(): List<Note>
 
     /**
@@ -40,7 +40,7 @@ interface NoteApiService {
      * @param noteId Id from the [Note] to get the user tags
      * @return List of [UserTag] related to the [Note], the list can be empty
      */
-    @GET("notes/{id}/userTags")
+    @GET("/notes/{id}/userTags")
     suspend fun getNoteUserTags(
         @Path("id") noteId: Long
     ): List<UserTag>
@@ -51,7 +51,7 @@ interface NoteApiService {
      * @param note [Note] to be updated with the new parameters
      * @return [MessageResponse] containg the operation results
      */
-    @PUT("notes")
+    @PUT("/notes")
     suspend fun updateNote(
         @Body note: Note
     ): MessageResponse
@@ -62,7 +62,7 @@ interface NoteApiService {
      * @param noteId Id from the [Note] to delete
      * @return [MessageResponse] containg the operation results
      */
-    @DELETE("notes/{id}")
+    @DELETE("/notes/{id}")
     suspend fun deleteNote(
         @Path("id") noteId: Long
     ): MessageResponse

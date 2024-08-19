@@ -48,7 +48,6 @@ internal class NotesViewModel @Inject constructor(
 
     // Block of code executed at ViewModel creation
     init {
-        // TODO Fix error: "Unable to parse TLS packet header"
         // Get a list of notes from the repository
         viewModelScope.launch {
             // Sets the _notesUiState to its Loading state
@@ -70,7 +69,6 @@ internal class NotesViewModel @Inject constructor(
             }
         }
 
-        // TODO Fix error: "Unable to parse TLS packet header"
         // Get a list of user notes from the repository
         viewModelScope.launch {
             // Sets the _userTags to its Loading state

@@ -20,7 +20,7 @@ interface UserTagApiService {
      * @param userTag [UserTag] to be send to the server for storage
      * @return [MessageResponse] containg the operation results
      */
-    @POST("tags")
+    @POST("/tags")
     suspend fun createUserTag(
         @Body userTag: UserTag
     ): MessageResponse
@@ -30,7 +30,7 @@ interface UserTagApiService {
      * Read all user tags
      * @return [List] of [UserTag]
      */
-    @GET("tags")
+    @GET("/tags")
     suspend fun getUserTags(): List<UserTag>
 
 
@@ -39,7 +39,7 @@ interface UserTagApiService {
      * @param userTag [UserTag] to be updated with the new parameters
      * @return [MessageResponse] containg the operation results
      */
-    @PUT("tags")
+    @PUT("/tags")
     suspend fun updateUserTag(
         @Body userTag: UserTag
     ): MessageResponse
@@ -50,7 +50,7 @@ interface UserTagApiService {
      * @param userTagId Id from the [UserTag] to delete
      * @return [MessageResponse] containg the operation results
      */
-    @DELETE("tags/{id}")
+    @DELETE("/tags/{id}")
     suspend fun deleteUserTag(
         @Path("id") userTagId: Long
     ): MessageResponse
