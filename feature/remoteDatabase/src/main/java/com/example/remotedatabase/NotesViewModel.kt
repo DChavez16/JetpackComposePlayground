@@ -36,15 +36,18 @@ internal class NotesViewModel @Inject constructor(
 
     // Backing property of the NotesUiState to avoid state updates from other classes
     private val _notesUiState = MutableStateFlow<NotesUiState>(NotesUiState.Loading)
-
     // The UI collects from this StateFlow to get its state updates
     val notesUiState: StateFlow<NotesUiState> = _notesUiState
 
     // Backing property for UserTag list to avoid state updates from other classes
     private val _userTags = MutableStateFlow<UserTagUiState>(UserTagUiState.Loading)
-
     // The UI collects from this StateFlow to get its state updates
     val userTags: StateFlow<UserTagUiState> = _userTags
+
+    // Backing property for the current selected note to avoid state updates from other classes
+    private val _currentSelectedNote = MutableStateFlow(Note())
+    // The UI collects from this StateFlow to get its state updates
+    val currentSelectedNote: StateFlow<Note> = _currentSelectedNote
 
     // Block of code executed at ViewModel creation
     init {
@@ -179,4 +182,6 @@ internal class NotesViewModel @Inject constructor(
             Log.i("NotesViewModel", messageResponse.message)
         }
     }
+
+
 }

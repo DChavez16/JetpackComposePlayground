@@ -62,10 +62,10 @@ private const val LOG_TAG = "TagsBottomSheet"
 
 @Composable
 internal fun TagsBottomSheet(
-    notesViewModel: NotesViewModel = viewModel(),
     selectedUserTags: () -> List<UserTag>,
     filterMode: () -> Boolean,
-    onMainButtonClick: (List<UserTag>) -> Unit
+    onMainButtonClick: (List<UserTag>) -> Unit,
+    notesViewModel: NotesViewModel = viewModel()
 ) {
 
     /**

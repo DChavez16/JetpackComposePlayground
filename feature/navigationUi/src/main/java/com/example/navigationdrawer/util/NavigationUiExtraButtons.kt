@@ -33,6 +33,8 @@ internal fun NavigationUiExtraButtons(
     windowSizeClass: () -> WindowSizeClass
 ) {
 
+    // TODO Update to the new design guidelines
+
     // If the Window Width Class is Medium, arrange the buttons vertically
     // Else, arrange the buttons horizontally
     if(windowSizeClass().windowWidthSizeClass == WindowWidthSizeClass.MEDIUM) {

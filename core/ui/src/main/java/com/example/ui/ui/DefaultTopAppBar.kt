@@ -62,6 +62,9 @@ fun DefaultTopAppBar(
     actionButtonContentDescription: () -> String? = { null },
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
+
+    // TODO Update to the new design guidelines
+
     CenterAlignedTopAppBar(
         title = {
             // Handles TopAppBar's title content animation

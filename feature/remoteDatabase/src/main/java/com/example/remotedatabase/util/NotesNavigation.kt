@@ -5,12 +5,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.model.Note
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
 import com.example.remotedatabase.ui.NotesDetailScreen
@@ -48,6 +50,8 @@ internal fun RemoteDatabaseNavHost(
     // Creates a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
 
+
+
     NavHost(
         navController = navController,
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
@@ -68,7 +72,10 @@ internal fun RemoteDatabaseNavHost(
         ) {
             Log.i("NoteDetailScreen", "NoteDetalScreen as 'new note' variant created")
 
-            NotesDetailScreen()
+            NotesDetailScreen(
+                noteToEdit = Note(),
+                onMainButtonClick = { TODO("Trigger ViewModel's createNote() method with the given note") }
+            )
         }
 
         // Edit Note destination
@@ -77,7 +84,10 @@ internal fun RemoteDatabaseNavHost(
         ) {
             Log.i("NoteDetailScreen", "NoteDetalScreen as 'edit note' variant created")
 
-            NotesDetailScreen()
+            NotesDetailScreen(
+                noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
+                onMainButtonClick = { TODO("Trigger ViewModel's updateNote() method with the given note") }
+            )
         }
     }
 }

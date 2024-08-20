@@ -56,6 +56,9 @@ private fun NotesScreenContent(
     navigateToAddNoteScreen: () -> Unit,
     remoteDatabaseNavHost: @Composable (PaddingValues) -> Unit
 ) {
+    // TODO Add Scafflod with changing TopAppBar
+    // TODO Display a Delete Button when the current route is EditNote
+    // TODO Show an AlertDialog when the delete button is clicked, at confirmation, trigger the deleteNote() method and return to the previous screen
 
     val topAppBarTitle = stringResource(
         if (currentRoute() == RemoteDatabaseDestinations.NotesList.screenRouteName) RemoteDatabaseDestinations.NotesList.screenTitle
