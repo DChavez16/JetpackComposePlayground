@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Discount
 import androidx.compose.material3.HorizontalDivider
@@ -25,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -144,7 +147,9 @@ private fun NoteTitleAndTags(
                     imageVector = Icons.Default.Discount,
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = stringResource(R.string.remote_database_notes_detail_add_tag),
-                    modifier = Modifier.size(16.dp).clickable { onNoteTagsIconButtonClicked() }
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable { onNoteTagsIconButtonClicked() }
                 )
             }
         }
@@ -163,7 +168,56 @@ private fun NoteBody(
     noteBody: String,
     onNoteBodyChange: (String) -> Unit
 ) {
+    val outlineVariantColor = MaterialTheme.colorScheme.outlineVariant
+    val verticalScroll = rememberScrollState()
 
+    TextField(
+        value = noteBody,
+        onValueChange = onNoteBodyChange,
+        textStyle = MaterialTheme.typography.bodyLarge,
+        singleLine = false,
+        colors = TextFieldDefaults.colors().copy(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(
+                alpha = 0.5f
+            ),
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(
+                alpha = 0.5f
+            )
+        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(state = verticalScroll)
+            .drawBehind {
+                val numberOfLines = (size.height.toDp() / 24).value.toInt()
+
+                for (line in 1..numberOfLines) {
+                    drawLine(
+                        color = outlineVariantColor,
+                        start = Offset(
+                            x = 12.dp.toPx(),
+                            y = 24.dp
+                                .toPx()
+                                .times(line.toFloat())
+                                .plus(9.dp.toPx())
+                        ),
+                        end = Offset(
+                            x = size.width - 12.dp.toPx(),
+                            y = 24.dp
+                                .toPx()
+                                .times(line.toFloat())
+                                .plus(9.dp.toPx())
+                        ),
+                        strokeWidth = 1.dp.toPx()
+                    )
+                }
+            }
+    )
 }
 
 
@@ -217,7 +271,16 @@ private fun NoteBodyPreview() {
     PreviewAppTheme(
         darkTheme = isSystemInDarkTheme()
     ) {
-
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            NoteBody(
+                noteBody = fakeNotesList[0].body,
+                onNoteBodyChange = {}
+            )
+        }
     }
 }
 
