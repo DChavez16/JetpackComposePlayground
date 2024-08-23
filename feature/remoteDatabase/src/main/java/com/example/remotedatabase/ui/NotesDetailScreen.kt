@@ -4,15 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Discount
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,28 +56,69 @@ internal fun NotesDetailScreen(
 
 @Composable
 private fun NotesDetailScreenContent(
-    noteToEdit: Note,
-    noteTags: List<UserTag>,
+    noteToEdit: () -> Note,
+    noteTags: () -> List<UserTag>,
     onNoteTagsIconButtonClicked: () -> Unit,
     onMainButtonClick: (String, String) -> Unit
 ) {
 
-    var editableNoteTitle by rememberSaveable { mutableStateOf(noteToEdit.title) }
-    var editableNoteBody by rememberSaveable { mutableStateOf(noteToEdit.body) }
+    var editableNoteTitle by rememberSaveable { mutableStateOf(noteToEdit().title) }
+    var editableNoteBody by rememberSaveable { mutableStateOf(noteToEdit().body) }
 
-    // Box filling all space
-    // Column filling all space
-    // Call to NoteTitleAndTags composable
-    // Call to NoteBody composable
-    // Centered tertiary FAB at the bottom
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Column with the title, tags and body of the note, occupying all the screen
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        ) {
+            // Note title and tags
+            NoteTitleAndTags(
+                noteTitle = { editableNoteTitle },
+                noteTags = noteTags,
+                onNoteTitleChange = { newNoteTitle -> editableNoteTitle = newNoteTitle },
+                onNoteTagsIconButtonClicked = onNoteTagsIconButtonClicked
+
+            )
+
+            // Note body
+            NoteBody(
+                noteBody = { editableNoteBody },
+                onNoteBodyChange = { newNoteBody -> editableNoteBody = newNoteBody }
+            )
+        }
+
+        // Save note FAB at the bottom
+        FloatingActionButton(
+            onClick = {
+                onMainButtonClick(editableNoteTitle, editableNoteBody)
+            },
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 2.dp,
+                hoveredElevation = 6.dp,
+                focusedElevation = 6.dp
+            ),
+            content = {
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = stringResource(R.string.remote_database_notes_detail_save_note_button_label)
+                )
+            },
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 20.dp)
+        )
+    }
 }
 
 
 @Composable
 private fun NoteTitleAndTags(
-    noteTitle: String,
+    noteTitle: () -> String,
+    noteTags: () -> List<UserTag>,
     onNoteTitleChange: (String) -> Unit,
-    noteTags: List<UserTag>,
     onNoteTagsIconButtonClicked: () -> Unit
 ) {
     Column {
@@ -82,7 +129,7 @@ private fun NoteTitleAndTags(
         ) {
             // Note title text field
             TextField(
-                value = noteTitle,
+                value = noteTitle(),
                 onValueChange = onNoteTitleChange,
                 placeholder = {
                     Text(
@@ -112,24 +159,25 @@ private fun NoteTitleAndTags(
             // Note tags row
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onNoteTagsIconButtonClicked() }
             ) {
                 // If the note user tags list is note empty
-                if (noteTags.isNotEmpty()) {
+                if (noteTags().isNotEmpty()) {
                     // Tag text from the first tag in the note user tags list
                     Text(
-                        text = noteTags[0].tagText,
+                        text = noteTags()[0].tagText,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     // If the number of tags in the note user tags list is greater than 1
-                    if (noteTags.size > 1) {
+                    if (noteTags().size > 1) {
                         val surfaceVariantColor = MaterialTheme.colorScheme.surfaceVariant
 
                         // Sets a bubble with the number of the rest of the tags in the list
                         Text(
-                            text = "+${noteTags.size - 1}",
+                            text = "+${noteTags().size - 1}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.drawBehind {
@@ -149,7 +197,6 @@ private fun NoteTitleAndTags(
                     contentDescription = stringResource(R.string.remote_database_notes_detail_add_tag),
                     modifier = Modifier
                         .size(16.dp)
-                        .clickable { onNoteTagsIconButtonClicked() }
                 )
             }
         }
@@ -165,14 +212,15 @@ private fun NoteTitleAndTags(
 
 @Composable
 private fun NoteBody(
-    noteBody: String,
+    noteBody: () -> String,
     onNoteBodyChange: (String) -> Unit
 ) {
     val outlineVariantColor = MaterialTheme.colorScheme.outlineVariant
     val verticalScroll = rememberScrollState()
 
+    // Note's body text field
     TextField(
-        value = noteBody,
+        value = noteBody(),
         onValueChange = onNoteBodyChange,
         textStyle = MaterialTheme.typography.bodyLarge,
         singleLine = false,
@@ -194,6 +242,7 @@ private fun NoteBody(
             .fillMaxSize()
             .verticalScroll(state = verticalScroll)
             .drawBehind {
+                // Line drawns to give a sensation of a notebook
                 val numberOfLines = (size.height.toDp() / 24).value.toInt()
 
                 for (line in 1..numberOfLines) {
@@ -238,26 +287,26 @@ private fun NoteTitleAndTagsPreview() {
         ) {
             // With no Tags
             NoteTitleAndTags(
-                noteTitle = fakeNotesList[3].title,
-//                noteTitle = "",
+                noteTitle = { fakeNotesList[3].title },
+//                noteTitle = { "" },
+                noteTags = { fakeNotesList[3].userTags },
                 onNoteTitleChange = {},
-                noteTags = fakeNotesList[3].userTags,
                 onNoteTagsIconButtonClicked = {}
             )
 
             // With one tag
             NoteTitleAndTags(
-                noteTitle = fakeNotesList[1].title,
+                noteTitle = { fakeNotesList[1].title },
+                noteTags = { fakeNotesList[1].userTags },
                 onNoteTitleChange = {},
-                noteTags = fakeNotesList[1].userTags,
                 onNoteTagsIconButtonClicked = {}
             )
 
             // With multiple tags
             NoteTitleAndTags(
-                noteTitle = fakeNotesList[2].title,
+                noteTitle = { fakeNotesList[2].title },
+                noteTags = { fakeNotesList[2].userTags },
                 onNoteTitleChange = {},
-                noteTags = fakeNotesList[2].userTags,
                 onNoteTagsIconButtonClicked = {}
             )
         }
@@ -277,7 +326,7 @@ private fun NoteBodyPreview() {
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
             NoteBody(
-                noteBody = fakeNotesList[0].body,
+                noteBody = { fakeNotesList[0].body },
                 onNoteBodyChange = {}
             )
         }
@@ -291,6 +340,18 @@ private fun NotesDetailScreenContentPreview() {
     PreviewAppTheme(
         darkTheme = isSystemInDarkTheme()
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
 
+        ) {
+            NotesDetailScreenContent(
+                noteToEdit = { fakeNotesList[0] },
+                noteTags = { fakeNotesList[0].userTags },
+                onNoteTagsIconButtonClicked = {},
+                onMainButtonClick = { _: String, _: String ->}
+            )
+        }
     }
 }
