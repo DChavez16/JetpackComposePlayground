@@ -73,6 +73,13 @@ internal class NotesViewModel @Inject constructor(
         }
 
         // Get a list of user notes from the repository
+        getUserTags()
+    }
+
+    /**
+     * Attemps to a [List] of [UserTag] from the repository, stores the result in the [_userTags]
+     */
+    fun getUserTags() {
         viewModelScope.launch {
             // Sets the _userTags to its Loading state
             _userTags.value = UserTagUiState.Loading

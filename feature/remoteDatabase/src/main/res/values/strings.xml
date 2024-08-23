@@ -32,5 +32,6 @@
 
     <!-- Notes Detail Screen -->
     <string name="remote_database_notes_detail_add_tag">Add tags to note</string>
+    <string name="remote_database_notes_detail_retry_connection">Try to connect to again</string>
     <string name="remote_database_notes_detail_save_note_button_label">Save note</string>
 </resources>

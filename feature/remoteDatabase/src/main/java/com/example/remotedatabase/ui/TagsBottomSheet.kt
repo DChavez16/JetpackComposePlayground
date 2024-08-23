@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,6 +70,9 @@ internal fun TagsBottomSheet(
     notesViewModel: NotesViewModel = viewModel()
 ) {
 
+    // TODO Fix user flow when clicking buttons
+    // TODO Add a way to turn off modify tags mode
+
     /**
      * State that holds the list of selected tags. It'll recieve updates and will be send to the
      * caller via onMainButtonClick() method
@@ -77,7 +82,7 @@ internal fun TagsBottomSheet(
     /**
      * State that holds the current TagsBottomSheetVariant instance. The starting variant is Start
      */
-    var currentTagBottomSheetVariant by rememberSaveable {
+    var currentTagBottomSheetVariant by remember {
         mutableStateOf<TagsBottomSheetVariant>(
             TagsBottomSheetVariant.Start
         )
@@ -185,7 +190,8 @@ internal fun TagsBottomSheet(
             Log.e(LOG_TAG, "Error at retrieving user tags content from the server: $errorMessage")
 
             ErrorContent(
-                errorMessage = errorMessage
+                errorMessage = errorMessage,
+                onRetryButtonClick = notesViewModel::getUserTags
             )
         }
     }
@@ -213,7 +219,7 @@ private fun TagsBottomSheetStart(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
+            .padding(start = 12.dp, end = 12.dp, bottom = 52.dp)
     ) {
         // Header row
         Row(
@@ -367,7 +373,7 @@ private fun TagsBottomSheetEditTag(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
+            .padding(start = 12.dp, end = 12.dp, bottom = 52.dp)
     ) {
         // Header row
         Row(
@@ -462,7 +468,7 @@ private fun LoadingContent() {
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp)
-            .padding(12.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 52.dp)
     ) {
         CircularProgressIndicator()
     }
@@ -471,7 +477,8 @@ private fun LoadingContent() {
 
 @Composable
 private fun ErrorContent(
-    errorMessage: String
+    errorMessage: String,
+    onRetryButtonClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -479,7 +486,7 @@ private fun ErrorContent(
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp)
-            .padding(12.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 52.dp)
     ) {
         // Error icon
         Icon(
@@ -500,7 +507,17 @@ private fun ErrorContent(
         Text(
             text = errorMessage,
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Icon(
+            imageVector = Icons.Rounded.Replay,
+            tint = MaterialTheme.colorScheme.onSurface,
+            contentDescription = stringResource(R.string.remote_database_notes_detail_retry_connection),
+            modifier = Modifier
+                .size(20.dp)
+                .clickable { onRetryButtonClick() }
         )
     }
 }
@@ -622,7 +639,8 @@ private fun ErrorContentPreview() {
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
         ) {
             ErrorContent(
-                errorMessage = "Preview error message"
+                errorMessage = "Preview error message",
+                onRetryButtonClick = {}
             )
         }
     }

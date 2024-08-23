@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.remotedatabase.ui
 
 import androidx.compose.foundation.background
@@ -16,18 +18,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Discount
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,20 +43,92 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import kotlinx.coroutines.launch
 
 
 @Composable
 internal fun NotesDetailScreen(
     noteToEdit: Note,
-    onMainButtonClick: (Note) -> Unit
+    onMainButtonClick: (Note) -> Unit,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
+
+    // Note's user tags wichh can be edited in the TagsBottomSheet
     var editableNoteTags by rememberSaveable { mutableStateOf(noteToEdit.userTags) }
+
+    // Modal bottom sheet state to expand or hide it
+    val modalBottomSheetState = rememberModalBottomSheetState()
+    val modalBottomSheetCoroutineScope = rememberCoroutineScope()
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
+        NotesDetailScreenContent(
+            noteToEdit = { noteToEdit },
+            noteTags = { editableNoteTags },
+            onNoteTagsIconButtonClicked = {
+                // Start the expand animation of the bottom sheet and set showBottomSheet to true
+                modalBottomSheetCoroutineScope.launch {
+                    modalBottomSheetState.expand()
+                }.invokeOnCompletion {
+                    showBottomSheet = true
+                }
+            },
+            onMainButtonClick = { noteTitle, noteBody ->
+                // Return to the caller the note with the edited title, body and tags
+                onMainButtonClick(
+                    noteToEdit.copy(
+                        title = noteTitle,
+                        body = noteBody,
+                        userTags = editableNoteTags
+                    )
+                )
+            },
+            modifier = Modifier.padding(innerPadding)
+        )
+
+        if(showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                    modalBottomSheetCoroutineScope.launch {
+                        modalBottomSheetState.hide()
+                    }.invokeOnCompletion {
+                        showBottomSheet = false
+                    }
+                },
+                sheetState = modalBottomSheetState,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ) {
+                TagsBottomSheet(
+                    selectedUserTags = { editableNoteTags },
+                    filterMode = { false },
+                    onMainButtonClick = { newUserTags ->
+                        // Replace the current editableUserTags with the obtained from TagsBottomSheet
+                        editableNoteTags = newUserTags
+
+                        // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                        modalBottomSheetCoroutineScope.launch {
+                            modalBottomSheetState.hide()
+                        }.invokeOnCompletion {
+                            showBottomSheet = false
+                        }
+                    },
+                    notesViewModel = hiltViewModel(viewModelStoreOwner)
+                )
+            }
+        }
+    }
 }
 
 
@@ -59,14 +137,15 @@ private fun NotesDetailScreenContent(
     noteToEdit: () -> Note,
     noteTags: () -> List<UserTag>,
     onNoteTagsIconButtonClicked: () -> Unit,
-    onMainButtonClick: (String, String) -> Unit
+    onMainButtonClick: (String, String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     var editableNoteTitle by rememberSaveable { mutableStateOf(noteToEdit().title) }
     var editableNoteBody by rememberSaveable { mutableStateOf(noteToEdit().body) }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         // Column with the title, tags and body of the note, occupying all the screen
         Column(

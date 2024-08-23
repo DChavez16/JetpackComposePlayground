@@ -74,7 +74,8 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = Note(),
-                onMainButtonClick = { TODO("Trigger ViewModel's createNote() method with the given note") }
+                onMainButtonClick = { TODO("Trigger ViewModel's createNote() method with the given note") },
+                viewModelStoreOwner = viewModelStoreOwner()
             )
         }
 
@@ -86,7 +87,8 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                onMainButtonClick = { TODO("Trigger ViewModel's updateNote() method with the given note") }
+                onMainButtonClick = { TODO("Trigger ViewModel's updateNote() method with the given note") },
+                viewModelStoreOwner = viewModelStoreOwner()
             )
         }
     }
