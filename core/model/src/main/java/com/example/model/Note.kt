@@ -38,7 +38,10 @@ val fakeNotesList = listOf(
         userTags = listOf(
             fakeUserTagsList[1],
             fakeUserTagsList[2],
-            fakeUserTagsList[3]
+            fakeUserTagsList[3],
+            fakeUserTagsList[4],
+            fakeUserTagsList[5],
+            fakeUserTagsList[6]
         )
     ),
     Note(

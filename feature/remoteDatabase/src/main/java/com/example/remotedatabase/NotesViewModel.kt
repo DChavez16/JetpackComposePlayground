@@ -49,6 +49,12 @@ internal class NotesViewModel @Inject constructor(
     // The UI collects from this StateFlow to get its state updates
     val currentSelectedNote: StateFlow<Note> = _currentSelectedNote
 
+    // Backing property to know if the current view mode is the list view to avoid state updates from other classes
+    private val _isListView = MutableStateFlow(true)
+    // The UI collects from this StateFlow to get its state updates
+    val isListView: StateFlow<Boolean> = _isListView
+
+
     // Block of code executed at ViewModel creation
     init {
         // Get a list of notes from the repository
