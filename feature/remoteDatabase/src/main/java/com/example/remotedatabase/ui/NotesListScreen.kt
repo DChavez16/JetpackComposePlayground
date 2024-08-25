@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -74,19 +71,19 @@ private fun NoteScreenItem(
             .height(163.dp)
     }
 
-    Card(
-        shape = RoundedCornerShape(size = 12.dp),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(4.dp),
+    Box(
         modifier = itemModifier
-            .clickable { onNoteClick(note) }
     ) {
-        Box(
+        // Note element card
+        Card(
+            shape = RoundedCornerShape(size = 12.dp),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            elevation = CardDefaults.cardElevation(4.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+                .clickable { onNoteClick(note) }
         ) {
             // If the view mode is list view, set the column's vertical arrangement as SpaceBetween, else set space of 4dp between elements
             val itemVerticalArrangement =
@@ -96,7 +93,7 @@ private fun NoteScreenItem(
             // Column of notes content
             Column(
                 verticalArrangement = itemVerticalArrangement,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(12.dp)
             ) {
                 // Note title
                 Text(
@@ -127,7 +124,7 @@ private fun NoteScreenItem(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clickable { onTagsClick(note.id) }
-                        .fillMaxWidth()
+                        .align(Alignment.End)
                 ) {
                     // If the note user tags list is note empty and showTags is false
                     if (note.userTags.isNotEmpty() && !showTags()) {
@@ -160,35 +157,35 @@ private fun NoteScreenItem(
                     }
                 }
             }
+        }
 
-            // TODO Make it draw out of bounds
-            // If showTags is true, show an expanded list of tags
-            if (showTags()) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shadowElevation = 6.dp,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .wrapContentSize(
-                            align = Alignment.BottomEnd,
-                            unbounded = true
-                        )
-                        .clickable { onTagsClick(note.id) }
+        // If showTags is true, show an expanded list of tags
+        if (showTags()) {
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shadowElevation = 6.dp,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .wrapContentSize(
+                        align = Alignment.BottomEnd,
+                        unbounded = true
+                    )
+                    .padding(end = 12.dp, bottom = 12.dp)
+                    .clickable { onTagsClick(note.id) }
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.padding(4.dp)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        for (noteUserTag in note.userTags) {
-                            Text(
-                                text = noteUserTag.tagText,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                    for (noteUserTag in note.userTags) {
+                        Text(
+                            text = noteUserTag.tagText,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
-                            if (noteUserTag != note.userTags.last()) {
-                                Spacer(Modifier.height(4.dp))
-                            }
+                        if (noteUserTag != note.userTags.last()) {
+                            Spacer(Modifier.height(4.dp))
                         }
                     }
                 }
