@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.remotedatabase.ui
 
 import androidx.compose.foundation.background
@@ -11,24 +13,49 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.model.Note
+import com.example.model.UserTag
 import com.example.model.fakeNotesList
+import com.example.model.fakeUserTagsList
+import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
@@ -46,6 +73,128 @@ private fun NotesListScreenContent(
 
 ) {
 
+}
+
+
+@Composable
+private fun NoteSearchTools(
+    filterTags: () -> List<UserTag>,
+    onNoteSearch: (String) -> Unit,
+    onTagFiltersButtonClick: () -> Unit,
+    onClearTagFilterClick: (Long) -> Unit
+) {
+
+    var noteSearchText by rememberSaveable { mutableStateOf("") }
+
+    // Note search / Filter button and Filtered tags
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Note search and Filter button
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Note search
+            SearchBar(
+                query = noteSearchText,
+                onQueryChange = { newNoteSearchText -> noteSearchText = newNoteSearchText },
+                onSearch = { onNoteSearch(noteSearchText) },
+                active = false,
+                onActiveChange = {},
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.remote_database_notes_list_search_tab_label),
+                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                trailingIcon = {
+                    // If the noteSearchText is empty, show the search icon, else a clear icon
+                    Icon(
+                        imageVector = with(Icons.Rounded) {
+                            if (noteSearchText.isEmpty()) Search else Clear
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .also {
+                                // If noteSearchText IS NOT empty, add a clicakble to clear the text
+                                if (noteSearchText.isNotEmpty()) {
+                                    it.clickable { noteSearchText = "" }
+                                }
+                            }
+                    )
+                },
+                colors = SearchBarDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                content = {},
+                modifier = Modifier
+                    .weight(1f)
+                    .offset(y = (-4).dp)
+            )
+
+            // Filter button
+            Icon(
+                imageVector = Icons.Rounded.FilterList,
+                contentDescription = stringResource(R.string.remote_database_notes_list_open_tags_filter),
+                tint = MaterialTheme.colorScheme.outline,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        onTagFiltersButtonClick()
+                    }
+            )
+        }
+
+        // Filtered tags
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Create an input chip for each uesr tag in the filterTags list
+            items(
+                items = filterTags(),
+                key = { userTag -> userTag.id }
+            ) { filterTag ->
+                InputChip(
+                    selected = false,
+                    onClick = {},
+                    label = {
+                        Text(
+                            text = filterTag.tagText,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Clear,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clickable {
+                                    onClearTagFilterClick(filterTag.id)
+                                }
+                        )
+                    },
+                    colors = InputChipDefaults.inputChipColors().copy(
+                        containerColor = Color.Transparent,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        trailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    border = InputChipDefaults.inputChipBorder(
+                        enabled = true,
+                        selected = false,
+                        borderColor = MaterialTheme.colorScheme.outline
+                    )
+                )
+            }
+        }
+    }
 }
 
 
@@ -93,7 +242,9 @@ private fun NoteScreenItem(
             // Column of notes content
             Column(
                 verticalArrangement = itemVerticalArrangement,
-                modifier = Modifier.fillMaxSize().padding(12.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
             ) {
                 // Note title
                 Text(
@@ -198,6 +349,35 @@ private fun NoteScreenItem(
 /*
 Previews
  */
+@Composable
+@CompactSizeScreenThemePreview
+private fun NoteSearchToolsPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(12.dp)
+        ) {
+            NoteSearchTools(
+                filterTags = {
+                    listOf(
+                        fakeUserTagsList[1],
+                        fakeUserTagsList[2]
+                    )
+                },
+                onNoteSearch = {},
+                onTagFiltersButtonClick = {},
+                onClearTagFilterClick = {}
+            )
+        }
+    }
+}
+
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun NoteScreenItemListViewModePreview() {
