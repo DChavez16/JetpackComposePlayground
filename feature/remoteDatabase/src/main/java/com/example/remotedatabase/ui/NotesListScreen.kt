@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -70,9 +74,61 @@ internal fun NotesListScreen(
 
 @Composable
 private fun NotesListScreenContent(
-
+    notes: () -> List<Note>,
+    onNoteClick: (Note) -> Unit,
+    isListViewMode: () -> Boolean,
+    filterTags: () -> List<UserTag>,
+    onTagFiltersButtonClick: () -> Unit,
+    onClearTagFilterClick: (Long) -> Unit
 ) {
 
+    // State that indicates which note will have its tags list expanded, -1L means none
+    var noteWithExpandedTags by rememberSaveable { mutableLongStateOf(-1L) }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+    ) {
+        // Note search tools
+        NoteSearchTools(
+            filterTags = filterTags,
+            onNoteSearch = { noteSearchText ->
+                notes().filter { note -> note.title.contains(noteSearchText) || note.body.contains(noteSearchText) }
+            },
+            onTagFiltersButtonClick = onTagFiltersButtonClick,
+            onClearTagFilterClick = onClearTagFilterClick
+        )
+
+        /*
+            If in List View Mode, use 1 fixed column an show the notes list items in list view mode,
+            else set adaptative columns and show the notes list items in grid view mode
+         */
+        LazyVerticalGrid(
+            columns = if (isListViewMode()) GridCells.Fixed(1) else GridCells.Adaptive(144.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize().widthIn(min = 320.dp, max = 623.dp)
+        ) {
+            items(
+                items = notes(),
+                key = { note -> note.id }
+            ) { note ->
+                NoteScreenItem(
+                    note = note,
+                    showTags = { note.id == noteWithExpandedTags },
+                    onNoteClick = onNoteClick,
+                    isListViewMode = isListViewMode,
+                    onTagsClick = { noteId ->
+                        // If the obtained noteId is the same as the current noteWithExpandedTags, set it to -1, else, set the new noteId
+                        noteWithExpandedTags = if (noteId == noteWithExpandedTags) -1 else noteId
+                    }
+                )
+            }
+        }
+    }
 }
 
 
@@ -269,12 +325,16 @@ private fun NoteScreenItem(
                     )
                 }
 
+                // ONLY IF the number of user tags of the note is greater than 1, add a clickable to expand the tags list
+                val noteTagsRowModifier = if(note.userTags.size > 1) {
+                    Modifier.clickable { onTagsClick(note.id) }
+                } else Modifier
+
                 // Note tags row
                 Row(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onTagsClick(note.id) }
+                    modifier = noteTagsRowModifier
                         .align(Alignment.End)
                 ) {
                     // If the note user tags list is note empty and showTags is false
@@ -349,6 +409,36 @@ private fun NoteScreenItem(
 /*
 Previews
  */
+@Composable
+@CompactSizeScreenThemePreview
+private fun NotesListScreenContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            NotesListScreenContent(
+                notes = { fakeNotesList },
+                onNoteClick = {},
+                isListViewMode = { true },
+                filterTags = {
+                    listOf(
+                        fakeUserTagsList[1],
+                        fakeUserTagsList[2]
+                    )
+                },
+                onTagFiltersButtonClick = {},
+                onClearTagFilterClick = {}
+            )
+        }
+    }
+}
+
+
 @Composable
 @CompactSizeScreenThemePreview
 private fun NoteSearchToolsPreview() {
