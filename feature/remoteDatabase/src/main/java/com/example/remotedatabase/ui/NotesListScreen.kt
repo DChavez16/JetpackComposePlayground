@@ -2,6 +2,9 @@
 
 package com.example.remotedatabase.ui
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -53,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.model.Note
@@ -62,6 +66,7 @@ import com.example.model.fakeUserTagsList
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @Composable
@@ -85,6 +90,9 @@ private fun NotesListScreenContent(
     // State that indicates which note will have its tags list expanded, -1L means none
     var noteWithExpandedTags by rememberSaveable { mutableLongStateOf(-1L) }
 
+    // State of a list that will hold the notes list with the search filter applied
+    var filteredNotesList by rememberSaveable { mutableStateOf(notes()) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,7 +104,10 @@ private fun NotesListScreenContent(
         NoteSearchTools(
             filterTags = filterTags,
             onNoteSearch = { noteSearchText ->
-                notes().filter { note -> note.title.contains(noteSearchText) || note.body.contains(noteSearchText) }
+                filteredNotesList = notes().filter { note ->
+                    note.title.contains(noteSearchText, ignoreCase = true) ||
+                            note.body.contains(noteSearchText, ignoreCase = true)
+                }
             },
             onTagFiltersButtonClick = onTagFiltersButtonClick,
             onClearTagFilterClick = onClearTagFilterClick
@@ -110,10 +121,12 @@ private fun NotesListScreenContent(
             columns = if (isListViewMode()) GridCells.Fixed(1) else GridCells.Adaptive(144.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize().widthIn(min = 320.dp, max = 623.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .widthIn(min = 320.dp, max = 623.dp)
         ) {
             items(
-                items = notes(),
+                items = filteredNotesList,
                 key = { note -> note.id }
             ) { note ->
                 NoteScreenItem(
@@ -178,10 +191,12 @@ private fun NoteSearchTools(
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .also {
-                                // If noteSearchText IS NOT empty, add a clicakble to clear the text
+                            .clickable {
                                 if (noteSearchText.isNotEmpty()) {
-                                    it.clickable { noteSearchText = "" }
+                                    // Clean the current search bar text content
+                                    noteSearchText = ""
+                                    // Trigger the onNoteSearch function with an empty string
+                                    onNoteSearch(noteSearchText)
                                 }
                             }
                     )
@@ -326,7 +341,7 @@ private fun NoteScreenItem(
                 }
 
                 // ONLY IF the number of user tags of the note is greater than 1, add a clickable to expand the tags list
-                val noteTagsRowModifier = if(note.userTags.size > 1) {
+                val noteTagsRowModifier = if (note.userTags.size > 1) {
                     Modifier.clickable { onTagsClick(note.id) }
                 } else Modifier
 
@@ -411,6 +426,7 @@ Previews
  */
 @Composable
 @CompactSizeScreenThemePreview
+//@Preview
 private fun NotesListScreenContentPreview() {
     PreviewAppTheme(
         darkTheme = isSystemInDarkTheme()

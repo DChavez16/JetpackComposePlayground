@@ -19,7 +19,7 @@
       <SelectionState runConfigName="app.auto">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NotesListScreenContentPreview - Dark Theme Preview">
+      <SelectionState runConfigName="NotesListScreenContentPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
