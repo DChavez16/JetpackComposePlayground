@@ -2,9 +2,6 @@
 
 package com.example.remotedatabase.ui
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -39,14 +36,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,9 +57,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
@@ -66,14 +68,84 @@ import com.example.model.fakeUserTagsList
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 
 
 @Composable
 internal fun NotesListScreen(
-
+    notes: () -> List<Note>,
+    isListViewMode: () -> Boolean,
+    onNoteClick: (Note) -> Unit,
+    viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
+    // State that holds a list of the current filtered user tags
+    var filteredUserTags by rememberSaveable { mutableStateOf(listOf<UserTag>()) }
+
+    // Modal bottom sheet state to expand or hide it
+    val modalBottomSheetState = rememberModalBottomSheetState()
+    val modalBottomSheetCoroutineScope = rememberCoroutineScope()
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
+        // Notes list screen content
+        NotesListScreenContent(
+            // Send the notes filtered by the user tags
+            notes = { notes().filter { note -> filteredUserTags.intersect(note.userTags.toSet()).isNotEmpty() } },
+            onNoteClick = onNoteClick,
+            isListViewMode = isListViewMode,
+            filterTags = { filteredUserTags },
+            onTagFiltersButtonClick = {
+                // Start the expand animation of the bottom sheet and set showBottomSheet to true
+                modalBottomSheetCoroutineScope.launch {
+                    modalBottomSheetState.expand()
+                }.invokeOnCompletion {
+                    showBottomSheet = true
+                }
+            },
+            onClearTagFilterClick = { userTagId ->
+                // Remove the user tag from the filteredUserTags list
+                filteredUserTags = filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
+            },
+            modifier = Modifier.padding(innerPadding)
+        )
+
+        // Show tags bottom sheet if showBottomSheet is true
+        if(showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                    modalBottomSheetCoroutineScope.launch {
+                        modalBottomSheetState.hide()
+                    }.invokeOnCompletion {
+                        showBottomSheet = false
+                    }
+                },
+                sheetState = modalBottomSheetState,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ) {
+                TagsBottomSheet(
+                    selectedUserTags = { filteredUserTags },
+                    filterMode = { true },
+                    onMainButtonClick = { newUserTags ->
+                        // Replace the current filteredUserTags with the obtained from TagsBottomSheet
+                        filteredUserTags = newUserTags
+
+                        // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                        modalBottomSheetCoroutineScope.launch {
+                            modalBottomSheetState.hide()
+                        }.invokeOnCompletion {
+                            showBottomSheet = false
+                        }
+                    },
+                    notesViewModel = hiltViewModel(viewModelStoreOwner)
+                )
+            }
+        }
+    }
 }
 
 
@@ -84,7 +156,8 @@ private fun NotesListScreenContent(
     isListViewMode: () -> Boolean,
     filterTags: () -> List<UserTag>,
     onTagFiltersButtonClick: () -> Unit,
-    onClearTagFilterClick: (Long) -> Unit
+    onClearTagFilterClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     // State that indicates which note will have its tags list expanded, -1L means none
@@ -96,7 +169,7 @@ private fun NotesListScreenContent(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
     ) {
