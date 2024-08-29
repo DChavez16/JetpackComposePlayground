@@ -77,7 +77,7 @@ internal fun TagsBottomSheet(
      * State that holds the list of selected tags. It'll recieve updates and will be send to the
      * caller via onMainButtonClick() method
      */
-    var drawerSelectedUserTags by rememberSaveable { mutableStateOf(selectedUserTags()) }
+    var bottomSheetSelectedUserTags by rememberSaveable { mutableStateOf(selectedUserTags()) }
 
     /**
      * State that holds the current TagsBottomSheetVariant instance. The starting variant is Start
@@ -114,7 +114,7 @@ internal fun TagsBottomSheet(
 
                     TagsBottomSheetStart(
                         userTagsList = { (userTagsUiState as UserTagUiState.Success).userTags },
-                        selectedUserTags = { drawerSelectedUserTags },
+                        selectedUserTags = { bottomSheetSelectedUserTags },
                         editMode = { editMode },
                         filterMode = filterMode,
                         onEditTagIconButtonClick = {
@@ -125,10 +125,10 @@ internal fun TagsBottomSheet(
                         onTagElementClick = { selectedTag ->
                             Log.i(LOG_TAG, "UserTag element with id ${selectedTag.id} clicked")
 
-                            // IF NOT in edit mode, add the selected tag to drawerSelectedUserTags if its not in the list, remove otherwise
+                            // IF NOT in edit mode, add the selected tag to bottomSheetSelectedUserTags if its not in the list, remove otherwise
                             if (!editMode) {
-                                drawerSelectedUserTags =
-                                    drawerSelectedUserTags.addRemoveUserTag(selectedTag)
+                                bottomSheetSelectedUserTags =
+                                    bottomSheetSelectedUserTags.addRemoveUserTag(selectedTag)
                             }
                             // IF in edit mode, change currentTagBottomSheetVariant to EditTag with the selected tag
                             else {
@@ -151,7 +151,7 @@ internal fun TagsBottomSheet(
                         onMainButtonClick = {
                             Log.i(LOG_TAG, "Main button clicked, returning list of selected UserTags")
 
-                            onMainButtonClick(drawerSelectedUserTags)
+                            onMainButtonClick(bottomSheetSelectedUserTags)
                         }
                     )
                 }
