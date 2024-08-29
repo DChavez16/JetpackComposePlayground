@@ -58,6 +58,16 @@ internal class NotesViewModel @Inject constructor(
     // Block of code executed at ViewModel creation
     init {
         // Get a list of notes from the repository
+        getNotes()
+
+        // Get a list of user notes from the repository
+        getUserTags()
+    }
+
+    /**
+     * Attemps to a [List] of [Note] from the repository, stores the result in the [_notesUiState]
+     */
+    fun getNotes() {
         viewModelScope.launch {
             // Sets the _notesUiState to its Loading state
             _notesUiState.value = NotesUiState.Loading
@@ -77,9 +87,6 @@ internal class NotesViewModel @Inject constructor(
                 Log.e("NotesViewModel", "Error collecting notes: ${e.message}")
             }
         }
-
-        // Get a list of user notes from the repository
-        getUserTags()
     }
 
     /**
@@ -196,5 +203,11 @@ internal class NotesViewModel @Inject constructor(
         }
     }
 
+    fun changeViewMode() {
+        _isListView.value = !_isListView.value
+    }
 
+    fun changeCurrentSelectedNote(note: Note) {
+        _currentSelectedNote.value = note
+    }
 }
