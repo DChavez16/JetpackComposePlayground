@@ -47,6 +47,8 @@ internal fun RemoteDatabaseNavHost(
     innerPadding: () -> PaddingValues
 ) {
 
+    // TODO Return to the notes list screen after creating or updating a note
+
     // Creates a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
 
