@@ -50,7 +50,8 @@ internal fun RemoteDatabaseNavHost(
     // Creates a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
 
-
+    val notesUiState = notesViewModel.notesUiState.collectAsState().value
+    val isListView = notesViewModel.isListView.collectAsState().value
 
     NavHost(
         navController = navController,
@@ -63,7 +64,19 @@ internal fun RemoteDatabaseNavHost(
         ) {
             Log.i("NotesListScreen", "NotesListScreen created")
 
-            NotesListScreen()
+            NotesListScreen(
+                notesUiState = notesUiState,
+                isListViewMode = { isListView },
+                onNoteClick = { selectedNote ->
+                    // Set the selecteNote as the current selected note
+                    notesViewModel.changeCurrentSelectedNote(selectedNote)
+
+                    // Navigate to the EditNote destination
+                    navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
+                },
+                onErrorMessageRetryButtonClick = notesViewModel::getNotes,
+                viewModelStoreOwner = viewModelStoreOwner()
+            )
         }
 
         // New Note destination
@@ -74,7 +87,7 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = Note(),
-                onMainButtonClick = { TODO("Trigger ViewModel's createNote() method with the given note") },
+                onMainButtonClick = notesViewModel::createNote,
                 viewModelStoreOwner = viewModelStoreOwner()
             )
         }
@@ -87,7 +100,7 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                onMainButtonClick = { TODO("Trigger ViewModel's updateNote() method with the given note") },
+                onMainButtonClick = notesViewModel::updateNote,
                 viewModelStoreOwner = viewModelStoreOwner()
             )
         }
