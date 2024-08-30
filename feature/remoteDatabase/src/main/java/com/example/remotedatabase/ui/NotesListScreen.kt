@@ -2,6 +2,7 @@
 
 package com.example.remotedatabase.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,10 +28,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
@@ -65,17 +69,21 @@ import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
 import com.example.model.fakeUserTagsList
+import com.example.remotedatabase.NotesUiState
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 
+private const val LOG_TAG = "NotesListScreen"
+
 @Composable
 internal fun NotesListScreen(
-    notes: () -> List<Note>,
+    notesUiState: NotesUiState,
     isListViewMode: () -> Boolean,
     onNoteClick: (Note) -> Unit,
+    onErrorMessageRetryButtonClick: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
@@ -87,61 +95,90 @@ internal fun NotesListScreen(
     val modalBottomSheetCoroutineScope = rememberCoroutineScope()
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
 
+    Log.i(LOG_TAG, "NotesListScreen started")
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        // Notes list screen content
-        NotesListScreenContent(
-            // Send the notes filtered by the user tags
-            notes = { notes().filter { note -> filteredUserTags.intersect(note.userTags.toSet()).isNotEmpty() } },
-            onNoteClick = onNoteClick,
-            isListViewMode = isListViewMode,
-            filterTags = { filteredUserTags },
-            onTagFiltersButtonClick = {
-                // Start the expand animation of the bottom sheet and set showBottomSheet to true
-                modalBottomSheetCoroutineScope.launch {
-                    modalBottomSheetState.expand()
-                }.invokeOnCompletion {
-                    showBottomSheet = true
-                }
-            },
-            onClearTagFilterClick = { userTagId ->
-                // Remove the user tag from the filteredUserTags list
-                filteredUserTags = filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
-            },
-            modifier = Modifier.padding(innerPadding)
-        )
+        when(notesUiState) {
+            is NotesUiState.Loading -> {
+                Log.i(LOG_TAG, "Retrieving notes content from the server...")
 
-        // Show tags bottom sheet if showBottomSheet is true
-        if(showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                    modalBottomSheetCoroutineScope.launch {
-                        modalBottomSheetState.hide()
-                    }.invokeOnCompletion {
-                        showBottomSheet = false
-                    }
-                },
-                sheetState = modalBottomSheetState,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ) {
-                TagsBottomSheet(
-                    selectedUserTags = { filteredUserTags },
-                    filterMode = { true },
-                    onMainButtonClick = { newUserTags ->
-                        // Replace the current filteredUserTags with the obtained from TagsBottomSheet
-                        filteredUserTags = newUserTags
+                LoadingContent()
+            }
 
-                        // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                        modalBottomSheetCoroutineScope.launch {
-                            modalBottomSheetState.hide()
-                        }.invokeOnCompletion {
-                            showBottomSheet = false
+            is NotesUiState.Success -> {
+                Log.i(LOG_TAG, "Notes content succesfully retrieved from the server")
+
+                // Notes list screen content
+                NotesListScreenContent(
+                    // Send the notes filtered by the user tags
+                    notes = {
+                        notesUiState.notes.filter { note ->
+                            filteredUserTags.intersect(note.userTags.toSet()).isNotEmpty()
                         }
                     },
-                    notesViewModel = hiltViewModel(viewModelStoreOwner)
+                    onNoteClick = onNoteClick,
+                    isListViewMode = isListViewMode,
+                    filterTags = { filteredUserTags },
+                    onTagFiltersButtonClick = {
+                        // Start the expand animation of the bottom sheet and set showBottomSheet to true
+                        modalBottomSheetCoroutineScope.launch {
+                            modalBottomSheetState.expand()
+                        }.invokeOnCompletion {
+                            showBottomSheet = true
+                        }
+                    },
+                    onClearTagFilterClick = { userTagId ->
+                        // Remove the user tag from the filteredUserTags list
+                        filteredUserTags = filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
+                    },
+                    modifier = Modifier.padding(innerPadding)
+                )
+
+                // Show tags bottom sheet if showBottomSheet is true
+                if (showBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                            modalBottomSheetCoroutineScope.launch {
+                                modalBottomSheetState.hide()
+                            }.invokeOnCompletion {
+                                showBottomSheet = false
+                            }
+                        },
+                        sheetState = modalBottomSheetState,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        TagsBottomSheet(
+                            selectedUserTags = { filteredUserTags },
+                            filterMode = { true },
+                            onMainButtonClick = { newUserTags ->
+                                // Replace the current filteredUserTags with the obtained from TagsBottomSheet
+                                filteredUserTags = newUserTags
+
+                                // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                                modalBottomSheetCoroutineScope.launch {
+                                    modalBottomSheetState.hide()
+                                }.invokeOnCompletion {
+                                    showBottomSheet = false
+                                }
+                            },
+                            notesViewModel = hiltViewModel(viewModelStoreOwner)
+                        )
+                    }
+                }
+            }
+
+            is NotesUiState.Error -> {
+                val errorMessage = notesUiState.errorMessage
+
+                Log.e(LOG_TAG, "Error at retrieving notes content from the server: $errorMessage")
+
+                ErrorContent(
+                    errorMessage = errorMessage,
+                    onRetryButtonClick =  onErrorMessageRetryButtonClick
                 )
             }
         }
@@ -490,6 +527,64 @@ private fun NoteScreenItem(
                 }
             }
         }
+    }
+}
+
+
+@Composable
+private fun LoadingContent() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+
+@Composable
+private fun ErrorContent(
+    errorMessage: String,
+    onRetryButtonClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        // Error icon
+        Icon(
+            imageVector = Icons.Rounded.Error,
+            tint = MaterialTheme.colorScheme.error,
+            contentDescription = null
+        )
+
+        // Error message header
+        Text(
+            text = "An error has ocurred",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        // Error message
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Icon(
+            imageVector = Icons.Rounded.Replay,
+            tint = MaterialTheme.colorScheme.onSurface,
+            contentDescription = stringResource(R.string.remote_database_notes_detail_retry_connection),
+            modifier = Modifier
+                .size(20.dp)
+                .clickable { onRetryButtonClick() }
+        )
     }
 }
 
