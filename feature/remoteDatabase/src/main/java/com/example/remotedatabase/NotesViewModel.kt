@@ -197,7 +197,7 @@ internal class NotesViewModel @Inject constructor(
                 "NotesViewModel",
                 "Deleting the user tag with id $userTagId from the remote database..."
             )
-            val messageResponse = noteRepository.deleteNote(userTagId)
+            val messageResponse = userTagRepository.deleteUserTag(userTagId)
 
             Log.i("NotesViewModel", messageResponse.message)
         }
