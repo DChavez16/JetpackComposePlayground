@@ -29,12 +29,20 @@ class RemoteNoteRepository @Inject constructor(
      * Calls the Api Service to get a [List] of [Note]
      * @return List of Note
      */
-    override suspend fun getNotes(): List<Note> =
-        noteApiService.getNotes().map { note ->
-            note.copy(
-                userTags = noteApiService.getNoteUserTags(note.id)
-            )
+    override suspend fun getNotes(): List<Note> {
+        // Collect notes
+        var notes = noteApiService.getNotes()
+
+        // Collect the user tags of each note
+        notes = notes.map { note ->
+            val currentNoteUserTags = noteApiService.getNoteUserTags(note.id)
+
+            note.copy(userTags = currentNoteUserTags)
         }
+
+        // Return the notes
+        return notes
+    }
 
     /**
      * Calls the Api Service to update the given [Note] in the remote database
