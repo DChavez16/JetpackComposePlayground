@@ -87,6 +87,8 @@ internal fun NotesListScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
+    // TODO Fix attemping to remove filter tags not working properly
+
     // State that holds a list of the current filtered user tags
     var filteredUserTags by rememberSaveable { mutableStateOf(listOf<UserTag>()) }
 
@@ -101,7 +103,7 @@ internal fun NotesListScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        when(notesUiState) {
+        when (notesUiState) {
             is NotesUiState.Loading -> {
                 Log.i(LOG_TAG, "Retrieving notes content from the server...")
 
@@ -115,9 +117,7 @@ internal fun NotesListScreen(
                 NotesListScreenContent(
                     // Send the notes filtered by the user tags
                     notes = {
-                        notesUiState.notes.filter { note ->
-                            filteredUserTags.intersect(note.userTags.toSet()).isNotEmpty()
-                        }
+                        notesUiState.notes
                     },
                     onNoteClick = onNoteClick,
                     isListViewMode = isListViewMode,
@@ -132,7 +132,8 @@ internal fun NotesListScreen(
                     },
                     onClearTagFilterClick = { userTagId ->
                         // Remove the user tag from the filteredUserTags list
-                        filteredUserTags = filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
+                        filteredUserTags =
+                            filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
                     },
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -178,7 +179,7 @@ internal fun NotesListScreen(
 
                 ErrorContent(
                     errorMessage = errorMessage,
-                    onRetryButtonClick =  onErrorMessageRetryButtonClick
+                    onRetryButtonClick = onErrorMessageRetryButtonClick
                 )
             }
         }
@@ -236,7 +237,7 @@ private fun NotesListScreenContent(
                 .widthIn(min = 320.dp, max = 623.dp)
         ) {
             items(
-                items = filteredNotesList,
+                items = getNotesByFilter(filteredNotesList, filterTags()),
                 key = { note -> note.id }
             ) { note ->
                 NoteScreenItem(
@@ -744,3 +745,13 @@ private fun NoteScreenItemGridViewModePreview() {
         }
     }
 }
+
+
+private fun getNotesByFilter(notesList: List<Note>, userTagsList: List<UserTag>): List<Note> =
+    // If the usetTagsList is empty, return the notesList; else, return the notesList filtered by the userTagsList
+    if (userTagsList.isEmpty()) notesList
+    else notesList.filter { note ->
+        note.userTags.any { userTag ->
+            userTagsList.contains(userTag)
+        }
+    }
