@@ -90,7 +90,7 @@ internal fun NotesListScreen(
     // TODO Fix attemping to remove filter tags not working properly
 
     // State that holds a list of the current filtered user tags
-    var filteredUserTags by rememberSaveable { mutableStateOf(listOf<UserTag>()) }
+    var filteredUserTags by rememberSaveable { mutableStateOf(emptyList<UserTag>()) }
 
     // Modal bottom sheet state to expand or hide it
     val modalBottomSheetState = rememberModalBottomSheetState()
@@ -116,9 +116,7 @@ internal fun NotesListScreen(
                 // Notes list screen content
                 NotesListScreenContent(
                     // Send the notes filtered by the user tags
-                    notes = {
-                        notesUiState.notes
-                    },
+                    notes = { notesUiState.notes },
                     onNoteClick = onNoteClick,
                     isListViewMode = isListViewMode,
                     filterTags = { filteredUserTags },
@@ -132,8 +130,7 @@ internal fun NotesListScreen(
                     },
                     onClearTagFilterClick = { userTagId ->
                         // Remove the user tag from the filteredUserTags list
-                        filteredUserTags =
-                            filteredUserTags.dropWhile { userTag -> userTag.id == userTagId }
+                        filteredUserTags = filteredUserTags.removeUserTagWithId(userTagId)
                     },
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -744,6 +741,20 @@ private fun NoteScreenItemGridViewModePreview() {
             )
         }
     }
+}
+
+
+private fun List<UserTag>.removeUserTagWithId(userTagId: Long): List<UserTag> {
+    val mutableUserTagList = this.toMutableList()
+
+    // Get the position of the user tag with the given id
+    val userTagPosition = this.indexOfFirst { userTag ->
+        Log.d(LOG_TAG, "userTag.id: ${userTag.id} | userTagId: $userTagId")
+        userTag.id == userTagId }
+
+    mutableUserTagList.removeAt(userTagPosition)
+
+    return mutableUserTagList.toList()
 }
 
 
