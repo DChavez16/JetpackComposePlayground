@@ -19,6 +19,8 @@ import com.example.remotedatabase.ui.NotesDetailScreen
 import com.example.remotedatabase.ui.NotesListScreen
 
 
+private const val LOG_TAG = "RemoteDatabaseNavHost"
+
 // Remote database destination enum class
 internal enum class RemoteDatabaseDestinations(
     @StringRes val screenTitle: Int,
@@ -64,7 +66,7 @@ internal fun RemoteDatabaseNavHost(
         composable(
             route = RemoteDatabaseDestinations.NotesList.screenRouteName
         ) {
-            Log.i("NotesListScreen", "NotesListScreen created")
+            Log.i(LOG_TAG, "NotesListScreen destination selected in the NavHost")
 
             NotesListScreen(
                 notesUiState = notesUiState,
@@ -85,7 +87,7 @@ internal fun RemoteDatabaseNavHost(
         composable(
             route = RemoteDatabaseDestinations.NewNote.screenRouteName
         ) {
-            Log.i("NoteDetailScreen", "NoteDetalScreen as 'new note' variant created")
+            Log.i(LOG_TAG, "NoteDetalScreen as 'new note' destination selected in the NavHost")
 
             NotesDetailScreen(
                 noteToEdit = Note(),
@@ -98,7 +100,7 @@ internal fun RemoteDatabaseNavHost(
         composable(
             route = RemoteDatabaseDestinations.EditNote.screenRouteName
         ) {
-            Log.i("NoteDetailScreen", "NoteDetalScreen as 'edit note' variant created")
+            Log.i(LOG_TAG, "NoteDetalScreen as 'edit note' destination selected in the NavHost")
 
             NotesDetailScreen(
                 noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,

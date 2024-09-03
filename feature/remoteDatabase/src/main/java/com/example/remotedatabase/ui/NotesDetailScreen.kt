@@ -2,6 +2,7 @@
 
 package com.example.remotedatabase.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -33,6 +36,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -54,6 +58,8 @@ import com.example.ui.ui.CompactSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 
+private const val LOG_TAG = "NotesDetailScreen"
+
 @Composable
 internal fun NotesDetailScreen(
     noteToEdit: Note,
@@ -61,16 +67,29 @@ internal fun NotesDetailScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
+    // TODO Fix extra notes bubbles showing larger in bigger screens
+    // TODO Fix user flow (Return to the previous screen after succesfully completing a create or update action)
+
     // Note's user tags wichh can be edited in the TagsBottomSheet
     var editableNoteTags by rememberSaveable { mutableStateOf(noteToEdit.userTags) }
 
+    // NotesDetailScreen coroutine scope
+    val notesDetailScreenCoroutineScope = rememberCoroutineScope()
+
     // Modal bottom sheet state to expand or hide it
     val modalBottomSheetState = rememberModalBottomSheetState()
-    val modalBottomSheetCoroutineScope = rememberCoroutineScope()
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    // Snackbar host state
+    val snackbarHostState = remember { SnackbarHostState() }
+    // Snackbar host invalid title message
+    val invalidTitleMessage = stringResource(R.string.remote_database_notes_detail_snackbar_invalid_title)
+
+    Log.i(LOG_TAG, "NotesDetailScreen started")
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         NotesDetailScreenContent(
@@ -78,21 +97,34 @@ internal fun NotesDetailScreen(
             noteTags = { editableNoteTags },
             onNoteTagsIconButtonClicked = {
                 // Start the expand animation of the bottom sheet and set showBottomSheet to true
-                modalBottomSheetCoroutineScope.launch {
+                notesDetailScreenCoroutineScope.launch {
                     modalBottomSheetState.expand()
                 }.invokeOnCompletion {
                     showBottomSheet = true
                 }
             },
             onMainButtonClick = { noteTitle, noteBody ->
-                // Return to the caller the note with the edited title, body and tags
-                onMainButtonClick(
-                    noteToEdit.copy(
+                // If the note title is empty, show the snackbar indicating that it can't be empty, else continue
+                if(noteTitle.isEmpty()) {
+                    notesDetailScreenCoroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = invalidTitleMessage
+                        )
+                    }
+                }
+                else {
+                    // Create a note to upload using noteToEdit as base
+                    val noteToUpload = noteToEdit.copy(
                         title = noteTitle,
                         body = noteBody,
                         userTags = editableNoteTags
                     )
-                )
+
+                    Log.i(LOG_TAG, "Uploading note: $noteToUpload")
+
+                    // Return to the caller the note with the edited title, body and tags
+                    onMainButtonClick(noteToUpload)
+                }
             },
             modifier = Modifier.padding(innerPadding)
         )
@@ -101,7 +133,7 @@ internal fun NotesDetailScreen(
             ModalBottomSheet(
                 onDismissRequest = {
                     // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                    modalBottomSheetCoroutineScope.launch {
+                    notesDetailScreenCoroutineScope.launch {
                         modalBottomSheetState.hide()
                     }.invokeOnCompletion {
                         showBottomSheet = false
@@ -118,7 +150,7 @@ internal fun NotesDetailScreen(
                         editableNoteTags = newUserTags
 
                         // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                        modalBottomSheetCoroutineScope.launch {
+                        notesDetailScreenCoroutineScope.launch {
                             modalBottomSheetState.hide()
                         }.invokeOnCompletion {
                             showBottomSheet = false
