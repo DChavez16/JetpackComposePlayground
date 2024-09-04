@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -55,6 +57,7 @@ import com.example.model.fakeNotesList
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.ExpandedSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 
@@ -67,7 +70,6 @@ internal fun NotesDetailScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
-    // TODO Fix extra notes bubbles showing larger in bigger screens
     // TODO Fix user flow (Return to the previous screen after succesfully completing a create or update action)
 
     // Note's user tags wichh can be edited in the TagsBottomSheet
@@ -182,6 +184,7 @@ private fun NotesDetailScreenContent(
         // Column with the title, tags and body of the note, occupying all the screen
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
             // Note title and tags
@@ -232,7 +235,9 @@ private fun NoteTitleAndTags(
     onNoteTitleChange: (String) -> Unit,
     onNoteTagsIconButtonClicked: () -> Unit
 ) {
-    Column {
+    Column(
+        modifier = Modifier.widthIn(min = 260.dp, max = 623.dp)
+    ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -294,7 +299,7 @@ private fun NoteTitleAndTags(
                             modifier = Modifier.drawBehind {
                                 drawCircle(
                                     color = surfaceVariantColor,
-                                    radius = 25f
+                                    radius = 10.dp.toPx()
                                 )
                             }
                         )
@@ -350,7 +355,8 @@ private fun NoteBody(
             )
         ),
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxHeight()
+            .widthIn(min = 260.dp, max = 623.dp)
             .verticalScroll(state = verticalScroll)
             .drawBehind {
                 // Line drawns to give a sensation of a notebook
@@ -384,6 +390,52 @@ private fun NoteBody(
 /*
 Previews
  */
+@CompactSizeScreenThemePreview
+@Composable
+private fun NotesDetailScreenContentPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+
+        ) {
+            NotesDetailScreenContent(
+                noteToEdit = { fakeNotesList[0] },
+                noteTags = { fakeNotesList[0].userTags },
+                onNoteTagsIconButtonClicked = {},
+                onMainButtonClick = { _: String, _: String ->}
+            )
+        }
+    }
+}
+
+
+@ExpandedSizeScreenThemePreview
+@Composable
+private fun NotesDetailScreenContentExpandedPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+
+        ) {
+            NotesDetailScreenContent(
+                noteToEdit = { fakeNotesList[0] },
+                noteTags = { fakeNotesList[0].userTags },
+                onNoteTagsIconButtonClicked = {},
+                onMainButtonClick = { _: String, _: String ->}
+            )
+        }
+    }
+}
+
+
 @CompactSizeScreenThemePreview
 @Composable
 private fun NoteTitleAndTagsPreview() {
@@ -439,29 +491,6 @@ private fun NoteBodyPreview() {
             NoteBody(
                 noteBody = { fakeNotesList[0].body },
                 onNoteBodyChange = {}
-            )
-        }
-    }
-}
-
-
-@CompactSizeScreenThemePreview
-@Composable
-private fun NotesDetailScreenContentPreview() {
-    PreviewAppTheme(
-        darkTheme = isSystemInDarkTheme()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background)
-
-        ) {
-            NotesDetailScreenContent(
-                noteToEdit = { fakeNotesList[0] },
-                noteTags = { fakeNotesList[0].userTags },
-                onNoteTagsIconButtonClicked = {},
-                onMainButtonClick = { _: String, _: String ->}
             )
         }
     }
