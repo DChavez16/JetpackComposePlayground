@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -73,6 +74,7 @@ import com.example.remotedatabase.NotesUiState
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.ExpandedSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
 
@@ -86,8 +88,6 @@ internal fun NotesListScreen(
     onErrorMessageRetryButtonClick: () -> Unit,
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
-
-    // TODO Fix attemping to remove filter tags not working properly
 
     // State that holds a list of the current filtered user tags
     var filteredUserTags by rememberSaveable { mutableStateOf(emptyList<UserTag>()) }
@@ -230,7 +230,7 @@ private fun NotesListScreenContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
                 .widthIn(min = 320.dp, max = 623.dp)
         ) {
             items(
@@ -267,7 +267,8 @@ private fun NoteSearchTools(
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .widthIn(min = 260.dp, max = 623.dp)
     ) {
         // Note search and Filter button
         Row(
@@ -483,7 +484,7 @@ private fun NoteScreenItem(
                                 modifier = Modifier.drawBehind {
                                     drawCircle(
                                         color = surfaceVariantColor,
-                                        radius = 25f
+                                        radius = 10.dp.toPx()
                                     )
                                 }
                             )
@@ -611,6 +612,36 @@ private fun NotesListScreenContentPreview() {
                     listOf(
                         fakeUserTagsList[1],
                         fakeUserTagsList[2]
+                    )
+                },
+                onTagFiltersButtonClick = {},
+                onClearTagFilterClick = {}
+            )
+        }
+    }
+}
+
+
+@Composable
+@ExpandedSizeScreenThemePreview
+private fun NotesListScreenContentExpandedPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            NotesListScreenContent(
+                notes = { fakeNotesList },
+                onNoteClick = {},
+                isListViewMode = { false },
+                filterTags = {
+                    listOf(
+//                        fakeUserTagsList[1],
+//                        fakeUserTagsList[2]
                     )
                 },
                 onTagFiltersButtonClick = {},
@@ -750,7 +781,8 @@ private fun List<UserTag>.removeUserTagWithId(userTagId: Long): List<UserTag> {
     // Get the position of the user tag with the given id
     val userTagPosition = this.indexOfFirst { userTag ->
         Log.d(LOG_TAG, "userTag.id: ${userTag.id} | userTagId: $userTagId")
-        userTag.id == userTagId }
+        userTag.id == userTagId
+    }
 
     mutableUserTagList.removeAt(userTagPosition)
 
