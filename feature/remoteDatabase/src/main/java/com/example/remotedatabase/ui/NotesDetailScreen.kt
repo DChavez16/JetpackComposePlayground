@@ -69,8 +69,6 @@ internal fun NotesDetailScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
-    // TODO Reflect User Tags changes in the Bottom Sheet (Edition & Deletion) when they are asigned in the current note
-
     // Note's user tags wichh can be edited in the TagsBottomSheet
     var editableNoteTags by rememberSaveable { mutableStateOf(noteToEdit.userTags) }
 

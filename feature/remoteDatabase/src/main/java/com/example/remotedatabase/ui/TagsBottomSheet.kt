@@ -70,8 +70,7 @@ internal fun TagsBottomSheet(
     notesViewModel: NotesViewModel = viewModel()
 ) {
 
-    // TODO Fix user flow when clicking buttons
-    // TODO Add a way to turn off modify tags mode
+    // TODO Fix user flow when clicking buttons (change to other tagBottomSheet variant as needed)
 
     /**
      * State that holds the list of selected tags. It'll recieve updates and will be send to the
@@ -237,22 +236,25 @@ private fun TagsBottomSheetStart(
             // Header edit icon button IF NOT in edit mode
             // Header instruction IF in edit mode
             if (!editMode()) {
-                // Edit icon button
-                IconButton(
-                    onClick = onEditTagIconButtonClick,
-                    colors = IconButtonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        disabledContainerColor = Color.Transparent,
-                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    ),
-                    modifier = Modifier.size(18.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = stringResource(R.string.remote_database_tags_bottom_sheet_edit_tags),
-                        modifier = Modifier.size(10.dp)
-                    )
+                // Show the edit tags icon button IF NOT in filter mode
+                if(filterMode()) {
+                    // Edit icon button
+                    IconButton(
+                        onClick = onEditTagIconButtonClick,
+                        colors = IconButtonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            disabledContainerColor = Color.Transparent,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        modifier = Modifier.size(18.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Edit,
+                            contentDescription = stringResource(R.string.remote_database_tags_bottom_sheet_edit_tags),
+                            modifier = Modifier.size(10.dp)
+                        )
+                    }
                 }
             } else {
                 // Header instruction
