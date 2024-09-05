@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
@@ -49,13 +50,11 @@ internal fun RemoteDatabaseNavHost(
     innerPadding: () -> PaddingValues
 ) {
 
-    // TODO Return to the notes list screen after creating or updating a note
-
     // Creates a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
 
-    val notesUiState = notesViewModel.notesUiState.collectAsState().value
-    val isListView = notesViewModel.isListView.collectAsState().value
+    val notesUiState by notesViewModel.notesUiState.collectAsState()
+    val isListView by notesViewModel.isListView.collectAsState()
 
     NavHost(
         navController = navController,
@@ -91,7 +90,13 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = Note(),
-                onMainButtonClick = notesViewModel::createNote,
+                onMainButtonClick = {
+                    // Creating a new note
+                    notesViewModel.createNote(it)
+
+                    // Returning to the NotesList destination
+                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
+                },
                 viewModelStoreOwner = viewModelStoreOwner()
             )
         }
@@ -104,7 +109,13 @@ internal fun RemoteDatabaseNavHost(
 
             NotesDetailScreen(
                 noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                onMainButtonClick = notesViewModel::updateNote,
+                onMainButtonClick = { updatedNote ->
+                    // Updating the note
+                    notesViewModel.updateNote(updatedNote)
+
+                    // Returning to the NotesList destination
+                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
+                },
                 viewModelStoreOwner = viewModelStoreOwner()
             )
         }

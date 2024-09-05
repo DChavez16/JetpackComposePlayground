@@ -124,6 +124,9 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = noteRepository.createNote(newNote)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the notes list
+            getNotes()
         }
     }
 
@@ -137,6 +140,9 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = userTagRepository.createUserTag(newUserTag)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the user tags list
+            getUserTags()
         }
     }
 
@@ -154,6 +160,9 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = noteRepository.updateNote(updatedNote)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the notes list
+            getNotes()
         }
     }
 
@@ -170,6 +179,11 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = userTagRepository.updateUserTag(updatedUserTag)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the notes list
+            getNotes()
+            // Refresh the user tags list
+            getUserTags()
         }
     }
 
@@ -184,6 +198,9 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = noteRepository.deleteNote(noteId)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the notes list
+            getNotes()
         }
     }
 
@@ -200,6 +217,11 @@ internal class NotesViewModel @Inject constructor(
             val messageResponse = userTagRepository.deleteUserTag(userTagId)
 
             Log.i("NotesViewModel", messageResponse.message)
+
+            // Refresh the notes list
+            getNotes()
+            // Refresh the user tags list
+            getUserTags()
         }
     }
 

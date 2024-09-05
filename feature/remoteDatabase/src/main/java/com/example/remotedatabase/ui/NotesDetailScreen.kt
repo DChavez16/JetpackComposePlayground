@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -70,7 +69,7 @@ internal fun NotesDetailScreen(
     viewModelStoreOwner: ViewModelStoreOwner
 ) {
 
-    // TODO Fix user flow (Return to the previous screen after succesfully completing a create or update action)
+    // TODO Reflect User Tags changes in the Bottom Sheet (Edition & Deletion) when they are asigned in the current note
 
     // Note's user tags wichh can be edited in the TagsBottomSheet
     var editableNoteTags by rememberSaveable { mutableStateOf(noteToEdit.userTags) }
@@ -355,8 +354,8 @@ private fun NoteBody(
             )
         ),
         modifier = Modifier
-            .fillMaxHeight()
             .widthIn(min = 260.dp, max = 623.dp)
+            .fillMaxSize()
             .verticalScroll(state = verticalScroll)
             .drawBehind {
                 // Line drawns to give a sensation of a notebook

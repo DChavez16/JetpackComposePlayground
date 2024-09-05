@@ -200,7 +200,10 @@ private fun DeleteNoteAlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             Button(
-                onClick = onDeleteButtonClick
+                onClick = {
+                    onDeleteButtonClick()
+                    onDismiss()
+                }
             ) {
                 Text(
                     text = stringResource(R.string.remote_database_edit_note_delete_note_alert_dialog_confirm_button_label),

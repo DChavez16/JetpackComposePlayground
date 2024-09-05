@@ -103,6 +103,7 @@ internal fun NotesListScreen(
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
+        // Notes List Screen UI State
         when (notesUiState) {
             is NotesUiState.Loading -> {
                 Log.i(LOG_TAG, "Retrieving notes content from the server...")
@@ -134,39 +135,6 @@ internal fun NotesListScreen(
                     },
                     modifier = Modifier.padding(innerPadding)
                 )
-
-                // Show tags bottom sheet if showBottomSheet is true
-                if (showBottomSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                            modalBottomSheetCoroutineScope.launch {
-                                modalBottomSheetState.hide()
-                            }.invokeOnCompletion {
-                                showBottomSheet = false
-                            }
-                        },
-                        sheetState = modalBottomSheetState,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    ) {
-                        TagsBottomSheet(
-                            selectedUserTags = { filteredUserTags },
-                            filterMode = { true },
-                            onMainButtonClick = { newUserTags ->
-                                // Replace the current filteredUserTags with the obtained from TagsBottomSheet
-                                filteredUserTags = newUserTags
-
-                                // Start the hide animation of the bottom sheet and set showBottomSheet to false
-                                modalBottomSheetCoroutineScope.launch {
-                                    modalBottomSheetState.hide()
-                                }.invokeOnCompletion {
-                                    showBottomSheet = false
-                                }
-                            },
-                            notesViewModel = hiltViewModel(viewModelStoreOwner)
-                        )
-                    }
-                }
             }
 
             is NotesUiState.Error -> {
@@ -177,6 +145,39 @@ internal fun NotesListScreen(
                 ErrorContent(
                     errorMessage = errorMessage,
                     onRetryButtonClick = onErrorMessageRetryButtonClick
+                )
+            }
+        }
+
+        // Show tags bottom sheet if showBottomSheet is true
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                    modalBottomSheetCoroutineScope.launch {
+                        modalBottomSheetState.hide()
+                    }.invokeOnCompletion {
+                        showBottomSheet = false
+                    }
+                },
+                sheetState = modalBottomSheetState,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ) {
+                TagsBottomSheet(
+                    selectedUserTags = { filteredUserTags },
+                    filterMode = { true },
+                    onMainButtonClick = { newUserTags ->
+                        // Replace the current filteredUserTags with the obtained from TagsBottomSheet
+                        filteredUserTags = newUserTags
+
+                        // Start the hide animation of the bottom sheet and set showBottomSheet to false
+                        modalBottomSheetCoroutineScope.launch {
+                            modalBottomSheetState.hide()
+                        }.invokeOnCompletion {
+                            showBottomSheet = false
+                        }
+                    },
+                    notesViewModel = hiltViewModel(viewModelStoreOwner)
                 )
             }
         }
