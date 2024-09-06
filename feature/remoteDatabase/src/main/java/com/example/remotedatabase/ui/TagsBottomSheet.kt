@@ -70,8 +70,6 @@ internal fun TagsBottomSheet(
     notesViewModel: NotesViewModel = viewModel()
 ) {
 
-    // TODO Fix user flow when clicking buttons (change to other tagBottomSheet variant as needed)
-
     /**
      * State that holds the list of selected tags. It'll recieve updates and will be send to the
      * caller via onMainButtonClick() method
@@ -86,6 +84,11 @@ internal fun TagsBottomSheet(
             TagsBottomSheetVariant.Start
         )
     }
+
+    /**
+     * State that holds if the TagsBottomSheet variant is in edit mode or not
+     */
+    var isTagsBottomSheetVariantInEditMode by rememberSaveable { mutableStateOf(false) }
 
     /**
      * State that holds the current UserTagUiState
@@ -106,26 +109,22 @@ internal fun TagsBottomSheet(
 
             when (currentTagBottomSheetVariant) {
                 is TagsBottomSheetVariant.Start -> {
-                    /**
-                     * State that holds if this Variant is in edit mode or not
-                     */
-                    var editMode by rememberSaveable { mutableStateOf(false) }
 
                     TagsBottomSheetStart(
                         userTagsList = { (userTagsUiState as UserTagUiState.Success).userTags },
                         selectedUserTags = { bottomSheetSelectedUserTags },
-                        editMode = { editMode },
+                        editMode = { isTagsBottomSheetVariantInEditMode },
                         filterMode = filterMode,
                         onEditTagIconButtonClick = {
-                            editMode = !editMode
+                            isTagsBottomSheetVariantInEditMode = !isTagsBottomSheetVariantInEditMode
 
-                            Log.i(LOG_TAG, if(editMode) "Enabled EditMode" else "Disabled EditMode")
+                            Log.i(LOG_TAG, if(isTagsBottomSheetVariantInEditMode) "Enabled EditMode" else "Disabled EditMode")
                         },
                         onTagElementClick = { selectedTag ->
                             Log.i(LOG_TAG, "UserTag element with id ${selectedTag.id} clicked")
 
                             // IF NOT in edit mode, add the selected tag to bottomSheetSelectedUserTags if its not in the list, remove otherwise
-                            if (!editMode) {
+                            if (!isTagsBottomSheetVariantInEditMode) {
                                 bottomSheetSelectedUserTags =
                                     bottomSheetSelectedUserTags.addRemoveUserTag(selectedTag)
                             }
@@ -150,7 +149,10 @@ internal fun TagsBottomSheet(
                         onMainButtonClick = {
                             Log.i(LOG_TAG, "Main button clicked, returning list of selected UserTags")
 
-                            onMainButtonClick(bottomSheetSelectedUserTags)
+                            // If the Start Variant IS NOT in edit mode, return the list of selected tags, else, disable the Start Variant edit mode
+                            if (!isTagsBottomSheetVariantInEditMode) {
+                                onMainButtonClick(bottomSheetSelectedUserTags)
+                            } else isTagsBottomSheetVariantInEditMode = false
                         }
                     )
                 }
@@ -177,6 +179,10 @@ internal fun TagsBottomSheet(
 
                                 notesViewModel.updateUserTag(newUserTag)
                             }
+
+                            // Change currentTagBottomSheetVariant to Start and disable the Start Variant edit mode
+                            currentTagBottomSheetVariant = TagsBottomSheetVariant.Start
+                            isTagsBottomSheetVariantInEditMode = false
                         }
                     )
                 }
