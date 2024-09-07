@@ -46,6 +46,8 @@ fun NotesScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
+    // TODO Change to follow an Offline-first approach
+
     // Nav controller and current back stack entry to observe the current route
     val notesNavController = rememberNavController()
     // Observes the notesNavControlles BackstackEntry as State
