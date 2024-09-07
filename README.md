@@ -7,6 +7,7 @@ It includes:
 - Light/Dark theme & Dynamic theme
 - Hilt Dependency Injection
 - Room local database
+- Retrofit to connect to a remote database
 - Preferences Datastore
 - WorkManager
 - Unit & instrumentation tests
