@@ -15,11 +15,15 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,6 +39,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.ui.theme.PreviewAppTheme
@@ -62,9 +68,6 @@ fun DefaultTopAppBar(
     actionButtonContentDescription: () -> String? = { null },
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
-
-    // TODO Update to the new design guidelines
-
     CenterAlignedTopAppBar(
         title = {
             // Handles TopAppBar's title content animation
@@ -79,7 +82,7 @@ fun DefaultTopAppBar(
 
             // Shows the menu button icon if the principal screen is focused, and handles its visibility animation
             // Only show the menu button whe WindowWidthClass is Compact
-            if(windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+            if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                 MenuIconButton(
                     isPrincipalScreen = isPrincipalScreen,
                     onMenuButtonClick = onMenuButtonClick
@@ -97,7 +100,7 @@ fun DefaultTopAppBar(
             ActionIconButton(
                 icon = actionButtonIcon,
                 onClick = onActionButtonClick,
-                contentDescription = actionButtonContentDescription()
+                actionIconButtonContentDescription = actionButtonContentDescription()
             )
         },
         colors = TopAppBarColors(
@@ -110,7 +113,9 @@ fun DefaultTopAppBar(
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
             scrolledContainerColor = MaterialTheme.colorScheme.primary
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
     )
 }
 
@@ -148,12 +153,18 @@ private fun TopAppBarTitle(
         contentAlignment = Alignment.Center,
         label = "TopAppBar Title Animated Content"
     ) { topAppBarTitle ->
-        Text(
-            text = topAppBarTitle(),
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            modifier = Modifier.semantics { testTag = "TopAppBarTitle" }
-        )
+        Box(
+            Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = topAppBarTitle(),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                modifier = Modifier.semantics { testTag = "TopAppBarTitle" }
+            )
+        }
     }
 }
 
@@ -183,14 +194,22 @@ private fun MenuIconButton(
         ) + fadeOut(),
         label = "Menu Button Animated Visibility"
     ) {
-        IconButton(
-            onClick = { onMenuButtonClick() },
-            modifier = Modifier.semantics { contentDescription = "Open Menu" }
+        Box(
+            Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = null
-            )
+            IconButton(
+                onClick = { onMenuButtonClick() },
+                modifier = Modifier
+                    .semantics { contentDescription = "Open Menu" }
+                    .size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -221,14 +240,22 @@ private fun BackIconButton(
         ) + fadeOut(),
         label = "Back Button Animated Visibility"
     ) {
-        IconButton(
-            onClick = { onBackButtonClick() },
-            modifier = Modifier.semantics { contentDescription = "Return to the previous screen" }
+        Box(
+            Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = null
-            )
+            IconButton(
+                onClick = { onBackButtonClick() },
+                modifier = Modifier
+                    .semantics { contentDescription = "Return to the previous screen" }
+                    .size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
@@ -237,7 +264,7 @@ private fun BackIconButton(
 private fun ActionIconButton(
     icon: () -> ImageVector? = { null },
     onClick: () -> Unit = {},
-    contentDescription: String? = null
+    actionIconButtonContentDescription: String? = null
 ) {
     /*
      Makes the action button visible if one was provided
@@ -260,20 +287,32 @@ private fun ActionIconButton(
         ) + fadeOut(),
         label = "Action Button Animated Visibility"
     ) {
-        if (icon() != null) {
-            IconButton(onClick = { onClick() }) {
-                Icon(
-                    imageVector = icon()!!,
-                    contentDescription = contentDescription
-                )
+        Box(
+            Modifier.fillMaxHeight(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (icon() != null) {
+                IconButton(
+                    onClick = { onClick() },
+                    modifier = Modifier
+                        .semantics { contentDescription = actionIconButtonContentDescription!! }
+                        .size(48.dp)
+                ) {
+                    Icon(
+                        imageVector = icon()!!,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
 }
 
 
-
-
+/*
+Preview
+ */
 @CompactSizeScreenThemePreview
 @Composable
 private fun DefaultTopAppBarOnPrincipalScreenPreview() {
@@ -302,7 +341,7 @@ private fun DefaultTopAppBarOnSecondaryScreenPreview() {
             onMenuButtonClick = {},
             onBackButtonPressed = {},
             isPrincipalScreen = { false },
-            actionButtonIcon = { Icons.Default.Delete },
+            actionButtonIcon = { Icons.Rounded.Delete },
             onActionButtonClick = {}
         )
     }
