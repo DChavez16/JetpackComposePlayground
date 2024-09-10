@@ -3,6 +3,7 @@ package com.example.util
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -27,7 +28,7 @@ enum class RootNavigationDestination(
     Animations(
         itemTitle = R.string.animations_screen,
         itemRouteName = "animations",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = { Icons.Rounded.Animation }
     ),
     DrawScope(
         itemTitle = R.string.draw_scope_screen,
