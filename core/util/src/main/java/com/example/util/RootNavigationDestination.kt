@@ -3,7 +3,6 @@ package com.example.util
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,7 +40,9 @@ enum class RootNavigationDestination(
     Themes(
         itemTitle = R.string.themes_screen,
         itemRouteName = "themes",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = {
+            ImageVector.vectorResource(R.drawable.colors)
+        }
     ),
     LocalDatabase(
         itemTitle = R.string.local_database_screen,
