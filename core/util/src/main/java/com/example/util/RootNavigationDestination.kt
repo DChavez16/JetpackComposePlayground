@@ -47,7 +47,9 @@ enum class RootNavigationDestination(
     LocalDatabase(
         itemTitle = R.string.local_database_screen,
         itemRouteName = "localDatabase",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = {
+            ImageVector.vectorResource(R.drawable.database)
+        }
     ),
     RemoteDatabase(
         itemTitle = R.string.remote_database_screen,
