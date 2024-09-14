@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.rounded.Animation
+import androidx.compose.material.icons.rounded.Cloud
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -54,7 +55,7 @@ enum class RootNavigationDestination(
     RemoteDatabase(
         itemTitle = R.string.remote_database_screen,
         itemRouteName = "remoteDatabase",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = { Icons.Rounded.Cloud }
     ),
     DataPersistence(
         itemTitle = R.string.data_persistence_screen,
