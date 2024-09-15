@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Cloud
+import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -60,7 +61,7 @@ enum class RootNavigationDestination(
     DataPersistence(
         itemTitle = R.string.data_persistence_screen,
         itemRouteName = "dataPersistence",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = { Icons.Rounded.Storefront }
     ),
     PersistentWork(
         itemTitle = R.string.persistent_work_screen,
