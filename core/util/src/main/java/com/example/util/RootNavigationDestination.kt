@@ -2,10 +2,10 @@ package com.example.util
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Cloud
 import androidx.compose.material.icons.rounded.Storefront
+import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -66,7 +66,7 @@ enum class RootNavigationDestination(
     PersistentWork(
         itemTitle = R.string.persistent_work_screen,
         itemRouteName = "persistentWork",
-        itemIcon = { Icons.Default.Build }
+        itemIcon = { Icons.Rounded.Work }
     ),
     Configuration(
         itemTitle = null,
