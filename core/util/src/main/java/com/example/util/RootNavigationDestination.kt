@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Cloud
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.Composable
@@ -71,6 +72,6 @@ enum class RootNavigationDestination(
     Configuration(
         itemTitle = null,
         itemRouteName = "configuration",
-        itemIcon = { null }
+        itemIcon = { Icons.Rounded.Settings }
     )
 }
