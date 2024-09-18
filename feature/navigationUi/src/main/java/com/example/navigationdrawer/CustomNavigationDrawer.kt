@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -97,7 +96,7 @@ private fun NavigationDrawerContent(
             .background(
                 color = MaterialTheme.colorScheme.primaryContainer
             )
-            .sizeIn(maxWidth = 280.dp)
+            .width(250.dp)
     ) {
         LazyColumn(
             modifier = Modifier.weight(1f)
@@ -109,7 +108,7 @@ private fun NavigationDrawerContent(
 
                     // Horizontal separator line
                     HorizontalDivider(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
@@ -143,10 +142,7 @@ private fun DrawerContentAppName() {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer
-            )
-            .padding(16.dp)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
         // App Image
         Image(
@@ -158,7 +154,7 @@ private fun DrawerContentAppName() {
         // App Name
         Text(
             text = stringResource(id = R.string.app_name),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -205,7 +201,7 @@ private fun DrawerContentNavigationItems(
             ) {
                 // Drawer element icon
                 Icon(
-                    imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
+                    imageVector = drawerItem.itemIcon() ?: Icons.Default.Settings,
                     contentDescription = null,
                     tint = with(MaterialTheme.colorScheme) {
                         if (currentSelectedItem() == drawerItem) primaryContainer else onPrimaryContainer
@@ -229,8 +225,9 @@ private fun DrawerContentNavigationItems(
 }
 
 
-
-
+/*
+Previews
+ */
 @CompactSizeScreenThemePreview
 @Composable
 private fun NavigationDrawerCompactSizePreview() {
