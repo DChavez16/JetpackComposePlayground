@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,8 +56,6 @@ fun CustomNavigationDrawer(
     onConfigurationButtonClick: () -> Unit,
     navigationDrawerViewModel: NavigationUIViewModel = hiltViewModel()
 ) {
-    // TODO Update to the new design guidelines
-
     // Value that indicates if the current theme is dark or not
     val isDarkTheme by navigationDrawerViewModel.darkThemeFlow.collectAsState()
 
@@ -124,6 +123,7 @@ private fun NavigationDrawerContent(
         }
 
 
+        // TODO Update to the new design guidelines
         // Configuration and theme buttons
         NavigationUiExtraButtons(
             isDarkTheme = { isDarkTheme() },
@@ -170,6 +170,7 @@ private fun DrawerContentNavigationItems(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 4.dp)
             .semantics { testTag = "drawerNavigationItems" }
     ) {
         for (drawerItem in RootNavigationDestination.entries.filter { it.itemTitle != null }) {
@@ -184,9 +185,13 @@ private fun DrawerContentNavigationItems(
                 modifier = Modifier
                     .fillMaxWidth()
                     .drawBehind {
-                        drawRect(
+                        drawRoundRect(
                             color = if (currentSelectedItem() == drawerItem) elementBackgroundColor
-                            else Color.Transparent
+                            else Color.Transparent,
+                            cornerRadius = CornerRadius(
+                                x = 20.dp.toPx(),
+                                y = 20.dp.toPx()
+                            )
                         )
                     }
                     .clickable(
@@ -194,8 +199,8 @@ private fun DrawerContentNavigationItems(
                         onClickLabel = navigationItemTitle
                     )
                     .padding(
-                        vertical = 6.dp,
-                        horizontal = 12.dp
+                        vertical = 4.dp,
+                        horizontal = 4.dp
                     )
                     .semantics(mergeDescendants = true) { contentDescription = navigationItemTitle }
             ) {
@@ -214,7 +219,7 @@ private fun DrawerContentNavigationItems(
                 // Drawer element title
                 Text(
                     text = navigationItemTitle,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = with(MaterialTheme.colorScheme) {
                         if (currentSelectedItem() == drawerItem) primaryContainer else onPrimaryContainer
                     }
