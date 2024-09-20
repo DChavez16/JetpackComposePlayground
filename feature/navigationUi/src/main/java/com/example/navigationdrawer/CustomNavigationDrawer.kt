@@ -97,6 +97,7 @@ private fun NavigationDrawerContent(
             )
             .width(250.dp)
     ) {
+        // Drawer header and navigation items
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
@@ -122,8 +123,6 @@ private fun NavigationDrawerContent(
             }
         }
 
-
-        // TODO Update to the new design guidelines
         // Configuration and theme buttons
         NavigationUiExtraButtons(
             isDarkTheme = { isDarkTheme() },

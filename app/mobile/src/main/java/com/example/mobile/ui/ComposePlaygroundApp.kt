@@ -26,8 +26,6 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
-    // TODO Implement Retrofit using a test API created with Ktor (A local volatile server)
-
     // Defines a coroutine scope
     val scope = rememberCoroutineScope()
 
