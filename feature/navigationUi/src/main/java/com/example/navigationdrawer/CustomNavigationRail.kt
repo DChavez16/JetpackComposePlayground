@@ -1,29 +1,29 @@
 package com.example.navigationdrawer
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.NavigationRailItemColors
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
@@ -57,8 +57,7 @@ fun CustomNavigationRail(
         navigationExtraButtonsWindowSizeClass = { navigationExtraButtonsWindowSizeClass },
         onRailItemClick = onRailItemClick,
         onConfigurationButtonClick = onConfigurationButtonClick,
-        onThemeButtonClick = navigationDrawerViewModel::updateDarkTheme,
-
+        onThemeButtonClick = navigationDrawerViewModel::updateDarkTheme
     )
 }
 
@@ -76,7 +75,8 @@ private fun NavigationRailContent(
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier
             .fillMaxHeight()
-            .width(64.dp)
+            .padding(4.dp)
+            .width(56.dp)
     ) {
         // Navigation Rail Items
         NavigationRailContentItems(
@@ -106,6 +106,7 @@ private fun NavigationRailContentItems(
     onRailItemClicked: (RootNavigationDestination) -> Unit
 ) {
     LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
@@ -115,32 +116,25 @@ private fun NavigationRailContentItems(
             items = RootNavigationDestination.entries.filter { it.itemTitle != null },
             key = { it.ordinal }
         ) { drawerItem ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .height(40.dp)
-            ) {
-                NavigationRailItem(
-                    selected = drawerItem == currentSelectedItem(),
-                    onClick = { onRailItemClicked(drawerItem) },
-                    icon = {
-                        Icon(
-                            imageVector = drawerItem.itemIcon ?: Icons.Default.Settings,
-                            contentDescription = null,
-                            modifier = Modifier.size(28.dp)
-                        )
+            // Navigation Rail Item icon button
+            IconButton(
+                onClick = { onRailItemClicked(drawerItem) },
+                colors = IconButtonDefaults.iconButtonColors().copy(
+                    containerColor = with(MaterialTheme.colorScheme) {
+                        // If is selected, set color to primary, else, set Color.Transparent
+                        if (drawerItem == currentSelectedItem()) primary else Color.Transparent
                     },
-                    label = null,
-                    colors = NavigationRailItemColors(
-                        selectedIconColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedTextColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedIndicatorColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        unselectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledTextColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    contentColor = with(MaterialTheme.colorScheme) {
+                        // If is selected, set color to primaryContainer, else, set to onPrimaryContainer
+                        if (drawerItem == currentSelectedItem()) primaryContainer else onPrimaryContainer
+                    }
+                ),
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = drawerItem.itemIcon() ?: Icons.Rounded.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
