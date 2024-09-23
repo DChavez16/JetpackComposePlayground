@@ -18,9 +18,6 @@ enum class RootNavigationDestination(
     val itemRouteName: String,
     val itemIcon: @Composable () -> ImageVector?
 ) {
-
-    // TODO Change the destination item icons to the declared in the Figma UI Kit
-
     LazyLayouts(
         itemTitle = R.string.lazy_layouts_screen,
         itemRouteName = "lazyLayouts",

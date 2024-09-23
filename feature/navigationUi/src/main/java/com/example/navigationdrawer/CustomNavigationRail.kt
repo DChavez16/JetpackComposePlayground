@@ -43,8 +43,6 @@ fun CustomNavigationRail(
     navigationDrawerViewModel: NavigationUIViewModel = hiltViewModel()
 ) {
 
-    // TODO Update to the new design guidelines
-
     // Value that indicates if the current theme is dark or not
     val isDarkTheme by navigationDrawerViewModel.darkThemeFlow.collectAsState()
 

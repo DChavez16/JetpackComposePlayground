@@ -97,7 +97,9 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun AppTheme(
     themeViewModel: ThemeViewModel = viewModel(),
-    content: @Composable () -> Unit
+    isDarkThemeOn: () -> Boolean,
+    isDynamicTheme: () -> Boolean,
+    content: @Composable () -> Unit,
 ) {
     // Collect the darkTheme value as a Flow
     val darkTheme by themeViewModel.darkThemeFlow.collectAsState()
