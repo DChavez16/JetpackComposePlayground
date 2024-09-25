@@ -93,7 +93,7 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun AppTheme(
-    isDarkThemeOn: () -> Boolean,
+    isDarkTheme: () -> Boolean,
     isDynamicTheme: () -> Boolean,
     content: @Composable () -> Unit,
 ) {
@@ -102,11 +102,11 @@ fun AppTheme(
     val colors = if (isDynamicTheme()) {
         val context = LocalContext.current
 
-        if (isDarkThemeOn()) dynamicDarkColorScheme(context)
+        if (isDarkTheme()) dynamicDarkColorScheme(context)
         else dynamicLightColorScheme(context)
     } else {
         // Code for using a non-dynamic theme
-        if (isDarkThemeOn()) DarkColors
+        if (isDarkTheme()) DarkColors
         else LightColors
     }
 
@@ -117,7 +117,7 @@ fun AppTheme(
             val window = (view.context as Activity).window
             window.statusBarColor = colors.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                isDarkThemeOn()
+                isDarkTheme()
         }
     }
 
