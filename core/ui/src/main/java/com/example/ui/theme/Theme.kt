@@ -8,13 +8,10 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 private val LightColors = lightColorScheme(
@@ -96,28 +93,22 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun AppTheme(
-    themeViewModel: ThemeViewModel = viewModel(),
     isDarkThemeOn: () -> Boolean,
     isDynamicTheme: () -> Boolean,
     content: @Composable () -> Unit,
 ) {
-    // Collect the darkTheme value as a Flow
-    val darkTheme by themeViewModel.darkThemeFlow.collectAsState()
-    // Collect the dynamicTheme value as a Flow
-    val dynamicTheme by themeViewModel.dynamicThemeFlow.collectAsState()
 
     // Define the theme's colors based on the selected parameters
-    val colors = if (dynamicTheme) {
+    val colors = if (isDynamicTheme()) {
         val context = LocalContext.current
 
-        if (darkTheme) dynamicDarkColorScheme(context)
+        if (isDarkThemeOn()) dynamicDarkColorScheme(context)
         else dynamicLightColorScheme(context)
     } else {
         // Code for using a non-dynamic theme
-        if (darkTheme) DarkColors
+        if (isDarkThemeOn()) DarkColors
         else LightColors
     }
-
 
     // Code that changes the status bar color
     val view = LocalView.current
@@ -126,7 +117,7 @@ fun AppTheme(
             val window = (view.context as Activity).window
             window.statusBarColor = colors.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                darkTheme
+                isDarkThemeOn()
         }
     }
 
