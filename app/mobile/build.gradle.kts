@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.playground.android.application)
     // Application Compose
     alias(libs.plugins.playground.application.compose)
-    // Hilt dependency injection
-    alias(libs.plugins.playground.hilt)
 }
 
 android {
@@ -40,6 +38,7 @@ dependencies {
 
     // Dependencies
     implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
 
     // Dependencies
     implementation(libs.core.ktx)

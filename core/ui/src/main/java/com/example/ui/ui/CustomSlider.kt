@@ -1,5 +1,6 @@
 package com.example.ui.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.ui.theme.PreviewAppTheme
 import java.math.RoundingMode
 
 @Composable
@@ -55,7 +57,9 @@ fun CustomSlider(
 @Preview(showBackground = true)
 @Composable
 private fun CustomSliderComposablePreview() {
-    com.example.ui.theme.AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         CustomSlider(
             sliderTextLabel = "Slider label",
             sliderValue = { 0.5f },

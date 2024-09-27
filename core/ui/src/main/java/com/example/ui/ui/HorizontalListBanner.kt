@@ -1,6 +1,7 @@
 package com.example.ui.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.AppTheme
+import com.example.ui.theme.PreviewAppTheme
 
 @Composable
 fun HorizontalListBanner(title: String) {
@@ -57,7 +58,9 @@ fun HorizontalListBanner(title: String) {
 @CompactSizeScreenThemePreview
 @Composable
 private fun HorizontalListBannerPreview() {
-    AppTheme {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
         Column {
             HorizontalListBanner(title = "Titulo")
             HorizontalListBanner(title = "Titulo Titulo")

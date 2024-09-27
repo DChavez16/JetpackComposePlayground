@@ -20,8 +20,8 @@ internal fun Project.configureAndroid(commonExtension: CommonExtension<*, *, *, 
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
 
         buildFeatures.buildConfig = false
@@ -38,7 +38,7 @@ private fun Project.configureKotlin() {
         // TODO Migrato to compilerOptions DSL
         kotlinOptions {
             // Set JVM target to 21
-            jvmTarget = JavaVersion.VERSION_21.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
