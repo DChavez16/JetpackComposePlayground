@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.playground.android.application)
     // Application Compose
     alias(libs.plugins.playground.application.compose)
+    // Hilt dependency injection
+    alias(libs.plugins.playground.hilt)
 }
 
 android {
@@ -28,6 +30,9 @@ dependencies {
     implementation(projects.feature.remoteDatabase)
     implementation(projects.feature.dataPersistence)
     implementation(projects.feature.persistentWork)
+
+    // Data
+    implementation(projects.data.theme)
 
     // Core
     implementation(projects.core.ui)
