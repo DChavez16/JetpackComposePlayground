@@ -45,6 +45,7 @@
             <option value="$PROJECT_DIR$/data/theme" />
             <option value="$PROJECT_DIR$/data/userTag" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/alarms" />
             <option value="$PROJECT_DIR$/feature/animations" />
             <option value="$PROJECT_DIR$/feature/configuration" />
             <option value="$PROJECT_DIR$/feature/dataPersistence" />
