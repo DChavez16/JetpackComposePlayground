@@ -12,6 +12,7 @@ android {
 dependencies {
     // Dependencies
     implementation(projects.core.ui)
+    implementation(projects.core.alarmManager)
 
     // Testing dependencies
     testImplementation(projects.core.testing)

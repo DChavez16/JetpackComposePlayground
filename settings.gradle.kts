@@ -31,6 +31,7 @@ include(":core:ui")
 include(":core:model")
 include(":core:util")
 include(":core:testing")
+include(":core:alarmManager")
 
 include(":data:product")
 include(":data:preferences")
