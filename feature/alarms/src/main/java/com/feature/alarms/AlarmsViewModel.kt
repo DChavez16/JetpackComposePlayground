@@ -24,6 +24,10 @@ internal class AlarmsViewModel @Inject constructor(
     calendar: Calendar? = Calendar.getInstance()
 ) : ViewModel() {
 
+    // Define a Flow for isAlarmExact and its backing property
+    private val _isAlarmExact = MutableStateFlow(false)
+    val isAlarmExact: StateFlow<Boolean> = _isAlarmExact
+
     // Define a Flow for exactAlarmInvokeType and its backing property
     private val _exactAlarmInvokeType = MutableStateFlow(ExactAlarmsInvokeType.NORMAL)
     val exactAlarmInvokeType: StateFlow<ExactAlarmsInvokeType> = _exactAlarmInvokeType
@@ -41,12 +45,14 @@ internal class AlarmsViewModel @Inject constructor(
     val isAlarmRunning: StateFlow<Boolean> = _isAlarmRunning
 
     // Define a Flow for alarmTargetTimeMiliseconds and its backing property
-    private val _alarmTargetTimeMiliseconds = MutableStateFlow( calendar?.timeInMillis ?: 0L)
+    private val _alarmTargetTimeMiliseconds = MutableStateFlow(calendar?.timeInMillis ?: 0L)
     val alarmTargetTimeMiliseconds: StateFlow<Long> = _alarmTargetTimeMiliseconds
 
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
-    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(calendar?.timeInMillis ?: 0L)
-    val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> = _alarmTargetTimeWindowLenghtMilliseconds
+    private val _alarmTargetTimeWindowLenghtMilliseconds =
+        MutableStateFlow(calendar?.timeInMillis ?: 0L)
+    val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
+        _alarmTargetTimeWindowLenghtMilliseconds
 
 
     init {
@@ -57,7 +63,7 @@ internal class AlarmsViewModel @Inject constructor(
     }
 
     /**
-     * Verify if an alarm with the [ALARM_INTENT_ACTION] is currently active and returns a nullable [PendingIntent]
+     * Verify if an alarm with the [AlarmReceiver] is currently active and returns a nullable [PendingIntent]
      *
      * @return A nullable [PendingIntent] if an alarm is active, null otherwise
      */
@@ -72,7 +78,7 @@ internal class AlarmsViewModel @Inject constructor(
             /* intent = */ alarmIntent,
             /* flags = */ PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
-        Log.i(TAG, if(pendingIntent != null) "Active alarm found" else "No active alarm found")
+        Log.i(TAG, if (pendingIntent != null) "Active alarm found" else "No active alarm found")
 
         return pendingIntent
     }
@@ -84,7 +90,14 @@ internal class AlarmsViewModel @Inject constructor(
         Log.d(TAG, "Verifying if there is an active alarm")
         // Attemps to call a pending intent to verify if an alarm is active, if is not null, _isAlarmRunning is set to true, false otherwise
         _isAlarmRunning.value = getActiveAlarmPendingIntent() != null
-        Log.d(TAG, "There is currently ${if(_isAlarmRunning.value) "an" else "no"} active alarm")
+        Log.d(TAG, "There is currently ${if (_isAlarmRunning.value) "an" else "no"} active alarm")
+    }
+
+    /**
+     * Change the current [_isAlarmExact] to the opposite value
+     */
+    fun changeAlarmAccuracy() {
+        _isAlarmExact.value = !_isAlarmExact.value
     }
 
     /**
@@ -94,7 +107,10 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun changeExactAlarmInvokeType(newExactAlarmInvokeType: ExactAlarmsInvokeType) {
         _exactAlarmInvokeType.value = newExactAlarmInvokeType
-        Log.d(TAG, "Exact alarm invoke time type changed to ${_exactAlarmInvokeType.value.functionName}")
+        Log.d(
+            TAG,
+            "Exact alarm invoke time type changed to ${_exactAlarmInvokeType.value.functionName}"
+        )
     }
 
     /**
@@ -104,7 +120,10 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun changeInexactAlarmInvokeType(newInexactAlarmInvokeType: InexactAlarmsInvokeType) {
         _inexactAlarmInvokeType.value = newInexactAlarmInvokeType
-        Log.d(TAG, "Inexact alarm invoke time type changed to ${_inexactAlarmInvokeType.value.functionName}")
+        Log.d(
+            TAG,
+            "Inexact alarm invoke time type changed to ${_inexactAlarmInvokeType.value.functionName}"
+        )
     }
 
     /**
@@ -112,7 +131,10 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun changeAlarmTypeInvokeTimeType() {
         _alarmType.value = _alarmType.value.changeInvokeTimeType()
-        Log.d(TAG, "Alarm type changed to ${if(_alarmType.value.isElapsedTime) "ELAPSED_TIME" else "RTC"}")
+        Log.d(
+            TAG,
+            "Alarm type changed to ${if (_alarmType.value.isElapsedTime) "ELAPSED_TIME" else "RTC"}"
+        )
     }
 
     /**
@@ -120,7 +142,7 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun changeAlarmTypeDeviceAwake() {
         _alarmType.value = _alarmType.value.changeWakeupType()
-        Log.d(TAG, "Alarm type changed to ${if(_alarmType.value.isWakeup) "WAKEUP" else "NORMAL"}")
+        Log.d(TAG, "Alarm type changed to ${if (_alarmType.value.isWakeup) "WAKEUP" else "NORMAL"}")
     }
 
     /**
@@ -138,9 +160,7 @@ internal class AlarmsViewModel @Inject constructor(
     /**
      * Starts a new inexact alarm with the current values. If one is already running, it will be canceled
      */
-    fun startInexactAlarm() {
-        // TODO Add logs
-
+    fun startAlarm() {
         // Cancel active alarm if there is any
         cancelAlarm()
 
@@ -149,103 +169,18 @@ internal class AlarmsViewModel @Inject constructor(
             PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-        // If the Alarm type is ELAPSED_TIME
-        if(alarmType.value.isElapsedTime) {
+        // Gets the current Alarm Type as an Int to be asigned to the alarms
+        val selectedAlarmType = _alarmType.value.getAlarmType()
 
-            // TODO Add logs
+        Log.d(
+            TAG,
+            "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with ${if (_isAlarmExact.value) _exactAlarmInvokeType.value.functionName else _inexactAlarmInvokeType.value.functionName})} as invoke type and ${_alarmType.value.getAlarmTypeAsString()} as alarm type"
+        )
 
-            val selectedAlarmType = if(_alarmType.value.isWakeup) AlarmManager.ELAPSED_REALTIME_WAKEUP else AlarmManager.ELAPSED_REALTIME
-
+        // If the Alarm is exact
+        if (_isAlarmExact.value) {
             // Start the correct alarm based in the exact alarm invoke type
-            when(_inexactAlarmInvokeType.value) {
-                InexactAlarmsInvokeType.NORMAL -> {
-                    alarmManager.set(
-                        /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
-                        /* operation = */ alarmIntent
-                    )
-                }
-                InexactAlarmsInvokeType.REPEATING -> {
-                    alarmManager.setInexactRepeating(
-                        /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
-                        /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
-                        /* operation = */ alarmIntent
-                    )
-                }
-                InexactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
-                    alarmManager.setAndAllowWhileIdle(
-                        /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
-                        /* operation = */ alarmIntent
-                    )
-                }
-                InexactAlarmsInvokeType.WINDOW -> {
-                    alarmManager.setWindow(
-                        /* type = */ selectedAlarmType,
-                        /* windowStartMillis = */ alarmTargetTimeMiliseconds.value,
-                        /* windowLengthMillis = */ alarmTargetTimeWindowLenghtMilliseconds.value,
-                        /* operation = */ alarmIntent
-                    )
-                }
-            }
-        } // Else (is RTC)
-        else {
-            // TODO Complete this section
-
-            val selectedAlarmType = if(_alarmType.value.isWakeup) AlarmManager.RTC_WAKEUP else AlarmManager.RTC
-
-            // Transform the alarm's target milliseconds into a Calendar
-            val rtcCalendar = Calendar.getInstance()
-            rtcCalendar.timeInMillis = alarmTargetTimeMiliseconds.value
-
-            // Transform the alarm's target window milliseconds into a Calendar
-            val rtcCalendarWindowMilliseconds = Calendar.getInstance()
-            rtcCalendarWindowMilliseconds.timeInMillis = alarmTargetTimeWindowLenghtMilliseconds.value
-
-            // Start the correct alarm based in the exact alarm invoke type
-            when(_inexactAlarmInvokeType.value) {
-                InexactAlarmsInvokeType.NORMAL -> {
-
-                }
-                InexactAlarmsInvokeType.REPEATING -> {
-
-                }
-                InexactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
-
-                }
-                InexactAlarmsInvokeType.WINDOW -> {
-
-                }
-            }
-        }
-
-        // Verfy if there is an alarm running
-        verifyAlarmsNotActive()
-    }
-
-    /**
-     * Starts a new exact alarm with the current values. If one is already running, it will be canceled
-     */
-    fun startExactAlarm() {
-        // TODO Add logs
-
-        // Cancel active alarm if there is any
-        cancelAlarm()
-
-        // Create a PendingIntent for the alarm
-        val alarmIntent: PendingIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        }
-
-        // If the Alarm type is ELAPSED_TIME
-        if(alarmType.value.isElapsedTime) {
-            // TODO Add logs
-
-            val selectedAlarmType = if(_alarmType.value.isWakeup) AlarmManager.ELAPSED_REALTIME_WAKEUP else AlarmManager.ELAPSED_REALTIME
-
-            // Start the correct alarm based in the inexact alarm invoke type
-            when(_exactAlarmInvokeType.value) {
+            when (_exactAlarmInvokeType.value) {
                 ExactAlarmsInvokeType.NORMAL -> {
                     alarmManager.setExact(
                         selectedAlarmType,
@@ -253,6 +188,7 @@ internal class AlarmsViewModel @Inject constructor(
                         alarmIntent
                     )
                 }
+
                 ExactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setRepeating(
                         /* type = */ selectedAlarmType,
@@ -261,6 +197,7 @@ internal class AlarmsViewModel @Inject constructor(
                         /* operation = */ alarmIntent
                     )
                 }
+
                 ExactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setExactAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
@@ -268,6 +205,7 @@ internal class AlarmsViewModel @Inject constructor(
                         /* operation = */ alarmIntent
                     )
                 }
+
                 ExactAlarmsInvokeType.ALARM_CLOCK -> {
                     alarmManager.setAlarmClock(
                         /* info = */ AlarmManager.AlarmClockInfo(
@@ -278,35 +216,49 @@ internal class AlarmsViewModel @Inject constructor(
                     )
                 }
             }
-        } // Else (is RTC)
+
+            Log.d(TAG, "Exact alarm started")
+        }
+        // Else (is inexact)
         else {
-            // TODO Complete this section
-
-            val selectedAlarmType = if(_alarmType.value.isWakeup) AlarmManager.RTC_WAKEUP else AlarmManager.RTC
-
-            // Transform the alarm's target milliseconds into a Calendar
-            val rtcCalendar = Calendar.getInstance()
-            rtcCalendar.timeInMillis = alarmTargetTimeMiliseconds.value
-
-            // Transform the alarm's target window milliseconds into a Calendar
-            val rtcCalendarWindowMilliseconds = Calendar.getInstance()
-            rtcCalendarWindowMilliseconds.timeInMillis = alarmTargetTimeWindowLenghtMilliseconds.value
-
             // Start the correct alarm based in the inexact alarm invoke type
-            when(_exactAlarmInvokeType.value) {
-                ExactAlarmsInvokeType.NORMAL -> {
-
+            when (_inexactAlarmInvokeType.value) {
+                InexactAlarmsInvokeType.NORMAL -> {
+                    alarmManager.set(
+                        /* type = */ selectedAlarmType,
+                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* operation = */ alarmIntent
+                    )
                 }
-                ExactAlarmsInvokeType.REPEATING -> {
 
+                InexactAlarmsInvokeType.REPEATING -> {
+                    alarmManager.setInexactRepeating(
+                        /* type = */ selectedAlarmType,
+                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
+                        /* operation = */ alarmIntent
+                    )
                 }
-                ExactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
 
+                InexactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
+                    alarmManager.setAndAllowWhileIdle(
+                        /* type = */ selectedAlarmType,
+                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* operation = */ alarmIntent
+                    )
                 }
-                ExactAlarmsInvokeType.ALARM_CLOCK -> {
 
+                InexactAlarmsInvokeType.WINDOW -> {
+                    alarmManager.setWindow(
+                        /* type = */ selectedAlarmType,
+                        /* windowStartMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* windowLengthMillis = */ alarmTargetTimeWindowLenghtMilliseconds.value,
+                        /* operation = */ alarmIntent
+                    )
                 }
             }
+
+            Log.d(TAG, "Inexact alarm started")
         }
 
         // Verfy if there is an alarm running
@@ -372,4 +324,24 @@ internal data class AlarmType(
 
         return this
     }
+
+    /**
+     * Get the [AlarmType] Int value based on the current parameters
+     */
+    fun getAlarmType(): Int =
+        when (this.isElapsedTime) {
+            true -> {
+                if (this.isWakeup) AlarmManager.ELAPSED_REALTIME_WAKEUP else AlarmManager.ELAPSED_REALTIME
+            }
+
+            false -> {
+                if (this.isWakeup) AlarmManager.RTC_WAKEUP else AlarmManager.RTC
+            }
+        }
+
+    /**
+     * Gets the current [AlarmType] as a String value
+     */
+    fun getAlarmTypeAsString(): String =
+        "${if (isElapsedTime) "ELAPSED_TIME" else "RTC"} ${if (isWakeup) "_WAKEUP" else ""}"
 }
