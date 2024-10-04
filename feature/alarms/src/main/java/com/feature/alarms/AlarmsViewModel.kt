@@ -25,7 +25,7 @@ internal class AlarmsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Define a Flow for isAlarmExact and its backing property
-    private val _isAlarmExact = MutableStateFlow(false)
+    private val _isAlarmExact = MutableStateFlow(true)
     val isAlarmExact: StateFlow<Boolean> = _isAlarmExact
 
     // Define a Flow for exactAlarmInvokeType and its backing property
