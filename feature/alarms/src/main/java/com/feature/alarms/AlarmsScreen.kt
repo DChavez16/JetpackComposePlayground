@@ -3,10 +3,13 @@
 package com.feature.alarms
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -23,10 +26,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.DefaultTopAppBar
 import com.feature.alarms.ui.ExactAlarmScreen
 import com.feature.alarms.ui.InexactAlarmScreen
 import kotlinx.coroutines.launch
@@ -45,12 +51,13 @@ fun AlarmsScreen(
     // State that indicates if the alarm to start will be exact or inexact (also, indicates which screen to show)
     val isAlarmExact by alarmsViewModel.isAlarmExact.collectAsState()
 
-    // TODO Create custom time picker composable for ELAPSED_TIME AlarmType
-    // TODO Use defalut time picker composable for RTC AlarmType
-
     AlarmsScreenContent(
         isAlarmExact = { isAlarmExact },
         changeAlarmAccuracy = alarmsViewModel::changeAlarmAccuracy,
+        getAlarmInvokeTypeTitle = { "" },
+        getAlarmInvokeTypeDescription = { "" },
+        getAlarmTypeTitle = { " "},
+        getAlarmTypeDescription = { "" },
         onMenuButtonClick = onMenuButtonClick
     )
 }
@@ -60,6 +67,10 @@ fun AlarmsScreen(
 private fun AlarmsScreenContent(
     isAlarmExact: () -> Boolean,
     changeAlarmAccuracy: () -> Unit,
+    getAlarmInvokeTypeTitle: () -> String,
+    getAlarmInvokeTypeDescription: () -> String,
+    getAlarmTypeTitle: () -> String,
+    getAlarmTypeDescription: () -> String,
     onMenuButtonClick: () -> Unit
 ) {
 
@@ -79,9 +90,21 @@ private fun AlarmsScreenContent(
         }
     }
 
+    // State that indicates if the Alert Dialog is showing
+    var isAlertDialogShowing by remember { mutableStateOf(false) }
+
+    // Screen TopAppBar title
+    val topAppBarTitle = stringResource(R.string.alarms_screen_title)
+
     Scaffold(
         topBar = {
-            // TODO Add DefaultTopAppBar
+            DefaultTopAppBar(
+                title = { topAppBarTitle },
+                onMenuButtonClick = onMenuButtonClick,
+                onBackButtonPressed = {},
+                actionButtonIcon = { Icons.Rounded.Info },
+                onActionButtonClick = { isAlertDialogShowing = true }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -126,8 +149,20 @@ private fun AlarmsScreenContent(
             }
         }
 
-        // TODO Add Alert Dialog indicating the current properties of the alarm
+        if(isAlertDialogShowing) {
+            AlarmDetailsAlertDialog(
+                onDismiss = { isAlertDialogShowing = false }
+            )
+        }
     }
+}
+
+
+@Composable
+private fun AlarmDetailsAlertDialog(
+    onDismiss: () -> Unit
+) {
+    // TODO Add Alert Dialog indicating the current properties of the alarm and their description
 }
 
 
@@ -142,8 +177,42 @@ private fun TemporalPreview() {
         AlarmsScreenContent(
             isAlarmExact = { temporatIsAlarmExact },
             changeAlarmAccuracy = { temporatIsAlarmExact = !temporatIsAlarmExact },
+            getAlarmInvokeTypeTitle = { "" },
+            getAlarmInvokeTypeDescription = { "" },
+            getAlarmTypeTitle = { "" },
+            getAlarmTypeDescription = { "" },
             onMenuButtonClick = {}
         )
+    }
+}
+
+
+/*
+ * Previews
+ */
+@Preview
+@Composable
+private fun AlarmDetailsAlertDialogPreview() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(32.dp)
+    ) {
+        // Alarm Detail Alert Dialog preview in light mode
+        PreviewAppTheme(
+            darkTheme = false
+        ) {
+            AlarmDetailsAlertDialog(
+                onDismiss = {}
+            )
+        }
+
+        // Alarm Detail Alert Dialog preview in dark mode
+        PreviewAppTheme(
+            darkTheme = true
+        ) {
+            AlarmDetailsAlertDialog(
+                onDismiss = {}
+            )
+        }
     }
 }
 

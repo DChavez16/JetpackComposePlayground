@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Alarms Screen -->
+    <string name="alarms_screen_title">Alarms</string>
+
+    <!-- Exact Alarm Screen -->
+    <string name="alarms_exact_alarms_screen_">-</string>
+
+    <!-- Inexact Alarm Screen -->
+    <string name="alarms_inexact_alarms_screen_">-</string>
+
+    <!-- Alarms Description -->
+    <!-- For Inexact alarms -->
+    <string name="alarms_alarms_description_inexact_alarm_title">Inexact Alarm</string>
+    <string name="alarms_alarms_description_inexact_alarm_description">-</string>
+    <string name="alarms_alarms_description_set_title">set()</string>
+    <string name="alarms_alarms_description_set_description">-</string>
+    <string name="alarms_alarms_description_set_inexact_repeating_title">setInexactRepeating()</string>
+    <string name="alarms_alarms_description_set_inexact_repeating_description">-</string>
+    <string name="alarms_alarms_description_set_and_allow_while_idle_title">setAndAllowWhileIdle()</string>
+    <string name="alarms_alarms_description_set_and_allow_while_idle_description">-</string>
+    <string name="alarms_alarms_description_set_window_title">setWindow()</string>
+    <string name="alarms_alarms_description_set_window_description">-</string>
+    <!-- For Exact alarms -->
+    <string name="alarms_alarms_description_exact_alarm_title">Exact Alarm</string>
+    <string name="alarms_alarms_description_exact_alarm_description">-</string>
+    <string name="alarms_alarms_description_set_exact_title">setExact()</string>
+    <string name="alarms_alarms_description_set_exact_description">-</string>
+    <string name="alarms_alarms_description_set_repeating_title">setRepeating()</string>
+    <string name="alarms_alarms_description_set_repeating_description">-</string>
+    <string name="alarms_alarms_description_set_exact_and_allow_while_idle_title">setExactAndAllowWhileIdle()</string>
+    <string name="alarms_alarms_description_set_exact_and_allow_while_idle_description">-</string>
+    <string name="alarms_alarms_description_set_alarm_clock_title">setAlarmClock()</string>
+    <string name="alarms_alarms_description_set_alarm_clock_description">-</string>
+    <!-- For Alarm types -->
+    <string name="alarms_alarms_description_elapsed_realtime_title">ELAPSED_REALTIME</string>
+    <string name="alarms_alarms_description_elapsed_realtime_description">-</string>
+    <string name="alarms_alarms_description_elapsed_realtime_wakeup_title">ELAPSED_REALTIME_WAKEUP</string>
+    <string name="alarms_alarms_description_elapsed_realtime_wakeup_description">-</string>
+    <string name="alarms_alarms_description_rtc_title">RTC</string>
+    <string name="alarms_alarms_description_rtc_description">-</string>
+    <string name="alarms_alarms_description_rtc_wakeup_title">RTC_WAKEUP</string>
+    <string name="alarms_alarms_description_rtc_wakeup_description">-</string>
+</resources>
