@@ -3,19 +3,30 @@
 package com.feature.alarms
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,10 +67,10 @@ fun AlarmsScreen(
     AlarmsScreenContent(
         isAlarmExact = { isAlarmExact },
         changeAlarmAccuracy = alarmsViewModel::changeAlarmAccuracy,
-        getAlarmInvokeTypeTitle = { "" },
-        getAlarmInvokeTypeDescription = { "" },
-        getAlarmTypeTitle = { " "},
-        getAlarmTypeDescription = { "" },
+        getAlarmInvokeTypeTitle = alarmsViewModel::getAlarmInvokeTypeTitle,
+        getAlarmInvokeTypeDescription = alarmsViewModel::getAlarmInvokeTypeDescription,
+        getAlarmTypeTitle = alarmsViewModel::getAlarmTypeTitle,
+        getAlarmTypeDescription = alarmsViewModel::getAlarmTypeDescription,
         onMenuButtonClick = onMenuButtonClick
     )
 }
@@ -149,9 +162,14 @@ private fun AlarmsScreenContent(
             }
         }
 
-        if(isAlertDialogShowing) {
+        if (isAlertDialogShowing) {
             AlarmDetailsAlertDialog(
-                onDismiss = { isAlertDialogShowing = false }
+                onDismiss = { isAlertDialogShowing = false },
+                isAlarmExact = isAlarmExact,
+                alarmInvokeTypeTitle = getAlarmInvokeTypeTitle,
+                alarmInvokeTypeDescription = getAlarmInvokeTypeDescription,
+                alarmTypeTitle = getAlarmTypeTitle,
+                alarmTypeDescription = getAlarmTypeDescription
             )
         }
     }
@@ -160,9 +178,107 @@ private fun AlarmsScreenContent(
 
 @Composable
 private fun AlarmDetailsAlertDialog(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    isAlarmExact: () -> Boolean,
+    alarmInvokeTypeTitle: () -> String,
+    alarmInvokeTypeDescription: () -> String,
+    alarmTypeTitle: () -> String,
+    alarmTypeDescription: () -> String
 ) {
-    // TODO Add Alert Dialog indicating the current properties of the alarm and their description
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier
+            .width(300.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(16.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // Title of the Alert Dialog
+            Text(
+                text = stringResource(R.string.alarms_screen_alert_dialog_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .align(CenterHorizontally)
+            )
+
+            // Content of the Alert Dialog
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .heightIn(max = 200.dp)
+            ) {
+                // Alarm accuracy details
+                item(key = 0) {
+                    // Alarm accuracy title
+                    Text(
+                        text = if (isAlarmExact()) stringResource(R.string.alarms_alarms_description_exact_alarm_title)
+                        else stringResource(R.string.alarms_alarms_description_inexact_alarm_title),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    // Alarm accuracy description
+                    Text(
+                        text = if (isAlarmExact()) stringResource(R.string.alarms_alarms_description_exact_alarm_description)
+                        else stringResource(R.string.alarms_alarms_description_inexact_alarm_description),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+                }
+
+                // Alarm invoke type details
+                item(key = 1) {
+                    // Alarm invoke type title
+                    Text(
+                        text = alarmInvokeTypeTitle(),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    // Alarm invoke type description
+                    Text(
+                        text = alarmInvokeTypeDescription(),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+                }
+
+                // Alarm invoke type details
+                item(key = 2) {
+                    // Alarm type title
+                    Text(
+                        text = alarmTypeTitle(),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+
+                    // Alarm type description
+                    Text(
+                        text = alarmTypeDescription(),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+
+            // Dismiss Button
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors().copy(
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                modifier = Modifier.align(End)
+            ) {
+                Text(
+                    text = stringResource(R.string.alarms_screen_alert_dialog_dismiss_button_label)
+                )
+            }
+        }
+    }
 }
 
 
@@ -172,15 +288,15 @@ private fun TemporalPreview() {
     var temporatIsAlarmExact by remember { mutableStateOf(true) }
 
     PreviewAppTheme(
-        darkTheme = false
+        darkTheme = isSystemInDarkTheme()
     ) {
         AlarmsScreenContent(
             isAlarmExact = { temporatIsAlarmExact },
             changeAlarmAccuracy = { temporatIsAlarmExact = !temporatIsAlarmExact },
-            getAlarmInvokeTypeTitle = { "" },
-            getAlarmInvokeTypeDescription = { "" },
-            getAlarmTypeTitle = { "" },
-            getAlarmTypeDescription = { "" },
+            getAlarmInvokeTypeTitle = { "invokeTypeTitle()" },
+            getAlarmInvokeTypeDescription = { "Invoke type description" },
+            getAlarmTypeTitle = { "alarmTypeTitle()" },
+            getAlarmTypeDescription = { "Alarm type description" },
             onMenuButtonClick = {}
         )
     }
@@ -201,16 +317,12 @@ private fun AlarmDetailsAlertDialogPreview() {
             darkTheme = false
         ) {
             AlarmDetailsAlertDialog(
-                onDismiss = {}
-            )
-        }
-
-        // Alarm Detail Alert Dialog preview in dark mode
-        PreviewAppTheme(
-            darkTheme = true
-        ) {
-            AlarmDetailsAlertDialog(
-                onDismiss = {}
+                onDismiss = {},
+                isAlarmExact = { true },
+                alarmInvokeTypeTitle = { "invokeTypeTitle()" },
+                alarmInvokeTypeDescription = { "Invoke type description" },
+                alarmTypeTitle = { "alarmTypeTitle()" },
+                alarmTypeDescription = { "Alarm type description" }
             )
         }
     }

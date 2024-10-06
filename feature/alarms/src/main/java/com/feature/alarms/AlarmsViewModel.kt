@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.example.alarmmanager.receiver.AlarmReceiver
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -174,7 +175,11 @@ internal class AlarmsViewModel @Inject constructor(
 
         Log.d(
             TAG,
-            "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with ${if (_isAlarmExact.value) _exactAlarmInvokeType.value.functionName else _inexactAlarmInvokeType.value.functionName})} as invoke type and ${_alarmType.value.getAlarmTypeAsString()} as alarm type"
+            "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with ${
+                if (_isAlarmExact.value) context.getText(
+                    _exactAlarmInvokeType.value.functionName
+                ) else context.getText(_inexactAlarmInvokeType.value.functionName)
+            } as invoke type and ${getAlarmInvokeTypeTitle()} as alarm type"
         )
 
         // If the Alarm is exact
@@ -264,6 +269,74 @@ internal class AlarmsViewModel @Inject constructor(
         // Verfy if there is an alarm running
         verifyAlarmsNotActive()
     }
+
+    /**
+     * Get alarm invoke type title as string
+     *
+     * @return The alarm invoke type title as string
+     */
+    fun getAlarmInvokeTypeTitle(): String = context.getString(
+        if (_isAlarmExact.value) _exactAlarmInvokeType.value.functionName
+        else _inexactAlarmInvokeType.value.functionName
+    )
+
+    /**
+     * Get alarm invoke type description as string
+     *
+     * @return The alarm invoke type description as string
+     */
+    fun getAlarmInvokeTypeDescription(): String = context.getString(
+        if (_isAlarmExact.value) _exactAlarmInvokeType.value.funtionDescription
+        else _inexactAlarmInvokeType.value.functionDescription
+    )
+
+    /**
+     * Get alarm type title as string
+     *
+     * @return The alarm type title as string
+     */
+    fun getAlarmTypeTitle(): String = context.getString(
+        if(_alarmType.value.isElapsedTime) {
+            if(_alarmType.value.isWakeup) {
+                R.string.alarms_alarms_description_elapsed_realtime_title
+            }
+            else {
+                R.string.alarms_alarms_description_elapsed_realtime_wakeup_title
+            }
+        }
+        else {
+            if(_alarmType.value.isWakeup) {
+                R.string.alarms_alarms_description_rtc_title
+            }
+            else {
+                R.string.alarms_alarms_description_rtc_wakeup_title
+            }
+        }
+    )
+
+    /**
+     * Get alarm type description as string
+     *
+     * @return The alarm type description as string
+     */
+    fun getAlarmTypeDescription(): String = context.getString(
+        if(_alarmType.value.isElapsedTime) {
+            if(_alarmType.value.isWakeup) {
+                R.string.alarms_alarms_description_elapsed_realtime_description
+            }
+            else {
+                R.string.alarms_alarms_description_elapsed_realtime_wakeup_description
+            }
+        }
+        else {
+            if(_alarmType.value.isWakeup) {
+                R.string.alarms_alarms_description_rtc_description
+            }
+            else {
+                R.string.alarms_alarms_description_rtc_wakeup_description
+            }
+        }
+    )
 }
 
 
@@ -271,19 +344,49 @@ internal class AlarmsViewModel @Inject constructor(
     Helper enum classes that represent the invoke alarm types
  */
 // Invoke types for exact alarms
-internal enum class ExactAlarmsInvokeType(val functionName: String) {
-    NORMAL("setExact()"),
-    REPEATING("setRepeating"),
-    ALLOW_WHILE_IDLE("setExactAndAllowWhileIdle()"),
-    ALARM_CLOCK("setAlarmClock()")
+internal enum class ExactAlarmsInvokeType(
+    @StringRes val functionName: Int,
+    @StringRes val funtionDescription: Int
+) {
+    NORMAL(
+        functionName = R.string.alarms_alarms_description_set_exact_title,
+        funtionDescription = R.string.alarms_alarms_description_set_exact_description
+    ),
+    REPEATING(
+        functionName = R.string.alarms_alarms_description_set_repeating_title,
+        funtionDescription = R.string.alarms_alarms_description_set_repeating_description
+    ),
+    ALLOW_WHILE_IDLE(
+        functionName = R.string.alarms_alarms_description_set_exact_and_allow_while_idle_title,
+        funtionDescription = R.string.alarms_alarms_description_set_exact_and_allow_while_idle_description
+    ),
+    ALARM_CLOCK(
+        functionName = R.string.alarms_alarms_description_set_alarm_clock_title,
+        funtionDescription = R.string.alarms_alarms_description_set_alarm_clock_description
+    )
 }
 
 // Invoke types for inexact alarms
-internal enum class InexactAlarmsInvokeType(val functionName: String) {
-    NORMAL("set()"),
-    REPEATING("setInexactRepeating()"),
-    ALLOW_WHILE_IDLE("setAndAllowWhileIdle()"),
-    WINDOW("setWindow()")
+internal enum class InexactAlarmsInvokeType(
+    @StringRes val functionName: Int,
+    @StringRes val functionDescription: Int
+) {
+    NORMAL(
+        functionName = R.string.alarms_alarms_description_set_title,
+        functionDescription = R.string.alarms_alarms_description_set_description
+    ),
+    REPEATING(
+        functionName = R.string.alarms_alarms_description_set_inexact_repeating_title,
+        functionDescription = R.string.alarms_alarms_description_set_inexact_repeating_description
+    ),
+    ALLOW_WHILE_IDLE(
+        functionName = R.string.alarms_alarms_description_set_and_allow_while_idle_title,
+        functionDescription = R.string.alarms_alarms_description_set_and_allow_while_idle_description
+    ),
+    WINDOW(
+        functionName = R.string.alarms_alarms_description_set_window_title,
+        functionDescription = R.string.alarms_alarms_description_set_window_description
+    )
 }
 
 
@@ -338,10 +441,4 @@ internal data class AlarmType(
                 if (this.isWakeup) AlarmManager.RTC_WAKEUP else AlarmManager.RTC
             }
         }
-
-    /**
-     * Gets the current [AlarmType] as a String value
-     */
-    fun getAlarmTypeAsString(): String =
-        "${if (isElapsedTime) "ELAPSED_TIME" else "RTC"} ${if (isWakeup) "_WAKEUP" else ""}"
 }

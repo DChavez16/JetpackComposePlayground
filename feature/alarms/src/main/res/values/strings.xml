@@ -2,6 +2,8 @@
 <resources>
     <!-- Alarms Screen -->
     <string name="alarms_screen_title">Alarms</string>
+    <string name="alarms_screen_alert_dialog_title">Alarm Details</string>
+    <string name="alarms_screen_alert_dialog_dismiss_button_label">Dismiss</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>
