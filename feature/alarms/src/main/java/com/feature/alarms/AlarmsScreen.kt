@@ -282,27 +282,6 @@ private fun AlarmDetailsAlertDialog(
 }
 
 
-@Preview
-@Composable
-private fun TemporalPreview() {
-    var temporatIsAlarmExact by remember { mutableStateOf(true) }
-
-    PreviewAppTheme(
-        darkTheme = isSystemInDarkTheme()
-    ) {
-        AlarmsScreenContent(
-            isAlarmExact = { temporatIsAlarmExact },
-            changeAlarmAccuracy = { temporatIsAlarmExact = !temporatIsAlarmExact },
-            getAlarmInvokeTypeTitle = { "invokeTypeTitle()" },
-            getAlarmInvokeTypeDescription = { "Invoke type description" },
-            getAlarmTypeTitle = { "alarmTypeTitle()" },
-            getAlarmTypeDescription = { "Alarm type description" },
-            onMenuButtonClick = {}
-        )
-    }
-}
-
-
 /*
  * Previews
  */

@@ -14,33 +14,33 @@
     <!-- Alarms Description -->
     <!-- For Inexact alarms -->
     <string name="alarms_alarms_description_inexact_alarm_title">Inexact Alarm</string>
-    <string name="alarms_alarms_description_inexact_alarm_description">-</string>
+    <string name="alarms_alarms_description_inexact_alarm_description">These alarms trigger at approximately the specified time. The system optimizes the delivery to conserve battery. Is critical for tasks where precise timing is not critical (e.g., periodic data updates, background sync, etc.). Generally preferred for better baetry performance</string>
     <string name="alarms_alarms_description_set_title">set()</string>
-    <string name="alarms_alarms_description_set_description">-</string>
+    <string name="alarms_alarms_description_set_description">This method schedules a one-time inexact alarm that will trigger at some point after a specified delay. The system determines the exact delivery time, taking into account factors like battery optimization and Doze mode. While it offers some flexibility in timing, it\'s important to note that on devices running API levels lower than 19, set() behaves like an exact alarm.</string>
     <string name="alarms_alarms_description_set_inexact_repeating_title">setInexactRepeating()</string>
-    <string name="alarms_alarms_description_set_inexact_repeating_description">-</string>
+    <string name="alarms_alarms_description_set_inexact_repeating_description">Use this method to schedule an inexact alarm that repeats at roughly regular intervals. You provide the initial trigger time and the desired interval (e.g., daily, hourly). The system adjusts the delivery time for each repetition to optimize for battery life. This is well-suited for tasks that need to occur periodically but don\'t require precise timing.</string>
     <string name="alarms_alarms_description_set_and_allow_while_idle_title">setAndAllowWhileIdle()</string>
-    <string name="alarms_alarms_description_set_and_allow_while_idle_description">-</string>
+    <string name="alarms_alarms_description_set_and_allow_while_idle_description">This method is designed for scheduling inexact alarms that are allowed to trigger even when the device is in Doze mode. This method is useful for tasks that need to run periodically even when the device is idle, such as checking for updates or syncing data. However, it\'s important to use it judiciously to avoid excessive battery drain. Only use it for tasks that genuinely need to run in Doze mode and consider the frequency and potential impact on battery life.</string>
     <string name="alarms_alarms_description_set_window_title">setWindow()</string>
-    <string name="alarms_alarms_description_set_window_description">-</string>
+    <string name="alarms_alarms_description_set_window_description">This method provides more control over the delivery window for an inexact alarm. You specify a time window within which the alarm should trigger. This allows for more flexibility than set(), as you can define a range instead of just a single delay. The system still optimizes the delivery time within the window to minimize wakeups and battery usage.</string>
     <!-- For Exact alarms -->
     <string name="alarms_alarms_description_exact_alarm_title">Exact Alarm</string>
-    <string name="alarms_alarms_description_exact_alarm_description">-</string>
+    <string name="alarms_alarms_description_exact_alarm_description">Trigger at the precise time specified. Can disrupt Doze mode and impact battery life. Ideal for tasks requiring accurate timing (e.g., alarm clocks, calendar reminders, etc.). Require special permissions in newer Android versions.</string>
     <string name="alarms_alarms_description_set_exact_title">setExact()</string>
-    <string name="alarms_alarms_description_set_exact_description">-</string>
+    <string name="alarms_alarms_description_set_exact_description">This method schedules an alarm that will trigger at the exact time specified. It offers the highest level of precision for time-critical tasks but can potentially disrupt Doze mode and impact battery life. Use this method sparingly and only when precise timing is absolutely essential.</string>
     <string name="alarms_alarms_description_set_repeating_title">setRepeating()</string>
-    <string name="alarms_alarms_description_set_repeating_description">-</string>
+    <string name="alarms_alarms_description_set_repeating_description">This method is similar to setExact(), but it schedules an alarm that repeats at the specified interval. While it ensures that the alarm fires at the exact time for each repetition, it can lead to more frequent wakeups and potentially higher battery consumption. Consider the trade-off between precision and battery life when using this method.</string>
     <string name="alarms_alarms_description_set_exact_and_allow_while_idle_title">setExactAndAllowWhileIdle()</string>
-    <string name="alarms_alarms_description_set_exact_and_allow_while_idle_description">-</string>
+    <string name="alarms_alarms_description_set_exact_and_allow_while_idle_description">This method combines the precision of setExact() with the ability to trigger even when the device is in Doze mode. It\'s suitable for tasks that require precise timing and must run even when the device is idle. However, use it cautiously as it can significantly impact battery life due to the frequent wakeups.</string>
     <string name="alarms_alarms_description_set_alarm_clock_title">setAlarmClock()</string>
-    <string name="alarms_alarms_description_set_alarm_clock_description">-</string>
+    <string name="alarms_alarms_description_set_alarm_clock_description">This method is specifically designed for setting alarms that the user is explicitly aware of, such as alarm clocks or reminders. It guarantees that the alarm will fire at the exact time, even in Doze mode, and the system might display the alarm in the system UI. This method is ideal for user-facing alarms where precision and visibility are crucial.</string>
     <!-- For Alarm types -->
     <string name="alarms_alarms_description_elapsed_realtime_title">ELAPSED_REALTIME</string>
-    <string name="alarms_alarms_description_elapsed_realtime_description">-</string>
+    <string name="alarms_alarms_description_elapsed_realtime_description">This alarm type uses a timer that starts running when the device boots up. It measures time since boot, including any time the device spends in sleep mode. Alarms set with this type will fire based on this elapsed time, but they won\'t wake up the device if it's asleep. This is suitable for tasks that need to be triggered based on the passage of time since boot, but don't require the device to wake up.</string>
     <string name="alarms_alarms_description_elapsed_realtime_wakeup_title">ELAPSED_REALTIME_WAKEUP</string>
-    <string name="alarms_alarms_description_elapsed_realtime_wakeup_description">-</string>
+    <string name="alarms_alarms_description_elapsed_realtime_wakeup_description">This type is similar to ELAPSED_REALTIME, but it has the added ability to wake up the device from sleep when the alarm triggers. It\'s useful for tasks that need to run at a specific time relative to device boot, even if the device is asleep. However, be mindful of the potential impact on battery life as waking up the device consumes more power.</string>
     <string name="alarms_alarms_description_rtc_title">RTC</string>
-    <string name="alarms_alarms_description_rtc_description">-</string>
+    <string name="alarms_alarms_description_rtc_description">This alarm type is based on the device\'s real-time clock. It triggers alarms based on the actual time of day, taking into account the current time zone and any daylight saving time adjustments. However, it won\'t wake up the device if it's asleep. Use this type for tasks that need to be triggered at a specific time of day, but don't require the device to be awake.</string>
     <string name="alarms_alarms_description_rtc_wakeup_title">RTC_WAKEUP</string>
-    <string name="alarms_alarms_description_rtc_wakeup_description">-</string>
+    <string name="alarms_alarms_description_rtc_wakeup_description">This type combines the real-time clock with the ability to wake up the device from sleep. It\'s suitable for tasks that need to run at a specific time of day, regardless of whether the device is asleep or awake. This is commonly used for alarm clocks, reminders, or other time-sensitive tasks that require the device's attention.</string>
 </resources>
