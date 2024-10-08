@@ -1,8 +1,8 @@
 [versions]
 # Android Gradle
-agp = "8.6.1"
+agp = "8.7.0"
 # Kotlin
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 # Core
 coreKtx = "1.13.1"
 # Lifecycle
@@ -16,7 +16,7 @@ materialAdaptative = "1.0.0-beta04"
 # Navigation
 navigationCompose = "2.7.7"
 # KSP
-ksp = "2.0.10-1.0.24"
+ksp = "2.0.20-1.0.25"
 # Hilt
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
