@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -221,14 +222,17 @@ private fun AlarmDetailsAlertDialog(
                     Text(
                         text = if (isAlarmExact()) stringResource(R.string.alarms_alarms_description_exact_alarm_title)
                         else stringResource(R.string.alarms_alarms_description_inexact_alarm_title),
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     // Alarm accuracy description
                     Text(
                         text = if (isAlarmExact()) stringResource(R.string.alarms_alarms_description_exact_alarm_description)
                         else stringResource(R.string.alarms_alarms_description_inexact_alarm_description),
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -239,13 +243,16 @@ private fun AlarmDetailsAlertDialog(
                     // Alarm invoke type title
                     Text(
                         text = alarmInvokeTypeTitle(),
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     // Alarm invoke type description
                     Text(
                         text = alarmInvokeTypeDescription(),
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -256,13 +263,16 @@ private fun AlarmDetailsAlertDialog(
                     // Alarm type title
                     Text(
                         text = alarmTypeTitle(),
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     // Alarm type description
                     Text(
                         text = alarmTypeDescription(),
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Justify,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
