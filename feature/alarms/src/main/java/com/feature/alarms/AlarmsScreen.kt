@@ -4,7 +4,6 @@ package com.feature.alarms
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -142,6 +141,9 @@ private fun AlarmsScreenContent(
                                 coroutineScope.launch {
                                     // If the page is currently the 'Exact Alarm' move to the 'Inexact Alarm' page. Otherwise the opposite
                                     pagerState.scrollToPage(if (isAlarmExact()) 1 else 0)
+
+                                    // Update the isAlarmExact state based
+                                    changeAlarmAccuracy()
                                 }
                             }
                         }
