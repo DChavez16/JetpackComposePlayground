@@ -12,6 +12,15 @@
     <string name="alarms_shared_alarm_type_elapsed_time">REALTIME</string>
     <string name="alarms_shared_alarm_type_rtc">RTC</string>
     <string name="alarms_shared_alarm_type_wakeup">WAKEUP</string>
+    <string name="alarms_shared_alarm_invoke_type_header">Invoke Type</string>
+    <string name="alarms_shared_alarm_invoke_type_info">These AlarmManager methods offer various ways to fine-tune alarm behavior. setInexactRepeating() and setRepeating() establish recurring alarms, but the former allows for flexibility in timing to conserve resources. setAndAllowWhileIdle() and setExactAndAllowWhileIdle() schedule alarms that can fire even when the device is in a low-power state, with the latter prioritizing precise timing. setWindow() provides a time window for alarm delivery, offering a balance between accuracy and system efficiency. Lastly, setAlarmClock() creates alarms intended for user-facing alarm clocks, ensuring they ring at the designated time, even during Doze mode. These methods collectively provide developers with tools to tailor alarm scheduling to specific application needs and system conditions.</string>
+    <string name="alarms_shared_alarm_invoke_type_info_accesibility">Display more information about alarm invoke types</string>
+    <string name="alarms_shared_alarm_invoke_type_inexact_window">Set Window</string>
+    <string name="alarms_shared_alarm_invoke_type_exact_precise_type">Set Precise Time</string>
+    <string name="alarms_shared_alarm_invoke_type_repeating_accesibility_enable">Enable repeating alarm</string>
+    <string name="alarms_shared_alarm_invoke_type_repeating_accesibility_disable">Disable repeating alarm</string>
+    <string name="alarms_shared_alarm_invoke_type_doze_accesibility_enable">Allow alarm while idle</string>
+    <string name="alarms_shared_alarm_invoke_type_doze_accesibility_disable">Disallow alarm while idle</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>

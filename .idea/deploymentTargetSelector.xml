@@ -22,7 +22,7 @@
       <SelectionState runConfigName="AlarmTypeSelectorsPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="a">
+      <SelectionState runConfigName="AlarmInvokeTypeSelectorsPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
