@@ -286,7 +286,7 @@ internal class AlarmsViewModel @Inject constructor(
      * @return The alarm invoke type description as string
      */
     fun getAlarmInvokeTypeDescription(): String = context.getString(
-        if (_isAlarmExact.value) _exactAlarmInvokeType.value.funtionDescription
+        if (_isAlarmExact.value) _exactAlarmInvokeType.value.functionDescription
         else _inexactAlarmInvokeType.value.functionDescription
     )
 
@@ -343,34 +343,40 @@ internal class AlarmsViewModel @Inject constructor(
 /*
     Helper enum classes that represent the invoke alarm types
  */
+// Invoke types interface
+internal interface AlarmsInvokeType {
+    val functionName: Int
+    val functionDescription: Int
+}
+
 // Invoke types for exact alarms
 internal enum class ExactAlarmsInvokeType(
-    @StringRes val functionName: Int,
-    @StringRes val funtionDescription: Int
-) {
+    @StringRes override val functionName: Int,
+    @StringRes override val functionDescription: Int
+): AlarmsInvokeType {
     NORMAL(
         functionName = R.string.alarms_alarms_description_set_exact_title,
-        funtionDescription = R.string.alarms_alarms_description_set_exact_description
+        functionDescription = R.string.alarms_alarms_description_set_exact_description
     ),
     REPEATING(
         functionName = R.string.alarms_alarms_description_set_repeating_title,
-        funtionDescription = R.string.alarms_alarms_description_set_repeating_description
+        functionDescription = R.string.alarms_alarms_description_set_repeating_description
     ),
     ALLOW_WHILE_IDLE(
         functionName = R.string.alarms_alarms_description_set_exact_and_allow_while_idle_title,
-        funtionDescription = R.string.alarms_alarms_description_set_exact_and_allow_while_idle_description
+        functionDescription = R.string.alarms_alarms_description_set_exact_and_allow_while_idle_description
     ),
     ALARM_CLOCK(
         functionName = R.string.alarms_alarms_description_set_alarm_clock_title,
-        funtionDescription = R.string.alarms_alarms_description_set_alarm_clock_description
+        functionDescription = R.string.alarms_alarms_description_set_alarm_clock_description
     )
 }
 
 // Invoke types for inexact alarms
 internal enum class InexactAlarmsInvokeType(
-    @StringRes val functionName: Int,
-    @StringRes val functionDescription: Int
-) {
+    @StringRes override val functionName: Int,
+    @StringRes override val functionDescription: Int
+): AlarmsInvokeType {
     NORMAL(
         functionName = R.string.alarms_alarms_description_set_title,
         functionDescription = R.string.alarms_alarms_description_set_description
