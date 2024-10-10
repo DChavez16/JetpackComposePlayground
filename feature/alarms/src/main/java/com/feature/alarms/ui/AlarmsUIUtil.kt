@@ -24,9 +24,9 @@ import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -65,7 +65,6 @@ internal fun AlarmTypeSelectors(
     modifier: Modifier = Modifier
 ) {
 
-    // TODO Add logs at user interactions
     // TODO Reduce recompositions
 
     // Coroutine scope for pager animations
@@ -169,10 +168,13 @@ internal fun AlarmTypeSelectors(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Wakeup type selector
-            FilterChip(
-                selected = currentAlarmType().isWakeup,
-                onClick = onAlarmTypeWakeupTypeChange,
+            var isInputChipSelected by remember { mutableStateOf(currentAlarmType().isWakeup) }
+            InputChip(
+                selected = isInputChipSelected,
+                onClick = {
+                    onAlarmTypeWakeupTypeChange()
+                    isInputChipSelected = !isInputChipSelected
+                },
                 label = {
                     Text(
                         text = stringResource(R.string.alarms_shared_alarm_type_wakeup),
@@ -208,7 +210,6 @@ internal fun AlarmInvokeTypeSelectors(
     modifier: Modifier = Modifier
 ) {
 
-    // TODO Add logs at user interactions
     // TODO Reduce recompositions
 
     // State for showing or not the info Alert Dialog
