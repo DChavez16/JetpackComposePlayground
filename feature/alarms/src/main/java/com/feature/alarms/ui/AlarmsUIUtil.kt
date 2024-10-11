@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,10 +48,12 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.example.ui.theme.AppTheme
 import com.feature.alarms.AlarmType
 import com.feature.alarms.AlarmsInvokeType
@@ -55,6 +61,7 @@ import com.feature.alarms.ExactAlarmsInvokeType
 import com.feature.alarms.InexactAlarmsInvokeType
 import com.feature.alarms.R
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 
 @Composable
@@ -64,8 +71,6 @@ internal fun AlarmTypeSelectors(
     onAlarmTypeWakeupTypeChange: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    // TODO Reduce recompositions
 
     // Coroutine scope for pager animations
     val coroutineScope = rememberCoroutineScope()
@@ -209,8 +214,6 @@ internal fun AlarmInvokeTypeSelectors(
     onChangeInvokeType: (AlarmsInvokeType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    // TODO Reduce recompositions
 
     // State for showing or not the info Alert Dialog
     var showAlertDialog by remember { mutableStateOf(false) }
@@ -367,8 +370,164 @@ internal fun AlarmInvokeTypeSelectors(
 
 
 @Composable
-internal fun ElapsedTimePicker() {
-    // TODO Create custom time picker composable for ELAPSED_TIME AlarmType
+internal fun ElapsedTimePicker(
+    onCurrentTimeInMillisChange: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    isChooseWindowRangeVariant: Boolean = false
+) {
+
+    // TODO Made it posible to use a Window variant who only accepts upt o one hour, and its no less than 5 minutes
+    // TODO Add a label that indicates that its the window range lenght in that case, use and alert dialog to show info about how it works
+
+    // PagerState for hours, minutes, and, seconds
+    val hoursPagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 25 }
+    )
+    val minutesPagerState = rememberPagerState(
+        initialPage = 15,
+        pageCount = { 60 }
+    )
+    val secondsPagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { 60 }
+    )
+
+    // Launched effect that observes with a Snapshot changes in the pager state' current pages
+    LaunchedEffect(hoursPagerState) {
+        snapshotFlow { hoursPagerState.currentPage }.collect { newPage ->
+            // TODO Verify this provides a valid time value in a calendar instance
+            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+            onCurrentTimeInMillisChange(
+                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+            )
+        }
+    }
+    LaunchedEffect(minutesPagerState) {
+        snapshotFlow { minutesPagerState.currentPage }.collect { newPage ->
+            // TODO Verify this provides a valid time value in a calendar instance
+            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+            onCurrentTimeInMillisChange(
+                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+            )
+        }
+    }
+    LaunchedEffect(secondsPagerState) {
+        snapshotFlow { secondsPagerState.currentPage }.collect { newPage ->
+            // TODO Verify this provides a valid time value in a calendar instance
+            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+            onCurrentTimeInMillisChange(
+                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+            )
+        }
+    }
+
+    // Elapsed time picker content
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.height(148.dp)
+    ) {
+
+        // Shared modifier for each pager
+        val pagerModifier = Modifier
+            .width(96.dp)
+            .padding(horizontal = 8.dp)
+
+        // Shared modifier for each text in the pagers
+        fun pagesTextModifier(pagerState: PagerState, page: Int) = Modifier.graphicsLayer {
+            val pageOffset = (
+                    (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                    ).absoluteValue
+
+            alpha = lerp(
+                start = 0.25f,
+                stop = 1f,
+                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+            )
+
+            scaleY = lerp(
+                start = 0.75f,
+                stop = 1f,
+                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+            )
+
+            scaleX = lerp(
+                start = 0.75f,
+                stop = 1f,
+                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+            )
+        }
+
+        val pagerSeparatorText = @Composable {
+            Text(
+                text = ":",
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        // Hour vertical pager
+        VerticalPager(
+            state = hoursPagerState,
+            contentPadding = PaddingValues(vertical = 44.dp),
+            modifier = pagerModifier
+        ) { page ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Text(
+                    text = page.toString(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = pagesTextModifier(hoursPagerState, page)
+                )
+            }
+        }
+
+        pagerSeparatorText()
+
+        // Minute vertical pager
+        VerticalPager(
+            state = minutesPagerState,
+            contentPadding = PaddingValues(vertical = 44.dp),
+            modifier = pagerModifier
+        ) { page ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Text(
+                    text = page.toString(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = pagesTextModifier(minutesPagerState, page)
+                )
+            }
+        }
+
+        pagerSeparatorText()
+
+        // Seconds vertical pager
+        VerticalPager(
+            state = secondsPagerState,
+            contentPadding = PaddingValues(vertical = 44.dp),
+            modifier = pagerModifier
+        ) { page ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Text(
+                    text = page.toString(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = pagesTextModifier(secondsPagerState, page)
+                )
+            }
+        }
+    }
 }
 
 
@@ -562,14 +721,20 @@ private fun ElapseTimePickerPreview() {
         AppTheme(
             isDarkTheme = { false }
         ) {
-
+            ElapsedTimePicker(
+                onCurrentTimeInMillisChange = {},
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
 
         // Dark theme preview
         AppTheme(
             isDarkTheme = { true }
         ) {
-
+            ElapsedTimePicker(
+                onCurrentTimeInMillisChange = {},
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
     }
 }
