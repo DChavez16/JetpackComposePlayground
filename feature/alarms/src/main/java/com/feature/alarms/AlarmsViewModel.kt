@@ -46,12 +46,11 @@ internal class AlarmsViewModel @Inject constructor(
     val isAlarmRunning: StateFlow<Boolean> = _isAlarmRunning
 
     // Define a Flow for alarmTargetTimeMiliseconds and its backing property
-    private val _alarmTargetTimeMiliseconds = MutableStateFlow(calendar?.timeInMillis ?: 0L)
-    val alarmTargetTimeMiliseconds: StateFlow<Long> = _alarmTargetTimeMiliseconds
+    private val _alarmTargetTimeMilliseconds = MutableStateFlow(calendar?.timeInMillis ?: 0L)
+    val alarmTargetTimeMilliseconds: StateFlow<Long> = _alarmTargetTimeMilliseconds
 
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
-    private val _alarmTargetTimeWindowLenghtMilliseconds =
-        MutableStateFlow(calendar?.timeInMillis ?: 0L)
+    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(0L)
     val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
         _alarmTargetTimeWindowLenghtMilliseconds
 
@@ -189,7 +188,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.NORMAL -> {
                     alarmManager.setExact(
                         selectedAlarmType,
-                        alarmTargetTimeMiliseconds.value,
+                        alarmTargetTimeMilliseconds.value,
                         alarmIntent
                     )
                 }
@@ -197,7 +196,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setRepeating(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
                         /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
                         /* operation = */ alarmIntent
                     )
@@ -206,7 +205,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setExactAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -214,7 +213,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALARM_CLOCK -> {
                     alarmManager.setAlarmClock(
                         /* info = */ AlarmManager.AlarmClockInfo(
-                            /* triggerTime = */ alarmTargetTimeMiliseconds.value,
+                            /* triggerTime = */ alarmTargetTimeMilliseconds.value,
                             /* showIntent = */ alarmIntent
                         ),
                         /* operation = */ alarmIntent
@@ -231,7 +230,7 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.NORMAL -> {
                     alarmManager.set(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -239,7 +238,7 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setInexactRepeating(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
                         /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
                         /* operation = */ alarmIntent
                     )
@@ -248,7 +247,7 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMiliseconds.value,
+                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -256,9 +255,12 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.WINDOW -> {
                     alarmManager.setWindow(
                         /* type = */ selectedAlarmType,
-                        /* windowStartMillis = */ alarmTargetTimeMiliseconds.value,
-                        /* windowLengthMillis = */ alarmTargetTimeWindowLenghtMilliseconds.value,
-                        /* operation = */ alarmIntent
+                        /* windowStartMillis = */
+                        alarmTargetTimeMilliseconds.value - alarmTargetTimeWindowLenghtMilliseconds.value,
+                        /* windowLengthMillis = */
+                        alarmTargetTimeMilliseconds.value + alarmTargetTimeWindowLenghtMilliseconds.value,
+                        /* operation = */
+                        alarmIntent
                     )
                 }
             }
@@ -296,19 +298,16 @@ internal class AlarmsViewModel @Inject constructor(
      * @return The alarm type title as string
      */
     fun getAlarmTypeTitle(): String = context.getString(
-        if(_alarmType.value.isElapsedTime) {
-            if(_alarmType.value.isWakeup) {
+        if (_alarmType.value.isElapsedTime) {
+            if (_alarmType.value.isWakeup) {
                 R.string.alarms_alarms_description_elapsed_realtime_title
-            }
-            else {
+            } else {
                 R.string.alarms_alarms_description_elapsed_realtime_wakeup_title
             }
-        }
-        else {
-            if(_alarmType.value.isWakeup) {
+        } else {
+            if (_alarmType.value.isWakeup) {
                 R.string.alarms_alarms_description_rtc_title
-            }
-            else {
+            } else {
                 R.string.alarms_alarms_description_rtc_wakeup_title
             }
         }
@@ -320,19 +319,16 @@ internal class AlarmsViewModel @Inject constructor(
      * @return The alarm type description as string
      */
     fun getAlarmTypeDescription(): String = context.getString(
-        if(_alarmType.value.isElapsedTime) {
-            if(_alarmType.value.isWakeup) {
+        if (_alarmType.value.isElapsedTime) {
+            if (_alarmType.value.isWakeup) {
                 R.string.alarms_alarms_description_elapsed_realtime_description
-            }
-            else {
+            } else {
                 R.string.alarms_alarms_description_elapsed_realtime_wakeup_description
             }
-        }
-        else {
-            if(_alarmType.value.isWakeup) {
+        } else {
+            if (_alarmType.value.isWakeup) {
                 R.string.alarms_alarms_description_rtc_description
-            }
-            else {
+            } else {
                 R.string.alarms_alarms_description_rtc_wakeup_description
             }
         }
@@ -353,7 +349,7 @@ internal interface AlarmsInvokeType {
 internal enum class ExactAlarmsInvokeType(
     @StringRes override val functionName: Int,
     @StringRes override val functionDescription: Int
-): AlarmsInvokeType {
+) : AlarmsInvokeType {
     NORMAL(
         functionName = R.string.alarms_alarms_description_set_exact_title,
         functionDescription = R.string.alarms_alarms_description_set_exact_description
@@ -376,7 +372,7 @@ internal enum class ExactAlarmsInvokeType(
 internal enum class InexactAlarmsInvokeType(
     @StringRes override val functionName: Int,
     @StringRes override val functionDescription: Int
-): AlarmsInvokeType {
+) : AlarmsInvokeType {
     NORMAL(
         functionName = R.string.alarms_alarms_description_set_title,
         functionDescription = R.string.alarms_alarms_description_set_description
