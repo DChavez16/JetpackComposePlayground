@@ -376,22 +376,24 @@ internal fun ElapsedTimePicker(
     isChooseWindowRangeVariant: Boolean = false
 ) {
 
-    // TODO Made it posible to use a Window variant who only accepts upt o one hour, and its no less than 5 minutes
     // TODO Add a label that indicates that its the window range lenght in that case, use and alert dialog to show info about how it works
 
     // PagerState for hours, minutes, and, seconds
     val hoursPagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { 25 }
+        pageCount = { if (isChooseWindowRangeVariant) 1 else 25 }
     )
     val minutesPagerState = rememberPagerState(
-        initialPage = 15,
-        pageCount = { 60 }
+        initialPage = 0,
+        pageCount = { if (isChooseWindowRangeVariant) 59 else 60 }
     )
     val secondsPagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { 60 }
     )
+
+    // State that enables, disables the user scroll of the seconds pager
+    var secondsUserScrollEnabled by remember { mutableStateOf(true) }
 
     // Launched effect that observes with a Snapshot changes in the pager state' current pages
     LaunchedEffect(hoursPagerState) {
@@ -405,10 +407,20 @@ internal fun ElapsedTimePicker(
     }
     LaunchedEffect(minutesPagerState) {
         snapshotFlow { minutesPagerState.currentPage }.collect { newPage ->
+            // If the time picker is a window range selection AND the new page is 58
+            if (isChooseWindowRangeVariant && newPage == 58) {
+                // Scroll the seconds pager to 0
+                secondsPagerState.scrollToPage(0)
+                // Disable the user scroll of the seconds pager
+                secondsUserScrollEnabled = false
+            }
+            // Else, enable it
+            else secondsUserScrollEnabled = true
+
             // TODO Verify this provides a valid time value in a calendar instance
             // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
             onCurrentTimeInMillisChange(
-                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+                (newPage * 3600000L) + (minutesPagerState.currentPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (secondsPagerState.currentPage * 1000L)
             )
         }
     }
@@ -423,108 +435,134 @@ internal fun ElapsedTimePicker(
     }
 
     // Elapsed time picker content
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.height(148.dp)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.widthIn(max = 500.dp)
     ) {
-
-        // Shared modifier for each pager
-        val pagerModifier = Modifier
-            .width(96.dp)
-            .padding(horizontal = 8.dp)
-
-        // Shared modifier for each text in the pagers
-        fun pagesTextModifier(pagerState: PagerState, page: Int) = Modifier.graphicsLayer {
-            val pageOffset = (
-                    (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-                    ).absoluteValue
-
-            alpha = lerp(
-                start = 0.25f,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-            )
-
-            scaleY = lerp(
-                start = 0.75f,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-            )
-
-            scaleX = lerp(
-                start = 0.75f,
-                stop = 1f,
-                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-            )
-        }
-
-        val pagerSeparatorText = @Composable {
+        // If the time picker is a window range selection
+        if (isChooseWindowRangeVariant) {
+            // Label
             Text(
-                text = ":",
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.primary
+                text = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_header),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        // Hour vertical pager
-        VerticalPager(
-            state = hoursPagerState,
-            contentPadding = PaddingValues(vertical = 44.dp),
-            modifier = pagerModifier
-        ) { page ->
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Text(
-                    text = page.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = pagesTextModifier(hoursPagerState, page)
+        // Elapsed time picker
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.height(148.dp)
+        ) {
+
+            // Shared modifier for each pager
+            val pagerModifier = Modifier
+                .width(96.dp)
+                .padding(horizontal = 8.dp)
+
+            // Shared modifier for each text in the pagers
+            fun pagesTextModifier(pagerState: PagerState, page: Int) = Modifier.graphicsLayer {
+                val pageOffset = (
+                        (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                        ).absoluteValue
+
+                alpha = lerp(
+                    start = 0.25f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                )
+
+                scaleY = lerp(
+                    start = 0.75f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                )
+
+                scaleX = lerp(
+                    start = 0.75f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
                 )
             }
-        }
 
-        pagerSeparatorText()
-
-        // Minute vertical pager
-        VerticalPager(
-            state = minutesPagerState,
-            contentPadding = PaddingValues(vertical = 44.dp),
-            modifier = pagerModifier
-        ) { page ->
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight()
-            ) {
+            val pagerSeparatorText = @Composable {
                 Text(
-                    text = page.toString(),
+                    text = ":",
                     style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = pagesTextModifier(minutesPagerState, page)
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
-        }
 
-        pagerSeparatorText()
+            // Hour vertical pager
+            VerticalPager(
+                state = hoursPagerState,
+                contentPadding = PaddingValues(vertical = 44.dp),
+                modifier = pagerModifier
+            ) { page ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Text(
+                        text = page.toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = pagesTextModifier(hoursPagerState, page).graphicsLayer {
+                            if(isChooseWindowRangeVariant) {
+                                alpha = 0.25f
+                            }
+                        }
+                    )
+                }
+            }
 
-        // Seconds vertical pager
-        VerticalPager(
-            state = secondsPagerState,
-            contentPadding = PaddingValues(vertical = 44.dp),
-            modifier = pagerModifier
-        ) { page ->
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                Text(
-                    text = page.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = pagesTextModifier(secondsPagerState, page)
-                )
+            pagerSeparatorText()
+
+            // Minute vertical pager
+            VerticalPager(
+                state = minutesPagerState,
+                contentPadding = PaddingValues(vertical = 44.dp),
+                modifier = pagerModifier
+            ) { page ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Text(
+                        text = if (isChooseWindowRangeVariant) page.plus(2).toString()
+                        else page.toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = pagesTextModifier(minutesPagerState, page)
+                    )
+                }
+            }
+
+            pagerSeparatorText()
+
+            // Seconds vertical pager
+            VerticalPager(
+                state = secondsPagerState,
+                contentPadding = PaddingValues(vertical = 44.dp),
+                userScrollEnabled = secondsUserScrollEnabled,
+                modifier = pagerModifier
+            ) { page ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Text(
+                        text = page.toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = pagesTextModifier(secondsPagerState, page).graphicsLayer {
+                            if(!secondsUserScrollEnabled) {
+                                alpha = 0.25f
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -733,7 +771,8 @@ private fun ElapseTimePickerPreview() {
         ) {
             ElapsedTimePicker(
                 onCurrentTimeInMillisChange = {},
-                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                isChooseWindowRangeVariant = true
             )
         }
     }

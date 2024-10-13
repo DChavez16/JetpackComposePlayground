@@ -21,6 +21,8 @@
     <string name="alarms_shared_alarm_invoke_type_repeating_accesibility_disable">Disable repeating alarm</string>
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_enable">Allow alarm while idle</string>
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_disable">Disallow alarm while idle</string>
+    <string name="alarms_shared_alarm_elapsed_time_window_header">Window length</string>
+    <string name="alarms_shared_alarm_elapsed_time_window_info">-</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>
