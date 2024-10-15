@@ -50,7 +50,7 @@ internal class AlarmsViewModel @Inject constructor(
     val alarmTargetTimeMilliseconds: StateFlow<Long> = _alarmTargetTimeMilliseconds
 
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
-    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(0L)
+    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(120000L)
     val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
         _alarmTargetTimeWindowLenghtMilliseconds
 
@@ -91,6 +91,24 @@ internal class AlarmsViewModel @Inject constructor(
         // Attemps to call a pending intent to verify if an alarm is active, if is not null, _isAlarmRunning is set to true, false otherwise
         _isAlarmRunning.value = getActiveAlarmPendingIntent() != null
         Log.d(TAG, "There is currently ${if (_isAlarmRunning.value) "an" else "no"} active alarm")
+    }
+
+    /**
+     * Update the current [_alarmTargetTimeMilliseconds] with the provided [Long] parameter
+     *
+     * @param newTimeInMillis The new value for [_alarmTargetTimeMilliseconds]
+     */
+    fun updateAlarmTargetTime(newTimeInMillis: Long) {
+        _alarmTargetTimeMilliseconds.value = newTimeInMillis
+    }
+
+    /**
+     * Update the current [_alarmTargetTimeWindowLenghtMilliseconds] with the provided [Long] parameter
+     *
+     * @param newTimeInMillis The new value for [_alarmTargetTimeWindowLenghtMilliseconds]
+     */
+    fun updateAlarmTargetTimeWindow(newTimeInMillis: Long) {
+        _alarmTargetTimeWindowLenghtMilliseconds.value = newTimeInMillis
     }
 
     /**
