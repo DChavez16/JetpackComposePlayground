@@ -2,6 +2,7 @@
 
 package com.feature.alarms.ui
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +62,7 @@ import com.feature.alarms.ExactAlarmsInvokeType
 import com.feature.alarms.InexactAlarmsInvokeType
 import com.feature.alarms.R
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import kotlin.math.absoluteValue
 
 
@@ -376,8 +378,6 @@ internal fun ElapsedTimePicker(
     isChooseWindowRangeVariant: Boolean = false
 ) {
 
-    // TODO Add a label that indicates that its the window range lenght in that case, use and alert dialog to show info about how it works
-
     // PagerState for hours, minutes, and, seconds
     val hoursPagerState = rememberPagerState(
         initialPage = 0,
@@ -392,13 +392,15 @@ internal fun ElapsedTimePicker(
         pageCount = { 60 }
     )
 
+    // State for showing or not the info Alert Dialog
+    var showAlertDialog by remember { mutableStateOf(false) }
+
     // State that enables, disables the user scroll of the seconds pager
     var secondsUserScrollEnabled by remember { mutableStateOf(true) }
 
     // Launched effect that observes with a Snapshot changes in the pager state' current pages
     LaunchedEffect(hoursPagerState) {
         snapshotFlow { hoursPagerState.currentPage }.collect { newPage ->
-            // TODO Verify this provides a valid time value in a calendar instance
             // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
             onCurrentTimeInMillisChange(
                 (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
@@ -417,19 +419,17 @@ internal fun ElapsedTimePicker(
             // Else, enable it
             else secondsUserScrollEnabled = true
 
-            // TODO Verify this provides a valid time value in a calendar instance
             // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
             onCurrentTimeInMillisChange(
-                (newPage * 3600000L) + (minutesPagerState.currentPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (secondsPagerState.currentPage * 1000L)
+                (hoursPagerState.currentPage * 3600000L) + (newPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (secondsPagerState.currentPage * 1000L)
             )
         }
     }
     LaunchedEffect(secondsPagerState) {
         snapshotFlow { secondsPagerState.currentPage }.collect { newPage ->
-            // TODO Verify this provides a valid time value in a calendar instance
             // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
             onCurrentTimeInMillisChange(
-                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+                (hoursPagerState.currentPage * 3600000L) + (minutesPagerState.currentPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (newPage * 1000L)
             )
         }
     }
@@ -441,12 +441,26 @@ internal fun ElapsedTimePicker(
     ) {
         // If the time picker is a window range selection
         if (isChooseWindowRangeVariant) {
-            // Label
-            Text(
-                text = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_header),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            // Title and info
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_header),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_info_accesibility),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.clickable {
+                        showAlertDialog = true
+                    }
+                )
+            }
         }
 
         // Elapsed time picker
@@ -509,7 +523,7 @@ internal fun ElapsedTimePicker(
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = pagesTextModifier(hoursPagerState, page).graphicsLayer {
-                            if(isChooseWindowRangeVariant) {
+                            if (isChooseWindowRangeVariant) {
                                 alpha = 0.25f
                             }
                         }
@@ -557,7 +571,7 @@ internal fun ElapsedTimePicker(
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = pagesTextModifier(secondsPagerState, page).graphicsLayer {
-                            if(!secondsUserScrollEnabled) {
+                            if (!secondsUserScrollEnabled) {
                                 alpha = 0.25f
                             }
                         }
@@ -565,6 +579,15 @@ internal fun ElapsedTimePicker(
                 }
             }
         }
+    }
+
+    // Alert dialog providing info about Alarm Invoke Types
+    if (showAlertDialog) {
+        InfoAlertDialog(
+            alertDialogTitle = R.string.alarms_shared_alarm_elapsed_time_window_header,
+            alertDialogContent = R.string.alarms_shared_alarm_elapsed_time_window_info,
+            onDismissRequest = { showAlertDialog = false }
+        )
     }
 }
 
@@ -759,8 +782,21 @@ private fun ElapseTimePickerPreview() {
         AppTheme(
             isDarkTheme = { false }
         ) {
+            val calendarOne = Calendar.getInstance()
+            calendarOne.set(Calendar.HOUR, 0)
+
             ElapsedTimePicker(
-                onCurrentTimeInMillisChange = {},
+                onCurrentTimeInMillisChange = {
+                    calendarOne.timeInMillis = it
+
+                    Log.d(
+                        "ElapseTimePickerPreview",
+                        "Current time: " +
+                                "${calendarOne.get(Calendar.HOUR)} : " +
+                                "${calendarOne.get(Calendar.MINUTE)} : " +
+                                "${calendarOne.get(Calendar.SECOND)}"
+                    )
+                },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
         }
@@ -769,8 +805,21 @@ private fun ElapseTimePickerPreview() {
         AppTheme(
             isDarkTheme = { true }
         ) {
+            val calendarTwo = Calendar.getInstance()
+            calendarTwo.set(Calendar.HOUR, 0)
+
             ElapsedTimePicker(
-                onCurrentTimeInMillisChange = {},
+                onCurrentTimeInMillisChange = {
+                    calendarTwo.timeInMillis = it
+
+                    Log.d(
+                        "ElapseTimePickerPreview",
+                        "Current window time: " +
+                                "${calendarTwo.get(Calendar.HOUR)} : " +
+                                "${calendarTwo.get(Calendar.MINUTE)} : " +
+                                "${calendarTwo.get(Calendar.SECOND)}"
+                    )
+                },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 isChooseWindowRangeVariant = true
             )

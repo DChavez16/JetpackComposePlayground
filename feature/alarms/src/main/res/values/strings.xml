@@ -22,7 +22,8 @@
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_enable">Allow alarm while idle</string>
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_disable">Disallow alarm while idle</string>
     <string name="alarms_shared_alarm_elapsed_time_window_header">Window length</string>
-    <string name="alarms_shared_alarm_elapsed_time_window_info">-</string>
+    <string name="alarms_shared_alarm_elapsed_time_window_info">The given time is set before and after the selected invoke time to create a time window. For example, for a selected invoke time of 10 minutes, if the given window time is 5 minutes, then the alarm will trigger sometime in a window between 5 and 15 minutes.</string>
+    <string name="alarms_shared_alarm_elapsed_time_window_info_accesibility">Display how an alarm window works</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>
