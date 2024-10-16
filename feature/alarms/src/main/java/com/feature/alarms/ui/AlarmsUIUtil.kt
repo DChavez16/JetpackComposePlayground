@@ -28,6 +28,8 @@ import androidx.compose.material.icons.rounded.BedtimeOff
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -36,9 +38,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,6 +69,7 @@ import com.feature.alarms.InexactAlarmsInvokeType
 import com.feature.alarms.R
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 
@@ -447,14 +454,14 @@ internal fun ElapsedTimePicker(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_header),
+                    text = stringResource(R.string.alarms_shared_alarm_window_header),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Icon(
                     imageVector = Icons.Outlined.Info,
-                    contentDescription = stringResource(R.string.alarms_shared_alarm_elapsed_time_window_info_accesibility),
+                    contentDescription = stringResource(R.string.alarms_shared_alarm_window_info_accesibility),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.clickable {
                         showAlertDialog = true
@@ -581,11 +588,11 @@ internal fun ElapsedTimePicker(
         }
     }
 
-    // Alert dialog providing info about Alarm Invoke Types
+    // Alert dialog providing info about how the time window works
     if (showAlertDialog) {
         InfoAlertDialog(
-            alertDialogTitle = R.string.alarms_shared_alarm_elapsed_time_window_header,
-            alertDialogContent = R.string.alarms_shared_alarm_elapsed_time_window_info,
+            alertDialogTitle = R.string.alarms_shared_alarm_window_header,
+            alertDialogContent = R.string.alarms_shared_alarm_window_info,
             onDismissRequest = { showAlertDialog = false }
         )
     }
@@ -593,14 +600,170 @@ internal fun ElapsedTimePicker(
 
 
 @Composable
-internal fun RtcTimePicker() {
-    // TODO Use defalut time picker composable for RTC AlarmType
+internal fun RtcTimePicker(
+    currentTimeInMillis: () -> Long,
+    onCurrentTimeInMillisChange: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    calendar: Calendar = Calendar.getInstance()
+) {
+
+    // Set the calendar current time to the given currentTimenInMillis argument
+    calendar.timeInMillis = currentTimeInMillis()
+
+    // State for showing or not the calendar date picker
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    // State for showing or not the time input
+    var showTimeInput by remember { mutableStateOf(false) }
+
+    // RTC picker content
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = CenterHorizontally,
+        modifier = modifier.widthIn(max = 500.dp)
+    ) {
+        // Date text (day, month and year)
+        Text(
+            text =
+            "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG_STANDALONE, Locale.US)} " +
+                    "${calendar.get(Calendar.DAY_OF_MONTH)}, " +
+                    "${calendar.get(Calendar.YEAR)}",
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable { showDatePicker = true }
+        )
+
+        // Time text (hours and minutes)
+        Text(
+            text = "${calendar.get(Calendar.HOUR_OF_DAY)} : ${calendar.get(Calendar.MINUTE)}",
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable { showTimeInput = true }
+        )
+    }
+
+    // TODO Fix modal popping and dismissing at the same time
+    // Alert dialog containing a date picker
+    if (showDatePicker) {
+
+        // Date picker state
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = calendar.timeInMillis,
+            yearRange = calendar.get(Calendar.YEAR)..calendar.get(Calendar.YEAR).plus(1),
+        )
+
+        // Content of the Alert Dialog (Date picker)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                // Get the current millis of the hour (and minutes) assigned to the calendar
+                val currentHourInMillis =
+                    (calendar.get(Calendar.HOUR_OF_DAY) * 3600000L) + (calendar.get(Calendar.MINUTE) * 60000L)
+
+                // Change the hour and minutes of the calentar instance with the ones in the time input state. After that add the current hour in millis
+                calendar.timeInMillis =
+                    datePickerState.selectedDateMillis?.plus(currentHourInMillis)
+                        ?: calendar.timeInMillis
+
+                // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
+                onCurrentTimeInMillisChange(calendar.timeInMillis)
+
+                // Set the showTimeInput state to false
+                showDatePicker = false
+            },
+            dismissButton = { showDatePicker = false },
+        ) {
+            DatePicker(
+                state = datePickerState
+            )
+        }
+    }
+
+    // Alert dialog containing a time input
+    if (showTimeInput) {
+        BasicAlertDialog(
+            onDismissRequest = { showTimeInput = false },
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .padding(16.dp)
+        ) {
+
+            // Time input state
+            val timeInputState = rememberTimePickerState(
+                initialHour = calendar.get(Calendar.HOUR_OF_DAY),
+                initialMinute = calendar.get(Calendar.MINUTE),
+                is24Hour = true
+            )
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // Title of the Alert Dialog
+                Text(
+                    text = stringResource(R.string.alarms_shared_alarm_rtc_alert_dialog_time_input_header),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .align(CenterHorizontally)
+                )
+
+                // Content of the Alert Dialog (Time input)
+                TimeInput(
+                    state = timeInputState,
+                    modifier = Modifier.align(CenterHorizontally)
+                )
+
+                // Action buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.align(End)
+                ) {
+                    // Dismiss Button
+                    TextButton(
+                        onClick = { showTimeInput = false },
+                        colors = ButtonDefaults.textButtonColors().copy(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.alarms_screen_alert_dialog_dismiss_button_label)
+                        )
+                    }
+
+                    // Confirm button
+                    TextButton(
+                        onClick = {
+                            // Change the hour and minutes of the calentar instance with the ones in the time input state
+                            calendar.set(Calendar.HOUR_OF_DAY, timeInputState.hour)
+                            calendar.set(Calendar.MINUTE, timeInputState.minute)
+
+                            // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
+                            onCurrentTimeInMillisChange(calendar.timeInMillis)
+
+                            // Set the showTimeInput state to false
+                            showTimeInput = false
+                        },
+                        colors = ButtonDefaults.textButtonColors().copy(
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.alarms_screen_alert_dialog_confirm_button_label)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 
 @Composable
 internal fun AlarmActionButtons() {
-
+    // TODO Alarm interaction action buttons 'Cancel' (if alarm available) and 'Start'
 }
 
 
@@ -681,6 +844,22 @@ private fun isAllowWhileIdleAlarmSelected(
     currentAlarmInvokeType: () -> AlarmsInvokeType
 ): Boolean =
     currentAlarmInvokeType() == ExactAlarmsInvokeType.ALLOW_WHILE_IDLE || currentAlarmInvokeType() == InexactAlarmsInvokeType.ALLOW_WHILE_IDLE
+
+private fun getMonthName(intMonth: Int): String =
+    when (intMonth) {
+        0 -> "January"
+        1 -> "February"
+        2 -> "March"
+        3 -> "April"
+        4 -> "May"
+        5 -> "June"
+        6 -> "July"
+        7 -> "August"
+        8 -> "September"
+        9 -> "October"
+        10 -> "November"
+        else -> "December"
+    }
 
 
 /*
@@ -835,18 +1014,30 @@ private fun RtcTimePickerPreview() {
         modifier = Modifier
             .widthIn(max = 350.dp)
     ) {
+
+        val calendar = Calendar.getInstance()
+        var currentTimenInMillis by remember { mutableLongStateOf(calendar.timeInMillis) }
+
         // Light theme preview
         AppTheme(
             isDarkTheme = { false }
         ) {
-
+            RtcTimePicker(
+                currentTimeInMillis = { currentTimenInMillis },
+                onCurrentTimeInMillisChange = { currentTimenInMillis = it },
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
 
         // Dark theme preview
         AppTheme(
             isDarkTheme = { true }
         ) {
-
+            RtcTimePicker(
+                currentTimeInMillis = { currentTimenInMillis },
+                onCurrentTimeInMillisChange = { currentTimenInMillis = it },
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
     }
 }

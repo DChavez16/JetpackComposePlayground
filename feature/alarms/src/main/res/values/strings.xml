@@ -3,6 +3,7 @@
     <!-- Alarms Screen -->
     <string name="alarms_screen_title">Alarms</string>
     <string name="alarms_screen_alert_dialog_title">Alarm Details</string>
+    <string name="alarms_screen_alert_dialog_confirm_button_label">Confirm</string>
     <string name="alarms_screen_alert_dialog_dismiss_button_label">Dismiss</string>
 
     <!-- Shared Alarm Properties Screen -->
@@ -21,9 +22,11 @@
     <string name="alarms_shared_alarm_invoke_type_repeating_accesibility_disable">Disable repeating alarm</string>
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_enable">Allow alarm while idle</string>
     <string name="alarms_shared_alarm_invoke_type_doze_accesibility_disable">Disallow alarm while idle</string>
-    <string name="alarms_shared_alarm_elapsed_time_window_header">Window length</string>
-    <string name="alarms_shared_alarm_elapsed_time_window_info">The given time is set before and after the selected invoke time to create a time window. For example, for a selected invoke time of 10 minutes, if the given window time is 5 minutes, then the alarm will trigger sometime in a window between 5 and 15 minutes.</string>
-    <string name="alarms_shared_alarm_elapsed_time_window_info_accesibility">Display how an alarm window works</string>
+    <string name="alarms_shared_alarm_window_header">Window length</string>
+    <string name="alarms_shared_alarm_window_info">The given time is set before and after the selected invoke time to create a time window. For example, for a selected invoke time of 10 minutes, if the given window time is 5 minutes, then the alarm will trigger sometime in a window between 5 and 15 minutes.</string>
+    <string name="alarms_shared_alarm_window_info_accesibility">Display how an alarm window works</string>
+    <string name="alarms_shared_alarm_rtc_alert_dialog_date_picker_header">Select date</string>
+    <string name="alarms_shared_alarm_rtc_alert_dialog_time_input_header">Select time</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>
