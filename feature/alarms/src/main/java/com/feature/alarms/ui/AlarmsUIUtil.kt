@@ -642,36 +642,58 @@ internal fun RtcTimePicker(
         )
     }
 
-    // TODO Fix modal popping and dismissing at the same time
     // Alert dialog containing a date picker
     if (showDatePicker) {
 
         // Date picker state
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = calendar.timeInMillis,
-            yearRange = calendar.get(Calendar.YEAR)..calendar.get(Calendar.YEAR).plus(1),
+            initialSelectedDateMillis = calendar.timeInMillis
         )
 
         // Content of the Alert Dialog (Date picker)
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
-                // Get the current millis of the hour (and minutes) assigned to the calendar
-                val currentHourInMillis =
-                    (calendar.get(Calendar.HOUR_OF_DAY) * 3600000L) + (calendar.get(Calendar.MINUTE) * 60000L)
+                TextButton(
+                    onClick = {
+                        // Get the current millis of the hour (and minutes) assigned to the calendar
+                        val currentHourInMillis =
+                            (calendar.get(Calendar.HOUR_OF_DAY) * 3600000L) + (calendar.get(Calendar.MINUTE) * 60000L)
 
-                // Change the hour and minutes of the calentar instance with the ones in the time input state. After that add the current hour in millis
-                calendar.timeInMillis =
-                    datePickerState.selectedDateMillis?.plus(currentHourInMillis)
-                        ?: calendar.timeInMillis
+                        // Change the hour and minutes of the calentar instance with the ones in the time input state. After that add the current hour in millis
+                        calendar.timeInMillis =
+                            datePickerState.selectedDateMillis?.plus(currentHourInMillis)
+                                ?: calendar.timeInMillis
 
-                // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
-                onCurrentTimeInMillisChange(calendar.timeInMillis)
+                        // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
+                        onCurrentTimeInMillisChange(calendar.timeInMillis)
 
-                // Set the showTimeInput state to false
-                showDatePicker = false
+                        // Set the showTimeInput state to false
+                        showDatePicker = false
+                    },
+                    colors = ButtonDefaults.textButtonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.alarms_screen_alert_dialog_confirm_button_label)
+                    )
+                }
             },
-            dismissButton = { showDatePicker = false },
+            dismissButton = {
+                // Dismiss Button
+                TextButton(
+                    onClick = { showDatePicker = false },
+                    colors = ButtonDefaults.textButtonColors().copy(
+                        contentColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.alarms_screen_alert_dialog_dismiss_button_label)
+                    )
+                }
+            },
         ) {
             DatePicker(
                 state = datePickerState
@@ -725,7 +747,7 @@ internal fun RtcTimePicker(
                     TextButton(
                         onClick = { showTimeInput = false },
                         colors = ButtonDefaults.textButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                            contentColor = MaterialTheme.colorScheme.secondary
                         )
                     ) {
                         Text(
@@ -747,7 +769,8 @@ internal fun RtcTimePicker(
                             showTimeInput = false
                         },
                         colors = ButtonDefaults.textButtonColors().copy(
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
                         Text(
@@ -844,22 +867,6 @@ private fun isAllowWhileIdleAlarmSelected(
     currentAlarmInvokeType: () -> AlarmsInvokeType
 ): Boolean =
     currentAlarmInvokeType() == ExactAlarmsInvokeType.ALLOW_WHILE_IDLE || currentAlarmInvokeType() == InexactAlarmsInvokeType.ALLOW_WHILE_IDLE
-
-private fun getMonthName(intMonth: Int): String =
-    when (intMonth) {
-        0 -> "January"
-        1 -> "February"
-        2 -> "March"
-        3 -> "April"
-        4 -> "May"
-        5 -> "June"
-        6 -> "July"
-        7 -> "August"
-        8 -> "September"
-        9 -> "October"
-        10 -> "November"
-        else -> "December"
-    }
 
 
 /*
