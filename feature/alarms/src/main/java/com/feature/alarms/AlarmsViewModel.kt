@@ -22,7 +22,7 @@ const val TAG = "AlarmsViewModel"
 internal class AlarmsViewModel @Inject constructor(
     private val alarmManager: AlarmManager,
     @ApplicationContext private val context: Context,
-    calendar: Calendar? = Calendar.getInstance()
+    val calendar: Calendar? = Calendar.getInstance()
 ) : ViewModel() {
 
     // Define a Flow for isAlarmExact and its backing property
@@ -46,11 +46,11 @@ internal class AlarmsViewModel @Inject constructor(
     val isAlarmRunning: StateFlow<Boolean> = _isAlarmRunning
 
     // Define a Flow for alarmTargetTimeMiliseconds and its backing property
-    private val _alarmTargetTimeMilliseconds = MutableStateFlow(calendar?.timeInMillis ?: 0L)
+    private val _alarmTargetTimeMilliseconds = MutableStateFlow(0L)
     val alarmTargetTimeMilliseconds: StateFlow<Long> = _alarmTargetTimeMilliseconds
 
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
-    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(120000L)
+    private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(0L)
     val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
         _alarmTargetTimeWindowLenghtMilliseconds
 
@@ -58,8 +58,23 @@ internal class AlarmsViewModel @Inject constructor(
     init {
         Log.d(TAG, "AlarmsViewModel Started")
 
+        // Initialize the alarm target time
+        initializeAlarmTargetTime()
+
         // Verify if there is an active alarm
         verifyAlarmsNotActive()
+    }
+
+    /**
+     * Set alarm target time in base of the current alart type value
+     */
+    fun initializeAlarmTargetTime() {
+        // If the alarm type is ELAPSED_TIME, set alarm target time to 0 millis, else set it to the calendar current time in millis
+        _alarmTargetTimeMilliseconds.value =
+            if (_alarmType.value.isElapsedTime) 0L else calendar?.timeInMillis ?: 0
+
+        // Aet alarm target time window to 2 minutes in millis
+        _alarmTargetTimeWindowLenghtMilliseconds.value = 2 * 60 * 1000
     }
 
     /**
