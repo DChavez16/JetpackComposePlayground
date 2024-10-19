@@ -27,6 +27,8 @@
     <string name="alarms_shared_alarm_window_info_accesibility">Display how an alarm window works</string>
     <string name="alarms_shared_alarm_rtc_alert_dialog_date_picker_header">Select date</string>
     <string name="alarms_shared_alarm_rtc_alert_dialog_time_input_header">Select time</string>
+    <string name="alarms_shared_alarm_cancel_alarm_button_label">Cancel</string>
+    <string name="alarms_shared_alarm_start_button_label">Start</string>
 
     <!-- Exact Alarm Screen -->
     <string name="alarms_exact_alarms_screen_">-</string>
