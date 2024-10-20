@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.BedtimeOff
 import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -35,6 +36,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -607,6 +609,8 @@ internal fun RtcTimePicker(
     calendar: Calendar = Calendar.getInstance()
 ) {
 
+    // TODO Fix hours and minutes showing inproperly
+
     // Set the calendar current time to the given currentTimenInMillis argument
     calendar.timeInMillis = currentTimeInMillis()
 
@@ -785,8 +789,45 @@ internal fun RtcTimePicker(
 
 
 @Composable
-internal fun AlarmActionButtons() {
-    // TODO Alarm interaction action buttons 'Cancel' (if alarm available) and 'Start'
+internal fun AlarmActionButtons(
+    isAlarmRunning: () -> Boolean,
+    onCancelAlarmClick: () -> Unit,
+    onStartAlarmClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth().widthIn(max = 500.dp)
+    ) {
+        // Cancel button (disable if an alarm is running)
+        OutlinedButton(
+            onClick = onCancelAlarmClick,
+            enabled = isAlarmRunning(),
+            modifier = Modifier.width(100.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.alarms_shared_alarm_cancel_alarm_button_label)
+            )
+        }
+
+        // Start button
+        Button(
+            onClick = onStartAlarmClick,
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 4.dp,
+                hoveredElevation = 12.dp,
+                focusedElevation = 12.dp,
+                disabledElevation = 0.dp
+            ),
+            modifier = Modifier.width(100.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.alarms_shared_alarm_start_button_label)
+            )
+        }
+    }
 }
 
 
@@ -1057,18 +1098,30 @@ private fun AlarmActionButtonsPreview() {
         modifier = Modifier
             .widthIn(max = 350.dp)
     ) {
+        var isAlarmRunning by remember { mutableStateOf(false) }
+
         // Light theme preview
         AppTheme(
             isDarkTheme = { false }
         ) {
-
+            AlarmActionButtons(
+                isAlarmRunning = { isAlarmRunning },
+                onCancelAlarmClick = { isAlarmRunning = false },
+                onStartAlarmClick = { isAlarmRunning = true },
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
 
         // Dark theme preview
         AppTheme(
             isDarkTheme = { true }
         ) {
-
+            AlarmActionButtons(
+                isAlarmRunning = { isAlarmRunning },
+                onCancelAlarmClick = { isAlarmRunning = false },
+                onStartAlarmClick = { isAlarmRunning = true },
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            )
         }
     }
 }
