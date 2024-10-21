@@ -528,7 +528,7 @@ internal fun ElapsedTimePicker(
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = page.toString(),
+                        text = convertNumberToTwoDigitString(page),
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = pagesTextModifier(hoursPagerState, page).graphicsLayer {
@@ -553,8 +553,9 @@ internal fun ElapsedTimePicker(
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = if (isChooseWindowRangeVariant) page.plus(2).toString()
-                        else page.toString(),
+                        text = convertNumberToTwoDigitString(
+                            if (isChooseWindowRangeVariant) page.plus(2) else page
+                        ),
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = pagesTextModifier(minutesPagerState, page)
@@ -576,7 +577,7 @@ internal fun ElapsedTimePicker(
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     Text(
-                        text = page.toString(),
+                        text = convertNumberToTwoDigitString(page),
                         style = MaterialTheme.typography.displayLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = pagesTextModifier(secondsPagerState, page).graphicsLayer {
@@ -639,7 +640,9 @@ internal fun RtcTimePicker(
 
         // Time text (hours and minutes)
         Text(
-            text = "${calendar.get(Calendar.HOUR_OF_DAY)} : ${calendar.get(Calendar.MINUTE)}",
+            text = convertNumberToTwoDigitString(calendar.get(Calendar.HOUR_OF_DAY)) +
+                    " : " +
+                    convertNumberToTwoDigitString(calendar.get(Calendar.MINUTE)),
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable { showTimeInput = true }
@@ -798,7 +801,9 @@ internal fun AlarmActionButtons(
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth().widthIn(max = 500.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .widthIn(max = 500.dp)
     ) {
         // Cancel button (disable if an alarm is running)
         OutlinedButton(
@@ -908,6 +913,10 @@ private fun isAllowWhileIdleAlarmSelected(
     currentAlarmInvokeType: () -> AlarmsInvokeType
 ): Boolean =
     currentAlarmInvokeType() == ExactAlarmsInvokeType.ALLOW_WHILE_IDLE || currentAlarmInvokeType() == InexactAlarmsInvokeType.ALLOW_WHILE_IDLE
+
+
+private fun convertNumberToTwoDigitString(number: Int): String =
+    if (number < 10) "0$number" else number.toString()
 
 
 /*
