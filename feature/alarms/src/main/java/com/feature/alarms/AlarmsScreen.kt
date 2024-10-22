@@ -72,7 +72,18 @@ fun AlarmsScreen(
         getAlarmTypeTitle = alarmsViewModel::getAlarmTypeTitle,
         getAlarmTypeDescription = alarmsViewModel::getAlarmTypeDescription,
         onMenuButtonClick = onMenuButtonClick
-    )
+    ) { page ->
+        when (page) {
+            // 0 for Exact Alarm
+            0 -> ExactAlarmScreen(
+                alarmsViewModel = hiltViewModel<AlarmsViewModel>(viewModelStoreOwner)
+            )
+            // 1 for Inexact Alarm
+            1 -> InexactAlarmScreen(
+                alarmsViewModel = hiltViewModel<AlarmsViewModel>(viewModelStoreOwner)
+            )
+        }
+    }
 }
 
 
@@ -84,7 +95,8 @@ private fun AlarmsScreenContent(
     getAlarmInvokeTypeDescription: () -> String,
     getAlarmTypeTitle: () -> String,
     getAlarmTypeDescription: () -> String,
-    onMenuButtonClick: () -> Unit
+    onMenuButtonClick: () -> Unit,
+    content: @Composable (Int) -> Unit
 ) {
 
     // Coroutine scope for pager animations
@@ -154,15 +166,9 @@ private fun AlarmsScreenContent(
 
             // Pager containing the Exact and Inexact Alarm screens
             HorizontalPager(
-                pagerState
-            ) { page ->
-                when (page) {
-                    // 0 for Exact Alarm
-                    0 -> ExactAlarmScreen()
-                    // 1 for Inexact Alarm
-                    1 -> InexactAlarmScreen()
-                }
-            }
+                state = pagerState,
+                pageContent = { page -> content(page) }
+            )
         }
 
         if (isAlertDialogShowing) {
