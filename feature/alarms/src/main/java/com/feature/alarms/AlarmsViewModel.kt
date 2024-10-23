@@ -138,8 +138,8 @@ internal class AlarmsViewModel @Inject constructor(
      *
      * @param newExactAlarmInvokeType The new [ExactAlarmsInvokeType] to be set
      */
-    fun changeExactAlarmInvokeType(newExactAlarmInvokeType: ExactAlarmsInvokeType) {
-        _exactAlarmInvokeType.value = newExactAlarmInvokeType
+    fun changeExactAlarmInvokeType(newExactAlarmInvokeType: AlarmsInvokeType) {
+        _exactAlarmInvokeType.value = newExactAlarmInvokeType as ExactAlarmsInvokeType
         Log.d(
             TAG,
             "Exact alarm invoke time type changed to ${_exactAlarmInvokeType.value.functionName}"
@@ -151,8 +151,8 @@ internal class AlarmsViewModel @Inject constructor(
      *
      * @param newInexactAlarmInvokeType The new [InexactAlarmsInvokeType] to be set
      */
-    fun changeInexactAlarmInvokeType(newInexactAlarmInvokeType: InexactAlarmsInvokeType) {
-        _inexactAlarmInvokeType.value = newInexactAlarmInvokeType
+    fun changeInexactAlarmInvokeType(newInexactAlarmInvokeType: AlarmsInvokeType) {
+        _inexactAlarmInvokeType.value = newInexactAlarmInvokeType as InexactAlarmsInvokeType
         Log.d(
             TAG,
             "Inexact alarm invoke time type changed to ${_inexactAlarmInvokeType.value.functionName}"

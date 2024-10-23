@@ -610,8 +610,6 @@ internal fun RtcTimePicker(
     calendar: Calendar = Calendar.getInstance()
 ) {
 
-    // TODO Fix hours and minutes showing inproperly
-
     // Set the calendar current time to the given currentTimenInMillis argument
     calendar.timeInMillis = currentTimeInMillis()
 
