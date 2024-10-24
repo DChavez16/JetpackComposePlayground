@@ -73,7 +73,7 @@ internal class AlarmsViewModel @Inject constructor(
         _alarmTargetTimeMilliseconds.value =
             if (_alarmType.value.isElapsedTime) 0L else calendar?.timeInMillis ?: 0
 
-        // Aet alarm target time window to 2 minutes in millis
+        // Set alarm target time window to 2 minutes in millis
         _alarmTargetTimeWindowLenghtMilliseconds.value = 2 * 60 * 1000
     }
 

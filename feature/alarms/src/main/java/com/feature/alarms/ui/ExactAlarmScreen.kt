@@ -67,7 +67,7 @@ private fun ExactAlarmScreenContent(
     onStartAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Column content
+    // Exact alarm screen column content
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
