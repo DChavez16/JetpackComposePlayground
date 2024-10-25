@@ -2,6 +2,7 @@ package com.example.util
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.Cloud
 import androidx.compose.material.icons.rounded.Settings
@@ -65,6 +66,11 @@ enum class RootNavigationDestination(
         itemTitle = R.string.persistent_work_screen,
         itemRouteName = "persistentWork",
         itemIcon = { Icons.Rounded.Work }
+    ),
+    Alarms(
+        itemTitle = R.string.alarms_screen,
+        itemRouteName = "alarms",
+        itemIcon = { Icons.Rounded.Alarm }
     ),
     Configuration(
         itemTitle = null,

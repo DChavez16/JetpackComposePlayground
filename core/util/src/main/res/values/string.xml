@@ -10,4 +10,5 @@
     <string name="remote_database_screen">Remote Database</string>
     <string name="data_persistence_screen">Data Persistence</string>
     <string name="persistent_work_screen">Persistent Work</string>
+    <string name="alarms_screen">Alarms</string>
 </resources>
