@@ -14,6 +14,7 @@ import com.example.remotedatabase.NotesScreen
 import com.example.room.LocalDatabaseScreen
 import com.example.themes.ThemeScreen
 import com.example.util.RootNavigationDestination
+import com.feature.alarms.AlarmsScreen
 
 
 // Root Navigation Composable function
@@ -95,6 +96,15 @@ internal fun RootNavHost(
             route = RootNavigationDestination.PersistentWork.itemRouteName
         ) {
             PersistentWorkScreen(
+                onMenuButtonClick = onMenuButtonClick
+            )
+        }
+
+        // Alarms destination
+        composable(
+            route = RootNavigationDestination.Alarms.itemRouteName
+        ) {
+            AlarmsScreen(
                 onMenuButtonClick = onMenuButtonClick
             )
         }

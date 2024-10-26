@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.feature.remoteDatabase)
     implementation(projects.feature.dataPersistence)
     implementation(projects.feature.persistentWork)
+    implementation(projects.feature.alarms)
 
     // Data
     implementation(projects.data.theme)
