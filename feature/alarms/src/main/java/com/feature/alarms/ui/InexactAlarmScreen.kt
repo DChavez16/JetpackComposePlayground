@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +42,7 @@ internal fun InexactAlarmScreen(
 
     InexactAlarmScreenContent(
         currentAlarmType = { currentAlarmType },
-        onAlarmInvokeTypeChange = alarmsViewModel::changeAlarmTypeInvokeTimeType,
+        onAlarmTypeInvokeTypeChange = alarmsViewModel::changeAlarmTypeInvokeTimeType,
         onAlarmTypeWakeupTypeChange = alarmsViewModel::changeAlarmTypeDeviceAwake,
         currentAlarmInvokeType = { currentAlarmInvokeType },
         onChangeInvokeType = alarmsViewModel::changeInexactAlarmInvokeType,
@@ -59,7 +61,7 @@ internal fun InexactAlarmScreen(
 @Composable
 private fun InexactAlarmScreenContent(
     currentAlarmType: () -> AlarmType,
-    onAlarmInvokeTypeChange: () -> Unit,
+    onAlarmTypeInvokeTypeChange: () -> Unit,
     onAlarmTypeWakeupTypeChange: () -> Unit,
     currentAlarmInvokeType: () -> AlarmsInvokeType,
     onChangeInvokeType: (AlarmsInvokeType) -> Unit,
@@ -83,7 +85,7 @@ private fun InexactAlarmScreenContent(
         // Alarm type selectors
         AlarmTypeSelectors(
             currentAlarmType = currentAlarmType,
-            onAlarmTypeInvokeTimeTypeChange = onAlarmInvokeTypeChange,
+            onAlarmTypeInvokeTimeTypeChange = onAlarmTypeInvokeTypeChange,
             onAlarmTypeWakeupTypeChange = onAlarmTypeWakeupTypeChange
         )
 
@@ -137,7 +139,7 @@ Previews
  */
 @Preview
 @Composable
-private fun ExactAlarmScreenContentPreview() {
+private fun InexactAlarmScreenContentPreview() {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -145,18 +147,18 @@ private fun ExactAlarmScreenContentPreview() {
         PreviewAppTheme(
             darkTheme = isSystemInDarkTheme()
         ) {
-
-            var currentAlarmInvokeType = InexactAlarmsInvokeType.WINDOW
+            var currentAlarmType = remember { mutableStateOf(AlarmType()) }
+            var currentAlarmInvokeType = remember { mutableStateOf(InexactAlarmsInvokeType.REPEATING) }
 
             InexactAlarmScreenContent(
-                currentAlarmType = { AlarmType(true) },
-                onAlarmInvokeTypeChange = { },
-                onAlarmTypeWakeupTypeChange = { },
-                currentAlarmInvokeType = { currentAlarmInvokeType },
-                onChangeInvokeType = { currentAlarmInvokeType = it as InexactAlarmsInvokeType },
+                currentAlarmType = { currentAlarmType.value },
+                onAlarmTypeInvokeTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isElapsedTime = !currentAlarmType.value.isElapsedTime) },
+                onAlarmTypeWakeupTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isWakeup = !currentAlarmType.value.isWakeup) },
+                currentAlarmInvokeType = { currentAlarmInvokeType.value },
+                onChangeInvokeType = { currentAlarmInvokeType.value = it as InexactAlarmsInvokeType },
                 currentTimeInMillis = { 0L },
                 onCurrentTimeInMillisChange = { },
-                isAlarmWindow = { currentAlarmInvokeType == InexactAlarmsInvokeType.WINDOW },
+                isAlarmWindow = { currentAlarmInvokeType.value == InexactAlarmsInvokeType.WINDOW },
                 onCurrentWindowLenghtInMillisChange = { },
                 isAlarmRunning = { false },
                 onCancelAlarmClick = { },

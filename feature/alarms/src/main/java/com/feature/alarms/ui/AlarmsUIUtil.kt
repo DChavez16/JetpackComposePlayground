@@ -83,6 +83,8 @@ internal fun AlarmTypeSelectors(
     modifier: Modifier = Modifier
 ) {
 
+    // TODO Fix alarm type invoke time type not changing properly when clicking the pager
+
     // Coroutine scope for pager animations
     val coroutineScope = rememberCoroutineScope()
 
@@ -476,7 +478,13 @@ internal fun ElapsedTimePicker(
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.height(148.dp)
+            modifier = Modifier
+                .height(168.dp)
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(32.dp)
+                )
         ) {
 
             // Shared modifier for each pager
@@ -520,7 +528,7 @@ internal fun ElapsedTimePicker(
             // Hour vertical pager
             VerticalPager(
                 state = hoursPagerState,
-                contentPadding = PaddingValues(vertical = 44.dp),
+                contentPadding = PaddingValues(vertical = 52.dp),
                 modifier = pagerModifier
             ) { page ->
                 Column(
@@ -545,7 +553,7 @@ internal fun ElapsedTimePicker(
             // Minute vertical pager
             VerticalPager(
                 state = minutesPagerState,
-                contentPadding = PaddingValues(vertical = 44.dp),
+                contentPadding = PaddingValues(vertical = 52.dp),
                 modifier = pagerModifier
             ) { page ->
                 Column(
@@ -568,7 +576,7 @@ internal fun ElapsedTimePicker(
             // Seconds vertical pager
             VerticalPager(
                 state = secondsPagerState,
-                contentPadding = PaddingValues(vertical = 44.dp),
+                contentPadding = PaddingValues(vertical = 52.dp),
                 userScrollEnabled = secondsUserScrollEnabled,
                 modifier = pagerModifier
             ) { page ->
@@ -623,7 +631,14 @@ internal fun RtcTimePicker(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = CenterHorizontally,
-        modifier = modifier.widthIn(max = 500.dp)
+        modifier = modifier
+            .widthIn(max = 500.dp)
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = RoundedCornerShape(32.dp)
+            )
+            .padding(16.dp)
     ) {
         // Date text (day, month and year)
         Text(

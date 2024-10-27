@@ -19,7 +19,7 @@
       <SelectionState runConfigName="app.auto">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ExactAlarmScreenContentPreview">
+      <SelectionState runConfigName="InexactAlarmScreenContentPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
