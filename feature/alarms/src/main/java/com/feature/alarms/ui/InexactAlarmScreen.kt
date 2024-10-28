@@ -61,8 +61,8 @@ internal fun InexactAlarmScreen(
 @Composable
 private fun InexactAlarmScreenContent(
     currentAlarmType: () -> AlarmType,
-    onAlarmTypeInvokeTypeChange: () -> Unit,
-    onAlarmTypeWakeupTypeChange: () -> Unit,
+    onAlarmTypeInvokeTypeChange: (Boolean) -> Unit,
+    onAlarmTypeWakeupTypeChange: (Boolean) -> Unit,
     currentAlarmInvokeType: () -> AlarmsInvokeType,
     onChangeInvokeType: (AlarmsInvokeType) -> Unit,
     currentTimeInMillis: () -> Long,
@@ -147,13 +147,13 @@ private fun InexactAlarmScreenContentPreview() {
         PreviewAppTheme(
             darkTheme = isSystemInDarkTheme()
         ) {
-            var currentAlarmType = remember { mutableStateOf(AlarmType()) }
+            var currentAlarmType = remember { mutableStateOf(AlarmType(true, false)) }
             var currentAlarmInvokeType = remember { mutableStateOf(InexactAlarmsInvokeType.REPEATING) }
 
             InexactAlarmScreenContent(
                 currentAlarmType = { currentAlarmType.value },
-                onAlarmTypeInvokeTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isElapsedTime = !currentAlarmType.value.isElapsedTime) },
-                onAlarmTypeWakeupTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isWakeup = !currentAlarmType.value.isWakeup) },
+                onAlarmTypeInvokeTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isElapsedTime = it) },
+                onAlarmTypeWakeupTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isWakeup = it) },
                 currentAlarmInvokeType = { currentAlarmInvokeType.value },
                 onChangeInvokeType = { currentAlarmInvokeType.value = it as InexactAlarmsInvokeType },
                 currentTimeInMillis = { 0L },

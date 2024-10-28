@@ -21,8 +21,7 @@ const val TAG = "AlarmsViewModel"
 @HiltViewModel
 internal class AlarmsViewModel @Inject constructor(
     private val alarmManager: AlarmManager,
-    @ApplicationContext private val context: Context,
-    val calendar: Calendar? = Calendar.getInstance()
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     // Define a Flow for isAlarmExact and its backing property
@@ -54,9 +53,15 @@ internal class AlarmsViewModel @Inject constructor(
     val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
         _alarmTargetTimeWindowLenghtMilliseconds
 
+    // Creting calendar variable
+    var calendar: Calendar
+
 
     init {
         Log.d(TAG, "AlarmsViewModel Started")
+
+        // Initialize calendar variable with a Calendar instance
+        calendar = Calendar.getInstance()
 
         // Initialize the alarm target time
         initializeAlarmTargetTime()
@@ -71,7 +76,7 @@ internal class AlarmsViewModel @Inject constructor(
     fun initializeAlarmTargetTime() {
         // If the alarm type is ELAPSED_TIME, set alarm target time to 0 millis, else set it to the calendar current time in millis
         _alarmTargetTimeMilliseconds.value =
-            if (_alarmType.value.isElapsedTime) 0L else calendar?.timeInMillis ?: 0
+            if (_alarmType.value.isElapsedTime) 0L else calendar.timeInMillis
 
         // Set alarm target time window to 2 minutes in millis
         _alarmTargetTimeWindowLenghtMilliseconds.value = 2 * 60 * 1000
@@ -161,9 +166,11 @@ internal class AlarmsViewModel @Inject constructor(
 
     /**
      * Change the [_alarmType]'s invoke time type value to the opposite one
+     *
+     * @param newIsElapsedTimeValue The new value for [_alarmType]'s invoke time type
      */
-    fun changeAlarmTypeInvokeTimeType() {
-        _alarmType.value = _alarmType.value.changeInvokeTimeType()
+    fun changeAlarmTypeInvokeTimeType(newIsElapsedTimeValue: Boolean) {
+        _alarmType.value = _alarmType.value.copy(isElapsedTime = newIsElapsedTimeValue)
         Log.d(
             TAG,
             "Alarm type changed to ${if (_alarmType.value.isElapsedTime) "ELAPSED_TIME" else "RTC"}"
@@ -172,9 +179,11 @@ internal class AlarmsViewModel @Inject constructor(
 
     /**
      * Change the [_alarmType]'s device awake value to the opposite one
+     *
+     * @param newIsWakeupValue The new value for [_alarmType]'s device awake
      */
-    fun changeAlarmTypeDeviceAwake() {
-        _alarmType.value = _alarmType.value.changeWakeupType()
+    fun changeAlarmTypeDeviceAwake(newIsWakeupValue: Boolean) {
+        _alarmType.value = _alarmType.value.copy(isWakeup = newIsWakeupValue)
         Log.d(TAG, "Alarm type changed to ${if (_alarmType.value.isWakeup) "WAKEUP" else "NORMAL"}")
     }
 
@@ -333,15 +342,15 @@ internal class AlarmsViewModel @Inject constructor(
     fun getAlarmTypeTitle(): String = context.getString(
         if (_alarmType.value.isElapsedTime) {
             if (_alarmType.value.isWakeup) {
-                R.string.alarms_alarms_description_elapsed_realtime_title
-            } else {
                 R.string.alarms_alarms_description_elapsed_realtime_wakeup_title
+            } else {
+                R.string.alarms_alarms_description_elapsed_realtime_title
             }
         } else {
             if (_alarmType.value.isWakeup) {
-                R.string.alarms_alarms_description_rtc_title
-            } else {
                 R.string.alarms_alarms_description_rtc_wakeup_title
+            } else {
+                R.string.alarms_alarms_description_rtc_title
             }
         }
     )
@@ -354,15 +363,15 @@ internal class AlarmsViewModel @Inject constructor(
     fun getAlarmTypeDescription(): String = context.getString(
         if (_alarmType.value.isElapsedTime) {
             if (_alarmType.value.isWakeup) {
-                R.string.alarms_alarms_description_elapsed_realtime_description
-            } else {
                 R.string.alarms_alarms_description_elapsed_realtime_wakeup_description
+            } else {
+                R.string.alarms_alarms_description_elapsed_realtime_description
             }
         } else {
             if (_alarmType.value.isWakeup) {
-                R.string.alarms_alarms_description_rtc_description
-            } else {
                 R.string.alarms_alarms_description_rtc_wakeup_description
+            } else {
+                R.string.alarms_alarms_description_rtc_description
             }
         }
     )
@@ -440,28 +449,6 @@ internal data class AlarmType(
      */
     var isWakeup: Boolean = false
 ) {
-
-    /**
-     * Change the current [isElapsedTime] invoke time type value to the opposite one (From ELAPSED_TIME to RTC or vice versa)
-     *
-     * @return The updated [AlarmType] instance
-     */
-    fun changeInvokeTimeType(): AlarmType {
-        this.isElapsedTime = !this.isElapsedTime
-
-        return this
-    }
-
-    /**
-     * Change the current [isWakeup] device awake value to the opposite one (From normal to WAKEUP or vice versa)
-     *
-     * @return The updated [AlarmType] instance
-     */
-    fun changeWakeupType(): AlarmType {
-        this.isWakeup = !this.isWakeup
-
-        return this
-    }
 
     /**
      * Get the [AlarmType] Int value based on the current parameters

@@ -78,12 +78,10 @@ import kotlin.math.absoluteValue
 @Composable
 internal fun AlarmTypeSelectors(
     currentAlarmType: () -> AlarmType,
-    onAlarmTypeInvokeTimeTypeChange: () -> Unit,
-    onAlarmTypeWakeupTypeChange: () -> Unit,
+    onAlarmTypeInvokeTimeTypeChange: (Boolean) -> Unit,
+    onAlarmTypeWakeupTypeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    // TODO Fix alarm type invoke time type not changing properly when clicking the pager
 
     // Coroutine scope for pager animations
     val coroutineScope = rememberCoroutineScope()
@@ -100,8 +98,7 @@ internal fun AlarmTypeSelectors(
     // Launched effect that observes with a Snapshot changes in the pager state' current page
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect {
-            // Change the alarm type invoke time type
-            onAlarmTypeInvokeTimeTypeChange()
+            onAlarmTypeInvokeTimeTypeChange(it == 0)
         }
     }
 
@@ -149,9 +146,6 @@ internal fun AlarmTypeSelectors(
                         coroutineScope.launch {
                             // If the page is currently the 'ELAPSED_TIME' move to the 'RTC' page. Otherwise the opposite
                             pagerState.scrollToPage(if (pagerState.currentPage == 0) 1 else 0)
-
-                            // Update the alarm invoke type
-                            onAlarmTypeInvokeTimeTypeChange()
                         }
                     }
                     .background(
@@ -190,8 +184,8 @@ internal fun AlarmTypeSelectors(
             InputChip(
                 selected = isInputChipSelected,
                 onClick = {
-                    onAlarmTypeWakeupTypeChange()
                     isInputChipSelected = !isInputChipSelected
+                    onAlarmTypeWakeupTypeChange(isInputChipSelected)
                 },
                 label = {
                     Text(
@@ -952,10 +946,10 @@ private fun AlarmTypeSelectorsPreview() {
             AlarmTypeSelectors(
                 currentAlarmType = { previewAlarmType },
                 onAlarmTypeInvokeTimeTypeChange = {
-                    previewAlarmType = previewAlarmType.changeInvokeTimeType()
+                    previewAlarmType = previewAlarmType.copy(isElapsedTime = it)
                 },
                 onAlarmTypeWakeupTypeChange = {
-                    previewAlarmType = previewAlarmType.changeWakeupType()
+                    previewAlarmType = previewAlarmType.copy(isWakeup = it)
                 },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
@@ -970,10 +964,10 @@ private fun AlarmTypeSelectorsPreview() {
             AlarmTypeSelectors(
                 currentAlarmType = { previewAlarmType },
                 onAlarmTypeInvokeTimeTypeChange = {
-                    previewAlarmType = previewAlarmType.changeInvokeTimeType()
+                    previewAlarmType = previewAlarmType.copy(isElapsedTime = it)
                 },
                 onAlarmTypeWakeupTypeChange = {
-                    previewAlarmType = previewAlarmType.changeWakeupType()
+                    previewAlarmType = previewAlarmType.copy(isWakeup = it)
                 },
                 modifier = Modifier.background(MaterialTheme.colorScheme.background)
             )
