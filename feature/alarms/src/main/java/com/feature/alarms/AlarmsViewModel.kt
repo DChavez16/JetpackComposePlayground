@@ -75,11 +75,28 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun initializeAlarmTargetTime() {
         // If the alarm type is ELAPSED_TIME, set alarm target time to 0 millis, else set it to the calendar current time in millis
-        _alarmTargetTimeMilliseconds.value =
-            if (_alarmType.value.isElapsedTime) 0L else calendar.timeInMillis
+        updateAlarmTargetTime(if (_alarmType.value.isElapsedTime) 0L else calendar.timeInMillis)
 
         // Set alarm target time window to 2 minutes in millis
-        _alarmTargetTimeWindowLenghtMilliseconds.value = 2 * 60 * 1000
+        updateAlarmTargetTimeWindow(2 * 60 * 1000)
+
+        Log.d(TAG, "Restarted alarm target time to default")
+    }
+
+    /**
+     * Initialize the properties of the Alarm to the default ones
+     */
+    private fun initializeAlarmProperties() {
+        // Set AlarmType to default
+        changeAlarmTypeInvokeTimeType(true)
+        changeAlarmTypeDeviceAwake(false)
+
+        // If the alarm is exact
+        if (_isAlarmExact.value) changeExactAlarmInvokeType(ExactAlarmsInvokeType.NORMAL)
+        // else, if its inexact
+        else changeInexactAlarmInvokeType(InexactAlarmsInvokeType.NORMAL)
+
+        Log.d(TAG, "Restarted alarm properties to default")
     }
 
     /**
@@ -134,8 +151,14 @@ internal class AlarmsViewModel @Inject constructor(
     /**
      * Change the current [_isAlarmExact] to the opposite value
      */
-    fun changeAlarmAccuracy() {
-        _isAlarmExact.value = !_isAlarmExact.value
+    fun changeAlarmAccuracy(newIsAlarmExact: Boolean) {
+        _isAlarmExact.value = newIsAlarmExact
+        Log.d(TAG, "Alarm accuracy changed to ${if (_isAlarmExact.value) "Exact" else "Inexact"}")
+
+        // Initialize alarm target time
+        initializeAlarmTargetTime()
+        // Initialize alarm properties
+        initializeAlarmProperties()
     }
 
     /**
@@ -147,7 +170,7 @@ internal class AlarmsViewModel @Inject constructor(
         _exactAlarmInvokeType.value = newExactAlarmInvokeType as ExactAlarmsInvokeType
         Log.d(
             TAG,
-            "Exact alarm invoke time type changed to ${_exactAlarmInvokeType.value.functionName}"
+            "Exact alarm invoke time type changed to ${_exactAlarmInvokeType.value.name}"
         )
     }
 
@@ -160,7 +183,7 @@ internal class AlarmsViewModel @Inject constructor(
         _inexactAlarmInvokeType.value = newInexactAlarmInvokeType as InexactAlarmsInvokeType
         Log.d(
             TAG,
-            "Inexact alarm invoke time type changed to ${_inexactAlarmInvokeType.value.functionName}"
+            "Inexact alarm invoke time type changed to ${_inexactAlarmInvokeType.value.name}"
         )
     }
 
