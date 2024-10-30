@@ -145,7 +145,7 @@ internal fun AlarmTypeSelectors(
                     .clickable {
                         coroutineScope.launch {
                             // If the page is currently the 'ELAPSED_TIME' move to the 'RTC' page. Otherwise the opposite
-                            pagerState.scrollToPage(if (pagerState.currentPage == 0) 1 else 0)
+                            pagerState.animateScrollToPage(if (pagerState.currentPage == 0) 1 else 0)
                         }
                     }
                     .background(

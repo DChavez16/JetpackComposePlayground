@@ -58,7 +58,6 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Optional, add animation when changing horizontal pager screen at TabRow click
     // TODO Fix alarms not working
     // TODO Fix Alarms screen crashing when rotating the device in phone devices
     // TODO Fix Alarms screen crashing when activating window inexact alarm in foldable devices
@@ -166,6 +165,7 @@ private fun AlarmsScreenContent(
                 AlarmsTabs.entries.forEachIndexed { index, currentTab ->
                     Tab(
                         selected = pagerState.currentPage == index,
+                        enabled = pagerState.currentPage != index,
                         text = {
                             Text(
                                 text = currentTab.text,
@@ -173,12 +173,9 @@ private fun AlarmsScreenContent(
                             )
                         },
                         onClick = {
-                            // Update the pager state current page only if the page is not the current one
-                            if (pagerState.currentPage != index) {
-                                coroutineScope.launch {
-                                    // If the page is currently the 'Exact Alarm' move to the 'Inexact Alarm' page. Otherwise the opposite
-                                    pagerState.scrollToPage(if (isAlarmExact()) 1 else 0)
-                                }
+                            coroutineScope.launch {
+                                // If the page is currently the 'Exact Alarm' move to the 'Inexact Alarm' page. Otherwise the opposite
+                                pagerState.animateScrollToPage(if (isAlarmExact()) 1 else 0)
                             }
                         }
                     )
