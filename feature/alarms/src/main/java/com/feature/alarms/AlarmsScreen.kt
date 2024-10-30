@@ -46,6 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.DefaultTopAppBar
+import com.feature.alarms.ui.AlarmActionButtons
+import com.feature.alarms.ui.AlarmTypeSelectors
 import com.feature.alarms.ui.ExactAlarmScreen
 import com.feature.alarms.ui.InexactAlarmScreen
 import kotlinx.coroutines.launch
@@ -56,9 +58,11 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Put the Alarm Type selectors fixed under the TabRow and over the HorizontalPager, don't reset its properties when the screen changes
     // TODO Optional, add animation when changing horizontal pager screen at TabRow click
     // TODO Fix alarms not working
+    // TODO Fix Alarms screen crashing when rotating the device in phone devices
+    // TODO Fix Alarms screen crashing when activating window inexact alarm in foldable devices
+    // TODO Fix title not showing
 
     // Stores the current ViewModelStoreOwner
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
@@ -67,14 +71,24 @@ fun AlarmsScreen(
 
     // State that indicates if the alarm to start will be exact or inexact (also, indicates which screen to show)
     val isAlarmExact by alarmsViewModel.isAlarmExact.collectAsState()
+    // State that collects the current alarm type
+    val currentAlarmType by alarmsViewModel.alarmType.collectAsState()
+    // State that indicates if the alarm is running
+    val isAlarmRunning by alarmsViewModel.isAlarmRunning.collectAsState()
 
     AlarmsScreenContent(
         isAlarmExact = { isAlarmExact },
         changeAlarmAccuracy = alarmsViewModel::changeAlarmAccuracy,
+        currentAlarmType = { currentAlarmType },
+        onAlarmTypeInvokeTypeChange = alarmsViewModel::changeAlarmTypeInvokeTimeType,
+        onAlarmTypeWakeupTypeChange = alarmsViewModel::changeAlarmTypeDeviceAwake,
         getAlarmInvokeTypeTitle = alarmsViewModel::getAlarmInvokeTypeTitle,
         getAlarmInvokeTypeDescription = alarmsViewModel::getAlarmInvokeTypeDescription,
         getAlarmTypeTitle = alarmsViewModel::getAlarmTypeTitle,
         getAlarmTypeDescription = alarmsViewModel::getAlarmTypeDescription,
+        isAlarmRunning = { isAlarmRunning },
+        onCancelAlarmClick = alarmsViewModel::cancelAlarm,
+        onStartAlarmClick = alarmsViewModel::startAlarm,
         onMenuButtonClick = onMenuButtonClick
     ) { page ->
         when (page) {
@@ -95,6 +109,12 @@ fun AlarmsScreen(
 private fun AlarmsScreenContent(
     isAlarmExact: () -> Boolean,
     changeAlarmAccuracy: (Boolean) -> Unit,
+    currentAlarmType: () -> AlarmType,
+    onAlarmTypeInvokeTypeChange: (Boolean) -> Unit,
+    onAlarmTypeWakeupTypeChange: (Boolean) -> Unit,
+    isAlarmRunning: () -> Boolean,
+    onCancelAlarmClick: () -> Unit,
+    onStartAlarmClick: () -> Unit,
     getAlarmInvokeTypeTitle: () -> String,
     getAlarmInvokeTypeDescription: () -> String,
     getAlarmTypeTitle: () -> String,
@@ -165,10 +185,27 @@ private fun AlarmsScreenContent(
                 }
             }
 
+            // Alarm type selectors
+            AlarmTypeSelectors(
+                currentAlarmType = currentAlarmType,
+                onAlarmTypeInvokeTimeTypeChange = onAlarmTypeInvokeTypeChange,
+                onAlarmTypeWakeupTypeChange = onAlarmTypeWakeupTypeChange,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)
+            )
+
             // Pager containing the Exact and Inexact Alarm screens
             HorizontalPager(
                 state = pagerState,
-                pageContent = { page -> content(page) }
+                pageContent = { page -> content(page) },
+                modifier = Modifier.weight(1f)
+            )
+
+            // Alarm action buttons
+            AlarmActionButtons(
+                isAlarmRunning = isAlarmRunning,
+                onCancelAlarmClick = onCancelAlarmClick,
+                onStartAlarmClick = onStartAlarmClick,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
 

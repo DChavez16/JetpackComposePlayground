@@ -26,6 +26,9 @@ fun ComposePlaygroundApp(
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
+    // TODO Add background to navigation drawer header so the elements can't be seen behind it
+    // TODO Fix Navigation rail adding padding outside it bounds
+
     // Defines a coroutine scope
     val scope = rememberCoroutineScope()
 

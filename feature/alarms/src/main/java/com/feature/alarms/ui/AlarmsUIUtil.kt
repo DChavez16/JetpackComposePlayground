@@ -511,11 +511,12 @@ internal fun ElapsedTimePicker(
                 )
             }
 
-            val pagerSeparatorText = @Composable {
+            val pagerSeparatorText = @Composable { modifier: Modifier ->
                 Text(
                     text = ":",
                     style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = modifier
                 )
             }
 
@@ -542,7 +543,11 @@ internal fun ElapsedTimePicker(
                 }
             }
 
-            pagerSeparatorText()
+            pagerSeparatorText(Modifier.graphicsLayer {
+                if (isChooseWindowRangeVariant) {
+                    alpha = 0.25f
+                }
+            })
 
             // Minute vertical pager
             VerticalPager(
@@ -565,7 +570,7 @@ internal fun ElapsedTimePicker(
                 }
             }
 
-            pagerSeparatorText()
+            pagerSeparatorText(Modifier)
 
             // Seconds vertical pager
             VerticalPager(

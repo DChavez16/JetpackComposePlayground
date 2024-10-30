@@ -6,7 +6,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,22 +36,15 @@ internal fun InexactAlarmScreen(
     val currentAlarmInvokeType = alarmsViewModel.inexactAlarmInvokeType.collectAsState().value
     // Current time in millis state flow
     val currentTimeInMillis = alarmsViewModel.alarmTargetTimeMilliseconds.collectAsState().value
-    // Alarm running flag state flow
-    val isAlarmRunning = alarmsViewModel.isAlarmRunning.collectAsState().value
 
     InexactAlarmScreenContent(
         currentAlarmType = { currentAlarmType },
-        onAlarmTypeInvokeTypeChange = alarmsViewModel::changeAlarmTypeInvokeTimeType,
-        onAlarmTypeWakeupTypeChange = alarmsViewModel::changeAlarmTypeDeviceAwake,
         currentAlarmInvokeType = { currentAlarmInvokeType },
         onChangeInvokeType = alarmsViewModel::changeInexactAlarmInvokeType,
         currentTimeInMillis = { currentTimeInMillis },
         onCurrentTimeInMillisChange = alarmsViewModel::updateAlarmTargetTime,
         isAlarmWindow = { currentAlarmInvokeType == InexactAlarmsInvokeType.WINDOW },
         onCurrentWindowLenghtInMillisChange = alarmsViewModel::updateAlarmTargetTimeWindow,
-        isAlarmRunning = { isAlarmRunning },
-        onCancelAlarmClick = alarmsViewModel::cancelAlarm,
-        onStartAlarmClick = alarmsViewModel::startAlarm,
         modifier = Modifier.fillMaxSize()
     )
 }
@@ -61,17 +53,12 @@ internal fun InexactAlarmScreen(
 @Composable
 private fun InexactAlarmScreenContent(
     currentAlarmType: () -> AlarmType,
-    onAlarmTypeInvokeTypeChange: (Boolean) -> Unit,
-    onAlarmTypeWakeupTypeChange: (Boolean) -> Unit,
     currentAlarmInvokeType: () -> AlarmsInvokeType,
     onChangeInvokeType: (AlarmsInvokeType) -> Unit,
     currentTimeInMillis: () -> Long,
     onCurrentTimeInMillisChange: (Long) -> Unit,
     isAlarmWindow: () -> Boolean,
     onCurrentWindowLenghtInMillisChange: (Long) -> Unit,
-    isAlarmRunning: () -> Boolean,
-    onCancelAlarmClick: () -> Unit,
-    onStartAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Inexact alarm screen column content
@@ -82,13 +69,6 @@ private fun InexactAlarmScreenContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        // Alarm type selectors
-        AlarmTypeSelectors(
-            currentAlarmType = currentAlarmType,
-            onAlarmTypeInvokeTimeTypeChange = onAlarmTypeInvokeTypeChange,
-            onAlarmTypeWakeupTypeChange = onAlarmTypeWakeupTypeChange
-        )
-
         // Alarm invoke type selectors
         AlarmInvokeTypeSelectors(
             isExactAlarm = { false },
@@ -121,15 +101,6 @@ private fun InexactAlarmScreenContent(
                 isChooseWindowRangeVariant = true
             )
         }
-
-        Spacer(modifier.weight(1f))
-
-        // Alarm action buttons
-        AlarmActionButtons(
-            isAlarmRunning = isAlarmRunning,
-            onCancelAlarmClick = onCancelAlarmClick,
-            onStartAlarmClick = onStartAlarmClick
-        )
     }
 }
 
@@ -148,21 +119,19 @@ private fun InexactAlarmScreenContentPreview() {
             darkTheme = isSystemInDarkTheme()
         ) {
             var currentAlarmType = remember { mutableStateOf(AlarmType(true, false)) }
-            var currentAlarmInvokeType = remember { mutableStateOf(InexactAlarmsInvokeType.REPEATING) }
+            var currentAlarmInvokeType =
+                remember { mutableStateOf(InexactAlarmsInvokeType.REPEATING) }
 
             InexactAlarmScreenContent(
                 currentAlarmType = { currentAlarmType.value },
-                onAlarmTypeInvokeTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isElapsedTime = it) },
-                onAlarmTypeWakeupTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isWakeup = it) },
                 currentAlarmInvokeType = { currentAlarmInvokeType.value },
-                onChangeInvokeType = { currentAlarmInvokeType.value = it as InexactAlarmsInvokeType },
+                onChangeInvokeType = {
+                    currentAlarmInvokeType.value = it as InexactAlarmsInvokeType
+                },
                 currentTimeInMillis = { 0L },
                 onCurrentTimeInMillisChange = { },
                 isAlarmWindow = { currentAlarmInvokeType.value == InexactAlarmsInvokeType.WINDOW },
                 onCurrentWindowLenghtInMillisChange = { },
-                isAlarmRunning = { false },
-                onCancelAlarmClick = { },
-                onStartAlarmClick = { },
                 modifier = Modifier.size(500.dp, 1000.dp)
             )
         }

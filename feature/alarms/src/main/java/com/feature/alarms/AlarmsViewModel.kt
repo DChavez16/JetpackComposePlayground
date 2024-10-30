@@ -87,10 +87,6 @@ internal class AlarmsViewModel @Inject constructor(
      * Initialize the properties of the Alarm to the default ones
      */
     private fun initializeAlarmProperties() {
-        // Set AlarmType to default
-        changeAlarmTypeInvokeTimeType(true)
-        changeAlarmTypeDeviceAwake(false)
-
         // If the alarm is exact
         if (_isAlarmExact.value) changeExactAlarmInvokeType(ExactAlarmsInvokeType.NORMAL)
         // else, if its inexact
@@ -198,6 +194,9 @@ internal class AlarmsViewModel @Inject constructor(
             TAG,
             "Alarm type changed to ${if (_alarmType.value.isElapsedTime) "ELAPSED_TIME" else "RTC"}"
         )
+
+        // Initialize alarm target time
+        initializeAlarmTargetTime()
     }
 
     /**

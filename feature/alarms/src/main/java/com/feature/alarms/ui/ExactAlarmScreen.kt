@@ -5,7 +5,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,20 +35,13 @@ internal fun ExactAlarmScreen(
     val currentAlarmInvokeType = alarmsViewModel.exactAlarmInvokeType.collectAsState().value
     // Current time in millis state flow
     val currentTimeInMillis = alarmsViewModel.alarmTargetTimeMilliseconds.collectAsState().value
-    // Alarm running flag state flow
-    val isAlarmRunning = alarmsViewModel.isAlarmRunning.collectAsState().value
 
     ExactAlarmScreenContent(
         currentAlarmType = { currentAlarmType },
-        onAlarmTypeInvokeTypeChange = alarmsViewModel::changeAlarmTypeInvokeTimeType,
-        onAlarmTypeWakeupTypeChange = alarmsViewModel::changeAlarmTypeDeviceAwake,
         currentAlarmInvokeType = { currentAlarmInvokeType },
         onChangeInvokeType = alarmsViewModel::changeExactAlarmInvokeType,
         currentTimeInMillis = { currentTimeInMillis },
         onCurrentTimeInMillisChange = alarmsViewModel::updateAlarmTargetTime,
-        isAlarmRunning = { isAlarmRunning },
-        onCancelAlarmClick = alarmsViewModel::cancelAlarm,
-        onStartAlarmClick = alarmsViewModel::startAlarm,
         modifier = Modifier.fillMaxSize()
     )
 }
@@ -58,15 +50,10 @@ internal fun ExactAlarmScreen(
 @Composable
 private fun ExactAlarmScreenContent(
     currentAlarmType: () -> AlarmType,
-    onAlarmTypeInvokeTypeChange: (Boolean) -> Unit,
-    onAlarmTypeWakeupTypeChange: (Boolean) -> Unit,
     currentAlarmInvokeType: () -> AlarmsInvokeType,
     onChangeInvokeType: (AlarmsInvokeType) -> Unit,
     currentTimeInMillis: () -> Long,
     onCurrentTimeInMillisChange: (Long) -> Unit,
-    isAlarmRunning: () -> Boolean,
-    onCancelAlarmClick: () -> Unit,
-    onStartAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Exact alarm screen column content
@@ -77,13 +64,6 @@ private fun ExactAlarmScreenContent(
             .background(MaterialTheme.colorScheme.background)
             .padding(8.dp)
     ) {
-        // Alarm type selectors
-        AlarmTypeSelectors(
-            currentAlarmType = currentAlarmType,
-            onAlarmTypeInvokeTimeTypeChange = onAlarmTypeInvokeTypeChange,
-            onAlarmTypeWakeupTypeChange = onAlarmTypeWakeupTypeChange
-        )
-
         // Alarm invoke type selectors
         AlarmInvokeTypeSelectors(
             isExactAlarm = { true },
@@ -105,15 +85,6 @@ private fun ExactAlarmScreenContent(
                 onCurrentTimeInMillisChange = onCurrentTimeInMillisChange
             )
         }
-
-        Spacer(Modifier.weight(1f))
-
-        // Alarm action buttons
-        AlarmActionButtons(
-            isAlarmRunning = isAlarmRunning,
-            onCancelAlarmClick = onCancelAlarmClick,
-            onStartAlarmClick = onStartAlarmClick
-        )
     }
 }
 
@@ -137,15 +108,10 @@ private fun ExactAlarmScreenContentPreview() {
 
             ExactAlarmScreenContent(
                 currentAlarmType = { currentAlarmType.value },
-                onAlarmTypeInvokeTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isElapsedTime = it) },
-                onAlarmTypeWakeupTypeChange = { currentAlarmType.value = currentAlarmType.value.copy(isWakeup = it) },
                 currentAlarmInvokeType = { currentAlarmInvokeType.value },
                 onChangeInvokeType = { currentAlarmInvokeType.value = it as ExactAlarmsInvokeType },
                 currentTimeInMillis = { 0L },
                 onCurrentTimeInMillisChange = { },
-                isAlarmRunning = { false },
-                onCancelAlarmClick = { },
-                onStartAlarmClick = { },
                 modifier = Modifier.size(500.dp, 1000.dp)
             )
         }
