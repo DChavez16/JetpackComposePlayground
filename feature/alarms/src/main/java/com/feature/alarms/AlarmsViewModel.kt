@@ -4,7 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.icu.util.Calendar
+import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -13,6 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 const val TAG = "AlarmsViewModel"
@@ -50,18 +53,15 @@ internal class AlarmsViewModel @Inject constructor(
 
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
     private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(0L)
-    val alarmTargetTimeWindowLenghtMilliseconds: StateFlow<Long> =
-        _alarmTargetTimeWindowLenghtMilliseconds
 
-    // Creting calendar variable
     var calendar: Calendar
 
 
     init {
         Log.d(TAG, "AlarmsViewModel Started")
 
-        // Initialize calendar variable with a Calendar instance
         calendar = Calendar.getInstance()
+        calendar.timeZone = TimeZone.getDefault()
 
         // Initialize the alarm target time
         initializeAlarmTargetTime()
@@ -133,6 +133,8 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun updateAlarmTargetTime(newTimeInMillis: Long) {
         _alarmTargetTimeMilliseconds.value = newTimeInMillis
+
+        Log.d(TAG, "Alarm target time updated to ${getTriggerTime()} ($newTimeInMillis)")
     }
 
     /**
@@ -142,6 +144,8 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun updateAlarmTargetTimeWindow(newTimeInMillis: Long) {
         _alarmTargetTimeWindowLenghtMilliseconds.value = newTimeInMillis
+
+        Log.d(TAG, "Alarm target time set${getTriggerTimeWindow()} ($newTimeInMillis)")
     }
 
     /**
@@ -238,11 +242,9 @@ internal class AlarmsViewModel @Inject constructor(
 
         Log.d(
             TAG,
-            "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with ${
-                if (_isAlarmExact.value) context.getText(
-                    _exactAlarmInvokeType.value.functionName
-                ) else context.getText(_inexactAlarmInvokeType.value.functionName)
-            } as invoke type and ${getAlarmInvokeTypeTitle()} as alarm type"
+            "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with " +
+                    "${getAlarmTypeTitle()} as invoke type and ${getAlarmInvokeTypeTitle()} as " +
+                    "alarm type with a trigger time of ${getTriggerTime()}${getTriggerTimeWindow()}"
         )
 
         // If the Alarm is exact
@@ -251,17 +253,17 @@ internal class AlarmsViewModel @Inject constructor(
             when (_exactAlarmInvokeType.value) {
                 ExactAlarmsInvokeType.NORMAL -> {
                     alarmManager.setExact(
-                        selectedAlarmType,
-                        alarmTargetTimeMilliseconds.value,
-                        alarmIntent
+                        /* type = */ selectedAlarmType,
+                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
+                        /* operation = */ alarmIntent
                     )
                 }
 
                 ExactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setRepeating(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
-                        /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
+                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
+                        /* intervalMillis = */ AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -269,7 +271,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setExactAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -277,7 +279,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALARM_CLOCK -> {
                     alarmManager.setAlarmClock(
                         /* info = */ AlarmManager.AlarmClockInfo(
-                            /* triggerTime = */ alarmTargetTimeMilliseconds.value,
+                            /* triggerTime = */ _alarmTargetTimeMilliseconds.value,
                             /* showIntent = */ alarmIntent
                         ),
                         /* operation = */ alarmIntent
@@ -289,12 +291,17 @@ internal class AlarmsViewModel @Inject constructor(
         }
         // Else (is inexact)
         else {
+            val alarmTriggerTime =
+                if (_alarmType.value.isElapsedTime)
+                    SystemClock.elapsedRealtime().plus(_alarmTargetTimeMilliseconds.value)
+                else _alarmTargetTimeMilliseconds.value
+
             // Start the correct alarm based in the inexact alarm invoke type
             when (_inexactAlarmInvokeType.value) {
                 InexactAlarmsInvokeType.NORMAL -> {
                     alarmManager.set(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ alarmTriggerTime,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -302,8 +309,8 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setInexactRepeating(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
-                        /* intervalMillis = */ AlarmManager.INTERVAL_HALF_HOUR,
+                        /* triggerAtMillis = */ alarmTriggerTime,
+                        /* intervalMillis = */ AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -311,7 +318,7 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ alarmTriggerTime,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -319,12 +326,11 @@ internal class AlarmsViewModel @Inject constructor(
                 InexactAlarmsInvokeType.WINDOW -> {
                     alarmManager.setWindow(
                         /* type = */ selectedAlarmType,
-                        /* windowStartMillis = */
-                        alarmTargetTimeMilliseconds.value - alarmTargetTimeWindowLenghtMilliseconds.value,
-                        /* windowLengthMillis = */
-                        alarmTargetTimeMilliseconds.value + alarmTargetTimeWindowLenghtMilliseconds.value,
-                        /* operation = */
-                        alarmIntent
+                        /* windowStartMillis = */ alarmTriggerTime
+                            .minus(_alarmTargetTimeWindowLenghtMilliseconds.value),
+                        /* windowLengthMillis = */ alarmTriggerTime
+                            .plus(_alarmTargetTimeWindowLenghtMilliseconds.value),
+                        /* operation = */ alarmIntent
                     )
                 }
             }
@@ -397,6 +403,38 @@ internal class AlarmsViewModel @Inject constructor(
             }
         }
     )
+
+
+    // Helper functions
+    private fun getTriggerTime(): String {
+        val tempCalendar = Calendar.getInstance()
+        tempCalendar.timeZone = TimeZone.getDefault()
+        tempCalendar.timeInMillis = _alarmTargetTimeMilliseconds.value
+
+        return if (_alarmType.value.isElapsedTime)
+            "${
+                tempCalendar.get(Calendar.HOUR).minus(6)
+            } : ${tempCalendar.get(Calendar.MINUTE)} : " +
+                    "${tempCalendar.get(Calendar.SECOND)}"
+        else "${
+            tempCalendar.getDisplayName(
+                Calendar.MONTH,
+                Calendar.LONG_STANDALONE,
+                Locale.US
+            )
+        } " +
+                "${tempCalendar.get(Calendar.DAY_OF_MONTH)} ${tempCalendar.get(Calendar.YEAR)}, " +
+                "${tempCalendar.get(Calendar.HOUR_OF_DAY)} : ${tempCalendar.get(Calendar.MINUTE)}"
+    }
+
+    private fun getTriggerTimeWindow(): String {
+        val tempCalendar = Calendar.getInstance()
+        tempCalendar.timeInMillis = _alarmTargetTimeWindowLenghtMilliseconds.value
+
+        return if (!_isAlarmExact.value && _inexactAlarmInvokeType.value == InexactAlarmsInvokeType.WINDOW)
+            " with a window of ${tempCalendar.get(Calendar.MINUTE)} : ${tempCalendar.get(Calendar.SECOND)}"
+        else ""
+    }
 }
 
 
