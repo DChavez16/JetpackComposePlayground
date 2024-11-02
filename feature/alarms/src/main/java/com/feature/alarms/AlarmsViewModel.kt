@@ -54,14 +54,9 @@ internal class AlarmsViewModel @Inject constructor(
     // Define a Flow for alarmtTargetTimeWindowMilliseconds and its backing property
     private val _alarmTargetTimeWindowLenghtMilliseconds = MutableStateFlow(0L)
 
-    var calendar: Calendar
-
 
     init {
         Log.d(TAG, "AlarmsViewModel Started")
-
-        calendar = Calendar.getInstance()
-        calendar.timeZone = TimeZone.getDefault()
 
         // Initialize the alarm target time
         initializeAlarmTargetTime()
@@ -75,7 +70,7 @@ internal class AlarmsViewModel @Inject constructor(
      */
     fun initializeAlarmTargetTime() {
         // If the alarm type is ELAPSED_TIME, set alarm target time to 0 millis, else set it to the calendar current time in millis
-        updateAlarmTargetTime(if (_alarmType.value.isElapsedTime) 0L else calendar.timeInMillis)
+        updateAlarmTargetTime(if (_alarmType.value.isElapsedTime) 0L else System.currentTimeMillis())
 
         // Set alarm target time window to 2 minutes in millis
         updateAlarmTargetTimeWindow(2 * 60 * 1000)

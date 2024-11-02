@@ -684,6 +684,9 @@ internal fun RtcTimePicker(
                             datePickerState.selectedDateMillis?.plus(currentHourInMillis)
                                 ?: calendar.timeInMillis
 
+                        // Sets the seconds in the calendar to 0
+                        calendar.set(Calendar.SECOND, 0)
+
                         // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
                         onCurrentTimeInMillisChange(calendar.timeInMillis)
 
@@ -777,9 +780,10 @@ internal fun RtcTimePicker(
                     // Confirm button
                     TextButton(
                         onClick = {
-                            // Change the hour and minutes of the calentar instance with the ones in the time input state
+                            // Change the hour and minutes of the calentar instance with the ones in the time input state, and set the seconds to 0
                             calendar.set(Calendar.HOUR_OF_DAY, timeInputState.hour)
                             calendar.set(Calendar.MINUTE, timeInputState.minute)
+                            calendar.set(Calendar.SECOND, 0)
 
                             // Call the onCurrentTimeInMillisChange callback with the new calendar time in millis
                             onCurrentTimeInMillisChange(calendar.timeInMillis)
