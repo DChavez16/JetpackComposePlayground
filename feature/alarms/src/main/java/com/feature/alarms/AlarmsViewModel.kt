@@ -216,8 +216,13 @@ internal class AlarmsViewModel @Inject constructor(
         val activeAlarmPendingIntent = getActiveAlarmPendingIntent() ?: return
         Log.i(TAG, "Active alarm found, cancelling active alarm")
 
+        // Cancelling both the alarm with the obtained intent and the intent itself
         alarmManager.cancel(activeAlarmPendingIntent)
+        activeAlarmPendingIntent.cancel()
         Log.i(TAG, "Active alarm cancelled")
+
+        // Verify if there is an active alarm
+        verifyAlarmsNotActive()
     }
 
     /**
