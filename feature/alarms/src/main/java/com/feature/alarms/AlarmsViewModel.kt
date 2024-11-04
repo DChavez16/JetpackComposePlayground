@@ -4,7 +4,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.SystemClock
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -229,6 +231,14 @@ internal class AlarmsViewModel @Inject constructor(
      * Starts a new inexact alarm with the current values. If one is already running, it will be canceled
      */
     fun startAlarm() {
+
+        // If the alarm is exact AND can't schedule exact alarms, request the permission and return
+        if (_isAlarmExact.value && !alarmManager.canScheduleExactAlarms()) {
+            Log.d(TAG, "Exact alarm permission not granted, requesting permission...")
+            requestExactAlarmPermission()
+            return
+        }
+
         // Cancel active alarm if there is any
         cancelAlarm()
 
@@ -434,6 +444,15 @@ internal class AlarmsViewModel @Inject constructor(
         return if (!_isAlarmExact.value && _inexactAlarmInvokeType.value == InexactAlarmsInvokeType.WINDOW)
             " with a window of ${tempCalendar.get(Calendar.MINUTE)} : ${tempCalendar.get(Calendar.SECOND)}"
         else ""
+    }
+
+    private fun requestExactAlarmPermission() {
+        Intent().apply {
+            action = ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+            flags = FLAG_ACTIVITY_NEW_TASK
+        }.also {
+            context.startActivity(it)
+        }
     }
 }
 
