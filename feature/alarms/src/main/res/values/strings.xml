@@ -30,12 +30,6 @@
     <string name="alarms_shared_alarm_cancel_alarm_button_label">Cancel</string>
     <string name="alarms_shared_alarm_start_button_label">Start</string>
 
-    <!-- Exact Alarm Screen -->
-    <string name="alarms_exact_alarms_screen_">-</string>
-
-    <!-- Inexact Alarm Screen -->
-    <string name="alarms_inexact_alarms_screen_">-</string>
-
     <!-- Alarms Description -->
     <!-- For Inexact alarms -->
     <string name="alarms_alarms_description_inexact_alarm_title">Inexact Alarm</string>
@@ -58,7 +52,7 @@
     <string name="alarms_alarms_description_set_exact_and_allow_while_idle_title">setExactAndAllowWhileIdle()</string>
     <string name="alarms_alarms_description_set_exact_and_allow_while_idle_description">This method combines the precision of setExact() with the ability to trigger even when the device is in Doze mode. It\'s suitable for tasks that require precise timing and must run even when the device is idle. However, use it cautiously as it can significantly impact battery life due to the frequent wakeups.</string>
     <string name="alarms_alarms_description_set_alarm_clock_title">setAlarmClock()</string>
-    <string name="alarms_alarms_description_set_alarm_clock_description">This method is specifically designed for setting alarms that the user is explicitly aware of, such as alarm clocks or reminders. It guarantees that the alarm will fire at the exact time, even in Doze mode, and the system might display the alarm in the system UI. This method is ideal for user-facing alarms where precision and visibility are crucial.</string>
+    <string name="alarms_alarms_description_set_alarm_clock_description">This method is specifically designed for setting alarms that the user is explicitly aware of, such as alarm clocks or reminders. It guarantees that the alarm will fire at the exact time, even in Doze mode, and the system might display the alarm in the system UI. This method is ideal for user-facing alarms where precision and visibility are crucial. This method is like setExact(), but implies RTC_WAKEUP; therefore, setting ELAPSED_REALTIME as alarm type triggers the alarm immediately.</string>
     <!-- For Alarm types -->
     <string name="alarms_alarms_description_elapsed_realtime_title">ELAPSED_REALTIME</string>
     <string name="alarms_alarms_description_elapsed_realtime_description">This alarm type uses a timer that starts running when the device boots up. It measures time since boot, including any time the device spends in sleep mode. Alarms set with this type will fire based on this elapsed time, but they won\'t wake up the device if it\'s asleep. This is suitable for tasks that need to be triggered based on the passage of time since boot, but don\'t require the device to wake up.</string>

@@ -250,6 +250,11 @@ internal class AlarmsViewModel @Inject constructor(
         // Gets the current Alarm Type as an Int to be asigned to the alarms
         val selectedAlarmType = _alarmType.value.getAlarmType()
 
+        // Calculate the actual trigger time for ELAPSED_TIME & RTC alarm types
+        val alarmTriggerTime = if (_alarmType.value.isElapsedTime)
+            SystemClock.elapsedRealtime().plus(_alarmTargetTimeMilliseconds.value)
+        else _alarmTargetTimeMilliseconds.value
+
         Log.d(
             TAG,
             "Starting ${if (_isAlarmExact.value) "exact" else "inexact"} alarm with " +
@@ -259,12 +264,13 @@ internal class AlarmsViewModel @Inject constructor(
 
         // If the Alarm is exact
         if (_isAlarmExact.value) {
+
             // Start the correct alarm based in the exact alarm invoke type
             when (_exactAlarmInvokeType.value) {
                 ExactAlarmsInvokeType.NORMAL -> {
                     alarmManager.setExact(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ alarmTriggerTime,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -272,7 +278,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.REPEATING -> {
                     alarmManager.setRepeating(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ alarmTriggerTime,
                         /* intervalMillis = */ AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                         /* operation = */ alarmIntent
                     )
@@ -281,7 +287,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALLOW_WHILE_IDLE -> {
                     alarmManager.setExactAndAllowWhileIdle(
                         /* type = */ selectedAlarmType,
-                        /* triggerAtMillis = */ _alarmTargetTimeMilliseconds.value,
+                        /* triggerAtMillis = */ alarmTriggerTime,
                         /* operation = */ alarmIntent
                     )
                 }
@@ -289,7 +295,7 @@ internal class AlarmsViewModel @Inject constructor(
                 ExactAlarmsInvokeType.ALARM_CLOCK -> {
                     alarmManager.setAlarmClock(
                         /* info = */ AlarmManager.AlarmClockInfo(
-                            /* triggerTime = */ _alarmTargetTimeMilliseconds.value,
+                            /* triggerTime = */ alarmTriggerTime,
                             /* showIntent = */ alarmIntent
                         ),
                         /* operation = */ alarmIntent
@@ -301,10 +307,6 @@ internal class AlarmsViewModel @Inject constructor(
         }
         // Else (is inexact)
         else {
-            val alarmTriggerTime =
-                if (_alarmType.value.isElapsedTime)
-                    SystemClock.elapsedRealtime().plus(_alarmTargetTimeMilliseconds.value)
-                else _alarmTargetTimeMilliseconds.value
 
             // Start the correct alarm based in the inexact alarm invoke type
             when (_inexactAlarmInvokeType.value) {
