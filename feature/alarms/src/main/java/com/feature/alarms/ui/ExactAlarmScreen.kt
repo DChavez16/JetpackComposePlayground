@@ -3,11 +3,11 @@ package com.feature.alarms.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -57,7 +57,7 @@ private fun ExactAlarmScreenContent(
     modifier: Modifier = Modifier
 ) {
     // Exact alarm screen column content
-    Column(
+    LazyColumn(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -65,25 +65,29 @@ private fun ExactAlarmScreenContent(
             .padding(8.dp)
     ) {
         // Alarm invoke type selectors
-        AlarmInvokeTypeSelectors(
-            isExactAlarm = { true },
-            currentAlarmInvokeType = currentAlarmInvokeType,
-            onChangeInvokeType = onChangeInvokeType
-        )
-
-        // Alarm invoke time pickers
-        // If the current alarm type is ELAPSED_TIME
-        if (currentAlarmType().isElapsedTime) {
-            ElapsedTimePicker(
-                onCurrentTimeInMillisChange = onCurrentTimeInMillisChange
+        item(key = 0) {
+            AlarmInvokeTypeSelectors(
+                isExactAlarm = { true },
+                currentAlarmInvokeType = currentAlarmInvokeType,
+                onChangeInvokeType = onChangeInvokeType
             )
         }
-        // Else (is RTC)
-        else {
-            RtcTimePicker(
-                currentTimeInMillis = currentTimeInMillis,
-                onCurrentTimeInMillisChange = onCurrentTimeInMillisChange
-            )
+
+        // Alarm invoke time pickers
+        item(key = 1) {
+            // If the current alarm type is ELAPSED_TIME
+            if (currentAlarmType().isElapsedTime) {
+                ElapsedTimePicker(
+                    onCurrentTimeInMillisChange = onCurrentTimeInMillisChange
+                )
+            }
+            // Else (is RTC)
+            else {
+                RtcTimePicker(
+                    currentTimeInMillis = currentTimeInMillis,
+                    onCurrentTimeInMillisChange = onCurrentTimeInMillisChange
+                )
+            }
         }
     }
 }

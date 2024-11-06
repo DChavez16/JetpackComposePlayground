@@ -58,10 +58,7 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Fix alarms not working
-    // TODO Fix Alarms screen crashing when rotating the device in phone devices
-    // TODO Fix Alarms screen crashing when activating window inexact alarm in foldable devices
-    // TODO Fix title not showing
+    // TODO Fix ViewModel being different for each screen orientation
 
     // Stores the current ViewModelStoreOwner
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
@@ -156,6 +153,7 @@ private fun AlarmsScreenContent(
         }
     ) { innerPadding ->
         Column(
+            horizontalAlignment = CenterHorizontally,
             modifier = Modifier.padding(innerPadding)
         ) {
             // Tab row to select between Exact and Inexact Alarm
