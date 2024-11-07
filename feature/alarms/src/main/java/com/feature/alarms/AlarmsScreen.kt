@@ -30,9 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -58,7 +60,9 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Fix ViewModel being different for each screen orientation
+    // TODO Fix unwanted alarm type update when device orientation changes
+    // TODO Fix unwanted ELAPSED_TIME alarm trigger time unwanted update when device orientation changes
+    // TODO Fix unwanted RTC alarm trigger time unwanted update when device orientation changes
 
     // Stores the current ViewModelStoreOwner
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
@@ -124,14 +128,22 @@ private fun AlarmsScreenContent(
 
     // State for the horizontal pager
     val pagerState = rememberPagerState(
+        initialPage = if (isAlarmExact()) 0 else 1,
         pageCount = { AlarmsTabs.entries.size }
     )
+
+    // Value that holds the pagers current page
+    val savedPageIndex = rememberSaveable { mutableIntStateOf(pagerState.currentPage) }
 
     // Launched effect that observes with a Snapshot changes in the pager state' current page
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { newPage ->
-            // Update the isAlarmExact state based
-            changeAlarmAccuracy(newPage == 0)
+            // If savedPageIndex is different than the newPage, update the savedPageIndex and the alarm accuracy
+            if (savedPageIndex.intValue != newPage) {
+                savedPageIndex.intValue = newPage
+                // Update the isAlarmExact state based
+                changeAlarmAccuracy(newPage == 0)
+            }
         }
     }
 
