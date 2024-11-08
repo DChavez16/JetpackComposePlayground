@@ -60,7 +60,6 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Fix unwanted alarm type update when device orientation changes
     // TODO Fix unwanted ELAPSED_TIME alarm trigger time unwanted update when device orientation changes
     // TODO Fix unwanted RTC alarm trigger time unwanted update when device orientation changes
 
@@ -133,14 +132,14 @@ private fun AlarmsScreenContent(
     )
 
     // Value that holds the pagers current page
-    val savedPageIndex = rememberSaveable { mutableIntStateOf(pagerState.currentPage) }
+    var savedPageIndex by rememberSaveable { mutableIntStateOf(if(isAlarmExact()) 0 else 1) }
 
     // Launched effect that observes with a Snapshot changes in the pager state' current page
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { newPage ->
             // If savedPageIndex is different than the newPage, update the savedPageIndex and the alarm accuracy
-            if (savedPageIndex.intValue != newPage) {
-                savedPageIndex.intValue = newPage
+            if (savedPageIndex != newPage) {
+                savedPageIndex = newPage
                 // Update the isAlarmExact state based
                 changeAlarmAccuracy(newPage == 0)
             }
@@ -170,12 +169,12 @@ private fun AlarmsScreenContent(
         ) {
             // Tab row to select between Exact and Inexact Alarm
             SecondaryTabRow(
-                selectedTabIndex = if (isAlarmExact()) 0 else 1
+                selectedTabIndex = savedPageIndex
             ) {
                 AlarmsTabs.entries.forEachIndexed { index, currentTab ->
                     Tab(
-                        selected = pagerState.currentPage == index,
-                        enabled = pagerState.currentPage != index,
+                        selected = savedPageIndex == index,
+                        enabled = savedPageIndex != index,
                         text = {
                             Text(
                                 text = currentTab.text,
