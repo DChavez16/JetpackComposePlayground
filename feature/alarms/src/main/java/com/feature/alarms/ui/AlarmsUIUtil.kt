@@ -46,10 +46,12 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -95,10 +97,18 @@ internal fun AlarmTypeSelectors(
         pageCount = { 2 }
     )
 
+    // Value that holds the pagers current page
+    val savedPageIndex = rememberSaveable { mutableIntStateOf(pagerState.currentPage) }
+
     // Launched effect that observes with a Snapshot changes in the pager state' current page
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect {
-            onAlarmTypeInvokeTimeTypeChange(it == 0)
+        snapshotFlow { pagerState.currentPage }.collect { newPage ->
+            // If savedPageIndex is different than the newPage, update the savedPageIndex and the alarm type
+            if (savedPageIndex.intValue != newPage) {
+                savedPageIndex.intValue = newPage
+                // Update the isAlarmExact state based
+                onAlarmTypeInvokeTimeTypeChange(newPage == 0)
+            }
         }
     }
 
