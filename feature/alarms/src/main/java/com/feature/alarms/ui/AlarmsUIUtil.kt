@@ -413,39 +413,63 @@ internal fun ElapsedTimePicker(
     // State that enables, disables the user scroll of the seconds pager
     var secondsUserScrollEnabled by remember { mutableStateOf(true) }
 
+    // Value that holds the pagers current page
+    val hoursSavedPageIndex = rememberSaveable { mutableIntStateOf(hoursPagerState.currentPage) }
+    // Value that holds the pagers current page
+    val minutesSavedPageIndex =
+        rememberSaveable { mutableIntStateOf(minutesPagerState.currentPage) }
+    // Value that holds the pagers current page
+    val secondsSavedPageIndex =
+        rememberSaveable { mutableIntStateOf(secondsPagerState.currentPage) }
+
     // Launched effect that observes with a Snapshot changes in the pager state' current pages
     LaunchedEffect(hoursPagerState) {
         snapshotFlow { hoursPagerState.currentPage }.collect { newPage ->
-            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
-            onCurrentTimeInMillisChange(
-                (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
-            )
+            // If hoursSavedPageIndex is different than the newPage, update the hoursSavedPageIndex and the alarm's hours
+            if (hoursSavedPageIndex.intValue != newPage) {
+                hoursSavedPageIndex.intValue = newPage
+
+                // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+                onCurrentTimeInMillisChange(
+                    (newPage * 3600000L) + (minutesPagerState.currentPage * 60000L) + (secondsPagerState.currentPage * 1000L)
+                )
+            }
         }
     }
     LaunchedEffect(minutesPagerState) {
         snapshotFlow { minutesPagerState.currentPage }.collect { newPage ->
-            // If the time picker is a window range selection AND the new page is 58
-            if (isChooseWindowRangeVariant && newPage == 58) {
-                // Scroll the seconds pager to 0
-                secondsPagerState.scrollToPage(0)
-                // Disable the user scroll of the seconds pager
-                secondsUserScrollEnabled = false
-            }
-            // Else, enable it
-            else secondsUserScrollEnabled = true
+            // If minutesSavedPageIndex is different than the newPage, update the minutesSavedPageIndex and the alarm's minutes
+            if (minutesSavedPageIndex.intValue != newPage) {
+                minutesSavedPageIndex.intValue = newPage
 
-            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
-            onCurrentTimeInMillisChange(
-                (hoursPagerState.currentPage * 3600000L) + (newPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (secondsPagerState.currentPage * 1000L)
-            )
+                // If the time picker is a window range selection AND the new page is 58
+                secondsUserScrollEnabled = if (isChooseWindowRangeVariant && newPage == 58) {
+                    // Scroll the seconds pager to 0
+                    secondsPagerState.scrollToPage(0)
+                    // Disable the user scroll of the seconds pager
+                    false
+                }
+                // Else, enable it
+                else true
+
+                // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+                onCurrentTimeInMillisChange(
+                    (hoursPagerState.currentPage * 3600000L) + (newPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (secondsPagerState.currentPage * 1000L)
+                )
+            }
         }
     }
     LaunchedEffect(secondsPagerState) {
         snapshotFlow { secondsPagerState.currentPage }.collect { newPage ->
-            // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
-            onCurrentTimeInMillisChange(
-                (hoursPagerState.currentPage * 3600000L) + (minutesPagerState.currentPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (newPage * 1000L)
-            )
+            // If secondsSavedPageIndex is different than the newPage, update the secondsSavedPageIndex and the alarm's seconds
+            if (secondsSavedPageIndex.intValue != newPage) {
+                secondsSavedPageIndex.intValue = newPage
+
+                // Return the total of this pager current page's value as hours in millis, plus the value for the rest of the pagers
+                onCurrentTimeInMillisChange(
+                    (hoursPagerState.currentPage * 3600000L) + (minutesPagerState.currentPage.plus(if (isChooseWindowRangeVariant) 2 else 0) * 60000L) + (newPage * 1000L)
+                )
+            }
         }
     }
 
