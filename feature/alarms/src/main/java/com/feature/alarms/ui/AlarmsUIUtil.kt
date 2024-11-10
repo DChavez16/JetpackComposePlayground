@@ -413,12 +413,12 @@ internal fun ElapsedTimePicker(
     // State that enables, disables the user scroll of the seconds pager
     var secondsUserScrollEnabled by remember { mutableStateOf(true) }
 
-    // Value that holds the pagers current page
+    // Value that holds the hours pager current page
     val hoursSavedPageIndex = rememberSaveable { mutableIntStateOf(hoursPagerState.currentPage) }
-    // Value that holds the pagers current page
+    // Value that holds the minutes pager current page
     val minutesSavedPageIndex =
         rememberSaveable { mutableIntStateOf(minutesPagerState.currentPage) }
-    // Value that holds the pagers current page
+    // Value that holds the seconds pager current page
     val secondsSavedPageIndex =
         rememberSaveable { mutableIntStateOf(secondsPagerState.currentPage) }
 

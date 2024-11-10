@@ -60,8 +60,7 @@ fun AlarmsScreen(
     onMenuButtonClick: () -> Unit
 ) {
 
-    // TODO Fix unwanted ELAPSED_TIME alarm trigger time unwanted update when device orientation changes
-    // TODO Fix unwanted RTC alarm trigger time unwanted update when device orientation changes
+    // TODO Add feedback when an alarm has started
 
     // Stores the current ViewModelStoreOwner
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
