@@ -58,6 +58,7 @@
             <option value="$PROJECT_DIR$/feature/persistentWork" />
             <option value="$PROJECT_DIR$/feature/remoteDatabase" />
             <option value="$PROJECT_DIR$/feature/themes" />
+            <option value="$PROJECT_DIR$/feature/widgets" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />
