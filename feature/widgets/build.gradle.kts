@@ -12,6 +12,7 @@ android {
 dependencies {
     // Dependencies
     implementation(projects.core.ui)
+    implementation(libs.bundles.glaceMaterial3)
 
     // Testing dependencies
     testImplementation(projects.core.testing)
