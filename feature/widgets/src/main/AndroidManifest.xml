@@ -4,6 +4,7 @@
     <application>
         <!-- Receiver for the 'IndividualNoteWidget' -->
         <receiver android:name=".receiver.IndividualNoteReceiver"
+            android:label="@string/individual_note_widget_label"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -15,6 +16,7 @@
 
         <!-- Receiver for the 'AllNotesWidget' -->
         <receiver android:name=".receiver.AllNotesReceiver"
+            android:label="@string/all_notes_widget_label"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

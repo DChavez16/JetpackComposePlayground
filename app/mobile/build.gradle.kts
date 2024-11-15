@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.feature.dataPersistence)
     implementation(projects.feature.persistentWork)
     implementation(projects.feature.alarms)
+    implementation(projects.feature.widgets)
 
     // Data
     implementation(projects.data.theme)
