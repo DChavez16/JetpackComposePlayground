@@ -21,7 +21,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             // Android Configuration
             extensions.configure<ApplicationExtension> {
                 configureAndroid(commonExtension = this)
-                defaultConfig.targetSdk = 34
+                defaultConfig.targetSdk = 35
                 @Suppress("UnstableApiUsage")
                 testOptions.animationsDisabled = true
             }
