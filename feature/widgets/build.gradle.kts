@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.playground.feature)
     // Library Compose
     alias(libs.plugins.playground.library.compose)
+    // Hilt
+    alias(libs.plugins.playground.hilt)
 }
 
 android {
@@ -12,7 +14,11 @@ android {
 dependencies {
     // Dependencies
     implementation(projects.core.ui)
+    implementation(projects.data.notes)
     implementation(libs.bundles.glaceMaterial3)
+
+    // Core dependencies
+    implementation(projects.core.model)
 
     // Testing dependencies
     testImplementation(projects.core.testing)
