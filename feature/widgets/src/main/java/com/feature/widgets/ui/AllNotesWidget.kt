@@ -23,52 +23,45 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.example.model.Note
-import com.example.notes.RemoteNoteRepository
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
+import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+private const val TAG = "AllNotesWidget"
 
 class AllNotesWidget() : GlanceAppWidget() {
 
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface RepositoryEntryPoint {
-        fun getRepository(): RemoteNoteRepository
-    }
-
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
-        Log.i("AllNotesWidget", "AllNotesWidget started")
+        Log.i(TAG, "AllNotesWidget started")
 
         val notesEntryPoint = EntryPointAccessors.fromApplication(
-            context.applicationContext, RepositoryEntryPoint::class.java,
+            context.applicationContext, WidgetsEntryPoint::class.java,
         )
 
         provideContent {
             val coroutineScope = rememberCoroutineScope()
-            val noteRepository = notesEntryPoint.getRepository()
-            var notesUiState =
-                remember { MutableStateFlow<AllNotesWidgetUiState>(AllNotesWidgetUiState.Loading) }
+            val noteRepository = notesEntryPoint.getNoteRepository()
+            var notesUiState = remember {
+                MutableStateFlow<AllNotesWidgetUiState>(AllNotesWidgetUiState.Loading)
+            }
 
             LaunchedEffect(Unit) {
                 coroutineScope.launch {
                     try {
                         notesUiState.value = AllNotesWidgetUiState.Loading
-                        Log.i("AllNotesWidget", "Retreiving notes")
+                        Log.i(TAG, "Retreiving notes")
                         notesUiState.value =
                             AllNotesWidgetUiState.Success(noteRepository.getNotes())
-                        Log.i("AllNotesWidget", "Notes succesfully retrieved")
+                        Log.i(TAG, "Notes succesfully retrieved")
                     } catch (e: IOException) {
                         notesUiState.value = AllNotesWidgetUiState.Error(e.message.toString())
-                        Log.e("AllNotesWidget", "IO Exception error: ${e.message}")
+                        Log.e(TAG, "IO Exception error: ${e.message}")
                     } catch (e: Exception) {
                         notesUiState.value = AllNotesWidgetUiState.Error(e.message.toString())
-                        Log.e("AllNotesWidget", "Exception error: ${e.message}")
+                        Log.e(TAG, "Exception error: ${e.message}")
                     }
                 }
             }
@@ -77,7 +70,6 @@ class AllNotesWidget() : GlanceAppWidget() {
                 notesUiState = notesUiState.collectAsState().value,
                 retryButtonClicked = {
                     coroutineScope.launch {
-                        Log.d("AllNotesWidget", "retryButtonClicked")
                         AllNotesWidget().updateAll(context)
                     }
                 }
@@ -99,7 +91,10 @@ private fun AllNotesWidgetContent(
             retryButtonClicked = retryButtonClicked
         )
 
-        is AllNotesWidgetUiState.Success -> WidgetSuccessContent(notesUiState.notes, retryButtonClicked)
+        is AllNotesWidgetUiState.Success -> WidgetSuccessContent(
+            notesUiState.notes,
+            retryButtonClicked
+        )
     }
 }
 
@@ -161,6 +156,7 @@ private fun WidgetSuccessContent(notesList: List<Note>, retryButtonClicked: () -
 }
 
 
+// Helper UI State
 private sealed interface AllNotesWidgetUiState {
     data class Success(val notes: List<Note>) : AllNotesWidgetUiState
     data class Error(val errorMessage: String) : AllNotesWidgetUiState
