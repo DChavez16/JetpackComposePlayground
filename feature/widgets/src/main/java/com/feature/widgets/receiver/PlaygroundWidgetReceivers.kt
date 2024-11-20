@@ -6,9 +6,12 @@ import android.content.Intent
 import android.util.Log
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.glance.GlanceId
+import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
@@ -26,6 +29,8 @@ import javax.inject.Inject
 //https://stackoverflow.com/questions/71381707/how-to-create-an-instance-of-room-dao-or-repository-or-viewmodel-in-glanceappwid/72168589#72168589
 //&
 //https://stackoverflow.com/questions/75511282/display-data-from-database-room-in-widget-glance-using-jetpack-compose
+
+// TODO Separate the receiers for both widgets in different classes
 
 // Receiver for the 'IndividualNoteWidget'
 @AndroidEntryPoint
@@ -62,8 +67,10 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        // Retreive pinned note
-        retreivePinnedNote(context)
+        if(intent.action == IndividualNoteRefreshCallback.UPDATE_ACTION) {
+            // Retreive pinned note
+            retreivePinnedNote(context)
+        }
     }
 
     // Function to retreive the pinned note
@@ -77,12 +84,12 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
             glanceId.let {
                 // Get the pinned note id
                 val prefs = getAppWidgetState(context, PreferencesGlanceStateDefinition, it)
-                val pinnedNoteId = prefs[PINNED_NOTE_ID]
+                val pinnedNoteId = prefs[PINNED_NOTE_ID] ?: -1
                 Log.d("IndividualNoteReceiver", "Pinned note id: $pinnedNoteId")
 
                 // Obtain the note with the given id from the repository
                 val note: Note? =
-                    noteRepository.getNotes().find { it.id == (pinnedNoteId?.toLong() ?: -1) }
+                    noteRepository.getNotes().find { it.id == (pinnedNoteId.toLong()) }
                 Log.d("IndividualNoteReceiver", "Retreived note id: ${note?.id ?: "null"}")
 
                 // Sets the note title as the PINNED_NOTE_TITLE in the Widget's preferences
@@ -95,8 +102,29 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
                         )
                     }
                 }
+
+                glanceAppWidget.update(context, glanceId)
             }
         }
+    }
+}
+
+class IndividualNoteRefreshCallback : ActionCallback {
+
+    companion object {
+        const val UPDATE_ACTION = "updateAction"
+    }
+
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters
+    ) {
+
+        val intent = Intent(context, IndividualNoteReceiver::class.java).apply {
+            action = UPDATE_ACTION
+        }
+        context.sendBroadcast(intent)
     }
 }
 

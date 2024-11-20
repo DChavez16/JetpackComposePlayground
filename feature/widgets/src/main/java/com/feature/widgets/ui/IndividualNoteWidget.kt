@@ -8,8 +8,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
@@ -23,9 +26,12 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import com.feature.widgets.activity.PinNoteActivity
 import com.feature.widgets.receiver.IndividualNoteReceiver
+import com.feature.widgets.receiver.IndividualNoteRefreshCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
 
 private const val TAG = "IndividualNoteWidget"
 
@@ -52,20 +58,10 @@ class IndividualNoteWidget : GlanceAppWidget() {
                             id
                         ) { prefs ->
                             prefs.toMutablePreferences().apply {
-                                Log.d(
-                                    TAG,
-                                    "PINNED_NOTE_ID preferences before changes ${this[IndividualNoteReceiver.PINNED_NOTE_ID]}"
-                                )
                                 this[IndividualNoteReceiver.PINNED_NOTE_ID] =
                                     this[IndividualNoteReceiver.PINNED_NOTE_ID]?.plus(1) ?: -1
-                                Log.d(
-                                    TAG,
-                                    "PINNED_NOTE_ID preferences changed to ${this[IndividualNoteReceiver.PINNED_NOTE_ID]}"
-                                )
                             }
                         }
-
-                        IndividualNoteWidget().updateAll(context)
                     }
                 }
             )
@@ -80,26 +76,42 @@ private fun IndividualNoteWidgetContent(
     updatePinnedNote: () -> Unit
 ) {
     when (noteTitle) {
-        "" -> WidgetErrorContent("No pinned note", updatePinnedNote)
-        null -> WidgetErrorContent("Connection error", updatePinnedNote)
+        "" -> WidgetNoPinnedNoteContent()
+        null -> WidgetConnectionErrorContent()
         else -> WidgetSuccessContent(noteTitle, updatePinnedNote)
     }
 }
 
 @Composable
-private fun WidgetErrorContent(
-    errorMessage: String,
-    onUpdatePinnedNoteClick: () -> Unit
-) {
+private fun WidgetConnectionErrorContent(updatePinnedNote: () -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
             .background(color = Color.Red)
             .fillMaxSize()
-            .clickable(onUpdatePinnedNoteClick)
+            .clickable(actionRunCallback<IndividualNoteRefreshCallback>())
     ) {
         Text(
-            text = errorMessage,
+            text = "Connection error",
+            style = TextStyle(
+                color = ColorProvider(day = Color.White, night = Color.White),
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Composable
+private fun WidgetNoPinnedNoteContent() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = GlanceModifier
+            .background(color = Color.Red)
+            .fillMaxSize()
+            .clickable(actionStartActivity<PinNoteActivity>())
+    ) {
+        Text(
+            text = "No pinned note",
             style = TextStyle(
                 color = ColorProvider(day = Color.White, night = Color.White),
                 textAlign = TextAlign.Center

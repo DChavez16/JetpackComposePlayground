@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Activity -->
+    <string name="title_activity_pin_note">PinNoteActivity</string>
+
+    <!-- Widgets metadata -->
     <string name="individual_note_widget_label">Pinned note</string>
     <string name="individual_note_widget_description">Pin an important note into your how screen!!</string>
     <string name="all_notes_widget_label">All notes</string>

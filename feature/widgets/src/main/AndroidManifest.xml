@@ -2,28 +2,38 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+        <activity
+            android:name=".activity.PinNoteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_pin_note" />
+
         <!-- Receiver for the 'IndividualNoteWidget' -->
-        <receiver android:name=".receiver.IndividualNoteReceiver"
-            android:label="@string/individual_note_widget_label"
-            android:exported="true">
+        <receiver
+            android:name=".receiver.IndividualNoteReceiver"
+            android:exported="true"
+            android:label="@string/individual_note_widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/individual_note_widget_info"/>
+                android:resource="@xml/individual_note_widget_info" />
         </receiver>
 
         <!-- Receiver for the 'AllNotesWidget' -->
-        <receiver android:name=".receiver.AllNotesReceiver"
-            android:label="@string/all_notes_widget_label"
-            android:exported="true">
+        <receiver
+            android:name=".receiver.AllNotesReceiver"
+            android:exported="true"
+            android:label="@string/all_notes_widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/all_notes_widget_info"/>
+                android:resource="@xml/all_notes_widget_info" />
         </receiver>
     </application>
+
 </manifest>
