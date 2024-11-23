@@ -79,7 +79,7 @@ class IndividualNoteWidget : GlanceAppWidget() {
             LaunchedEffect(Unit) {
                 coroutineScope.launch(Dispatchers.IO) {
                     // If the pinned note is -1
-                    if (pinnedNoteId == -1) {
+                    if (pinnedNoteId.toInt() == -1) {
                         // Set the notesUiState as NoPinnedNote
                         notesUiState.value = NoPinnedNote
                         Log.i(TAG, "No pinned note id saved")
@@ -134,10 +134,10 @@ class IndividualNoteWidget : GlanceAppWidget() {
 
 @Composable
 private fun IndividualNoteWidgetContent(
-    pinnedNoteId: Int,
+    pinnedNoteId: Long,
     noteUiState: IndividualNoteWidgetUiState,
 ) {
-    if (pinnedNoteId == -1) NoPinnedNoteScreen()
+    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen()
     else when (noteUiState) {
         is Loading -> LoadingScreen()
         is NoPinnedNote -> NoteNotFoundScreen()

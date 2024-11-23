@@ -3,18 +3,22 @@ package com.feature.widgets.receiver
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.notes.RemoteNoteRepository
 import com.feature.widgets.ui.AllNotesWidget
 import com.feature.widgets.ui.IndividualNoteWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -31,7 +35,7 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
 
     // Preferences keys
     companion object {
-        val PINNED_NOTE_ID = intPreferencesKey("selected_note_id")
+        val PINNED_NOTE_ID = longPreferencesKey("selected_note_id")
     }
 
     // Inject NoteRepository
@@ -50,10 +54,11 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
 
+    // Receive actions
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        if(intent.action == UpdatePinnedNoteIdCallback.UPDATE_PINNED_NOTE_ID) {
+        if (intent.action == UpdatePinnedNoteIdCallback.UPDATE_PINNED_NOTE_ID) {
             // Update the pinned note id in the Widget parameters
             updatePinnedNoteId(
                 context,
@@ -63,16 +68,26 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
         }
     }
 
+    // Update the pinned note id in the given's Widget parameters
     fun updatePinnedNoteId(
         context: Context,
         widgetIdInt: Int,
         newPinnedNoteId: Long,
     ) {
-        // Update the pinned note id in the Widget parameters
-        
+        coroutineScope.launch {
+            // Get widget to update id
+            val widgetId = GlanceAppWidgetManager(context).getGlanceIdBy(widgetIdInt)
 
-        // Refresh the widget
+            // Update the pinned note id in the Widget parameters
+            updateAppWidgetState(context, PreferencesGlanceStateDefinition, widgetId) { prefs ->
+                prefs.toMutablePreferences().apply {
+                    this[PINNED_NOTE_ID] = newPinnedNoteId
+                }
+            }
 
+            // Refresh the widget
+            IndividualNoteWidget().update(context, widgetId)
+        }
     }
 }
 
@@ -92,7 +107,10 @@ class UpdatePinnedNoteIdCallback : ActionCallback {
             action = UPDATE_PINNED_NOTE_ID
         }
 
-        intent.putExtra("new_pinned_note_id", parameters[ActionParameters.Key<Long>("new_pinned_note_id")])
+        intent.putExtra(
+            "new_pinned_note_id",
+            parameters[ActionParameters.Key<Long>("new_pinned_note_id")]
+        )
         intent.putExtra("widget_id_int", parameters[ActionParameters.Key<Int>("widget_id_int")])
 
         context.sendBroadcast(intent)
