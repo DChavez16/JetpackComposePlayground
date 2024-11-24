@@ -1,15 +1,13 @@
 package com.feature.widgets.receiver
 
 import android.appwidget.AppWidgetManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.glance.GlanceId
-import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.notes.RemoteNoteRepository
@@ -58,7 +56,7 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        if (intent.action == UpdatePinnedNoteIdCallback.UPDATE_PINNED_NOTE_ID) {
+        if (intent.action == UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID) {
             // Update the pinned note id in the Widget parameters
             updatePinnedNoteId(
                 context,
@@ -91,31 +89,54 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     }
 }
 
-class UpdatePinnedNoteIdCallback : ActionCallback {
+class UpdatePinnedNoteIdBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         const val UPDATE_PINNED_NOTE_ID = "updatePinnedNoteId"
     }
 
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters
-    ) {
+    override fun onReceive(context: Context?, intent: Intent?) {
 
-        val intent = Intent(context, IndividualNoteReceiver::class.java).apply {
-            action = UPDATE_PINNED_NOTE_ID
+        if (intent?.action == UPDATE_PINNED_NOTE_ID) {
+            val widgetReceiverIntent = Intent(context, IndividualNoteReceiver::class.java)
+                .apply { action = UPDATE_PINNED_NOTE_ID }
+
+            widgetReceiverIntent.putExtra(
+                "new_pinned_note_id",
+                intent.getLongExtra("new_pinned_note_id", -1)
+            )
+            widgetReceiverIntent.putExtra("widget_id", intent.getIntExtra("widget_id_int", -1))
+
+            context?.sendBroadcast(widgetReceiverIntent)
         }
-
-        intent.putExtra(
-            "new_pinned_note_id",
-            parameters[ActionParameters.Key<Long>("new_pinned_note_id")]
-        )
-        intent.putExtra("widget_id_int", parameters[ActionParameters.Key<Int>("widget_id_int")])
-
-        context.sendBroadcast(intent)
     }
 }
+
+//class UpdatePinnedNoteIdCallback : ActionCallback {
+//
+//    companion object {
+//        const val UPDATE_PINNED_NOTE_ID = "updatePinnedNoteId"
+//    }
+//
+//    override suspend fun onAction(
+//        context: Context,
+//        glanceId: GlanceId,
+//        parameters: ActionParameters
+//    ) {
+//
+//        val intent = Intent(context, IndividualNoteReceiver::class.java).apply {
+//            action = UPDATE_PINNED_NOTE_ID
+//        }
+//
+//        intent.putExtra(
+//            "new_pinned_note_id",
+//            parameters[ActionParameters.Key<Long>("new_pinned_note_id")]
+//        )
+//        intent.putExtra("widget_id_int", parameters[ActionParameters.Key<Int>("widget_id_int")])
+//
+//        context.sendBroadcast(intent)
+//    }
+//}
 
 
 // Receiver for the 'AllNotesWidget'

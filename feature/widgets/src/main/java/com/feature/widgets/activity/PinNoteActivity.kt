@@ -1,9 +1,10 @@
 package com.feature.widgets.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,15 +14,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.ui.theme.AppTheme
 import com.example.ui.theme.PreviewAppTheme
+import com.feature.widgets.receiver.UpdatePinnedNoteIdBroadcastReceiver
 
 class PinNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        val glanceWidgetId = intent.getIntExtra("GLANCE_ID_INT_KEY", -1)
+
         setContent {
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
+                        a = {
+                            val intent =
+                                Intent(UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID).apply {
+                                    putExtra("new_pinned_note_id", -1)
+                                    putExtra("widget_id", glanceWidgetId)
+                                }
+
+                            sendBroadcast(intent)
+                        },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -31,10 +44,13 @@ class PinNoteActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(modifier: Modifier = Modifier) {
+fun Greeting(
+    a: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Text(
         text = "Pick note!!!!1!11!",
-        modifier = modifier
+        modifier = modifier.clickable { a }
     )
 }
 
@@ -42,6 +58,6 @@ fun Greeting(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     PreviewAppTheme {
-        Greeting()
+        Greeting({})
     }
 }

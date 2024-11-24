@@ -9,20 +9,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.Preferences
+import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
+import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
+import com.feature.widgets.activity.PinNoteActivity
 import com.feature.widgets.receiver.IndividualNoteReceiver
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.ConnectionError
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.Loading
@@ -126,6 +133,7 @@ class IndividualNoteWidget : GlanceAppWidget() {
             IndividualNoteWidgetContent(
                 pinnedNoteId = pinnedNoteId,
                 noteUiState = notesUiState.collectAsState().value,
+                glanceId = GlanceAppWidgetManager(context).getAppWidgetId(id)
             )
         }
     }
@@ -136,8 +144,11 @@ class IndividualNoteWidget : GlanceAppWidget() {
 private fun IndividualNoteWidgetContent(
     pinnedNoteId: Long,
     noteUiState: IndividualNoteWidgetUiState,
+    glanceId: Int
 ) {
-    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen()
+    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(
+        glanceId = glanceId
+    )
     else when (noteUiState) {
         is Loading -> LoadingScreen()
         is NoPinnedNote -> NoteNotFoundScreen()
@@ -147,9 +158,15 @@ private fun IndividualNoteWidgetContent(
 }
 
 @Composable
-private fun NoPinnedNoteScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
+private fun NoPinnedNoteScreen(
+    glanceId: Int
+) {
+
+    val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
+
+    Column(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
             .background(color = Color.Gray)
             .fillMaxSize()
@@ -159,6 +176,15 @@ private fun NoPinnedNoteScreen() {
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             )
+        )
+
+        Button(
+            text = "Pin note",
+            onClick = {
+                actionStartActivity<PinNoteActivity>(
+                    actionParametersOf(glanceIdKey to glanceId)
+                )
+            }
         )
     }
 }
