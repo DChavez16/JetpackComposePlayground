@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlancePreviewApi::class)
+
 package com.feature.widgets.ui
 
 import android.content.Context
@@ -12,6 +14,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
@@ -25,9 +28,12 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.model.Note
+import com.example.model.fakeNotesList
 import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
 import com.feature.widgets.activity.PinNoteActivity
 import com.feature.widgets.receiver.IndividualNoteReceiver
@@ -258,11 +264,51 @@ private fun SuccessScreen(note: Note) {
 }
 
 
-// Helper UI Stete
+// Helper UI State
 private sealed interface IndividualNoteWidgetUiState {
     data class Success(val note: Note) : IndividualNoteWidgetUiState
     data class ConnectionError(val errorMessage: String) : IndividualNoteWidgetUiState
     data object NoPinnedNote : IndividualNoteWidgetUiState
     data object Loading : IndividualNoteWidgetUiState
+}
 
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun NoPinnedNoteScreenPreview() {
+    GlanceTheme {
+        NoPinnedNoteScreen(glanceId = 1)
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun LoadingScreenPreview() {
+    GlanceTheme {
+        LoadingScreen()
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun NoteNotFoundScreenPreview() {
+    GlanceTheme {
+        NoteNotFoundScreen()
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun ConnectionErrorScreenPreview() {
+    GlanceTheme {
+        ConnectionErrorScreen("Error message")
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun SuccessScreenPreview() {
+    GlanceTheme {
+        SuccessScreen(fakeNotesList[0])
+    }
 }

@@ -110,6 +110,8 @@ compose-color-picker-android = { module = "com.godaddy.android.colorpicker:compo
 ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
 # Glance
 glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
+glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "glance" }
+glance-preview = { module = "androidx.glance:glance-preview", version.ref = "glance" }
 glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 # Unit Test
 junit = { module = "junit:junit", version.ref = "junitTest" }
@@ -192,5 +194,7 @@ androidTest = [
 ]
 glaceMaterial3 = [
     "glance-appwidget",
-    "glance-material3"
+    "glance-material3",
+    "glance-appwidget-preview",
+    "glance-preview"
 ]
