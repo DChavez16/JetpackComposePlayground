@@ -164,6 +164,23 @@ private fun IndividualNoteWidgetContent(
 }
 
 @Composable
+private fun IndividualNoteWidgetContentt(
+    pinnedNoteId: Long,
+    noteUiState: IndividualNoteWidgetUiState,
+    glanceId: Int
+) {
+    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(
+        glanceId = glanceId
+    )
+    else when (noteUiState) {
+        is Loading -> LoadingScreen()
+        is NoPinnedNote -> NoteNotFoundScreen()
+        is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
+        is Success -> SuccessScreen(noteUiState.note)
+    }
+}
+
+@Composable
 private fun NoPinnedNoteScreen(
     glanceId: Int
 ) {
@@ -277,7 +294,11 @@ private sealed interface IndividualNoteWidgetUiState {
 @Composable
 private fun NoPinnedNoteScreenPreview() {
     GlanceTheme {
-        NoPinnedNoteScreen(glanceId = 1)
+        IndividualNoteWidgetContent(
+            pinnedNoteId = -1,
+            noteUiState = NoPinnedNote,
+            glanceId = 1
+        )
     }
 }
 
@@ -285,7 +306,11 @@ private fun NoPinnedNoteScreenPreview() {
 @Composable
 private fun LoadingScreenPreview() {
     GlanceTheme {
-        LoadingScreen()
+        IndividualNoteWidgetContent(
+            pinnedNoteId = 1,
+            noteUiState = Loading,
+            glanceId = 1
+        )
     }
 }
 
@@ -293,7 +318,11 @@ private fun LoadingScreenPreview() {
 @Composable
 private fun NoteNotFoundScreenPreview() {
     GlanceTheme {
-        NoteNotFoundScreen()
+        IndividualNoteWidgetContent(
+            pinnedNoteId = 1,
+            noteUiState = NoPinnedNote,
+            glanceId = 1
+        )
     }
 }
 
@@ -301,7 +330,11 @@ private fun NoteNotFoundScreenPreview() {
 @Composable
 private fun ConnectionErrorScreenPreview() {
     GlanceTheme {
-        ConnectionErrorScreen("Error message")
+        IndividualNoteWidgetContent(
+            pinnedNoteId = 1,
+            noteUiState = ConnectionError("Connection error"),
+            glanceId = 1
+        )
     }
 }
 
@@ -309,6 +342,10 @@ private fun ConnectionErrorScreenPreview() {
 @Composable
 private fun SuccessScreenPreview() {
     GlanceTheme {
-        SuccessScreen(fakeNotesList[0])
+        IndividualNoteWidgetContent(
+            pinnedNoteId = 1,
+            noteUiState = Success(fakeNotesList[0]),
+            glanceId = 1
+        )
     }
 }
