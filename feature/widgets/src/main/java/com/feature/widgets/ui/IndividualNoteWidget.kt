@@ -27,7 +27,9 @@ import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.Text
@@ -152,31 +154,30 @@ private fun IndividualNoteWidgetContent(
     noteUiState: IndividualNoteWidgetUiState,
     glanceId: Int
 ) {
-    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(
-        glanceId = glanceId
-    )
-    else when (noteUiState) {
-        is Loading -> LoadingScreen()
-        is NoPinnedNote -> NoteNotFoundScreen()
-        is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
-        is Success -> SuccessScreen(noteUiState.note)
-    }
-}
+    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId = glanceId)
+    else Column(
+        modifier = GlanceModifier.fillMaxSize().background(color = Color(red = 249, green = 208, blue = 59))
+    ) {
+        // Widget header
+        Row(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = GlanceModifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Individual Note Widget",
+                style = TextStyle(
+                    color = ColorProvider(day = Color.White, night = Color.White)
+                )
+            )
+        }
 
-@Composable
-private fun IndividualNoteWidgetContentt(
-    pinnedNoteId: Long,
-    noteUiState: IndividualNoteWidgetUiState,
-    glanceId: Int
-) {
-    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(
-        glanceId = glanceId
-    )
-    else when (noteUiState) {
-        is Loading -> LoadingScreen()
-        is NoPinnedNote -> NoteNotFoundScreen()
-        is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
-        is Success -> SuccessScreen(noteUiState.note)
+        // Content
+        when (noteUiState) {
+            is Loading -> LoadingScreen()
+            is NoPinnedNote -> NoteNotFoundScreen()
+            is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
+            is Success -> SuccessScreen(noteUiState.note)
+        }
     }
 }
 
@@ -217,7 +218,7 @@ private fun LoadingScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color.Yellow)
+            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
@@ -234,7 +235,7 @@ private fun NoteNotFoundScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color.Gray)
+            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
@@ -251,7 +252,7 @@ private fun ConnectionErrorScreen(errorMessage: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color.Red)
+            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
@@ -268,7 +269,7 @@ private fun SuccessScreen(note: Note) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color.Green)
+            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
