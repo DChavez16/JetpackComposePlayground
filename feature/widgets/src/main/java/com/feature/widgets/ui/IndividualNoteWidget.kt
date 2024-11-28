@@ -10,16 +10,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.components.SquareIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
@@ -30,6 +34,7 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.Text
@@ -37,6 +42,7 @@ import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.example.model.fakeNotesList
 import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
+import com.feature.widgets.R
 import com.feature.widgets.activity.PinNoteActivity
 import com.feature.widgets.receiver.IndividualNoteReceiver
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.ConnectionError
@@ -156,12 +162,16 @@ private fun IndividualNoteWidgetContent(
 ) {
     if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId = glanceId)
     else Column(
-        modifier = GlanceModifier.fillMaxSize().background(color = Color(red = 249, green = 208, blue = 59))
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(color = Color(red = 255, green = 227, blue = 120))
     ) {
         // Widget header
         Row(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = GlanceModifier.fillMaxWidth()
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .background(color = Color(red = 249, green = 208, blue = 59))
         ) {
             Text(
                 text = "Individual Note Widget",
@@ -215,18 +225,24 @@ private fun NoPinnedNoteScreen(
 
 @Composable
 private fun LoadingScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = GlanceModifier
-            .background(color = Color(red = 255, green = 227, blue = 120))
-            .fillMaxSize()
+    Column(
+        modifier = GlanceModifier.fillMaxSize().background(Color.Black.copy(alpha = 0.25f))
     ) {
-        Text(
-            text = "Loading...",
-            style = TextStyle(
-                color = ColorProvider(day = Color.Black, night = Color.Black)
+        Row(
+            horizontalAlignment = Alignment.End,
+            modifier = GlanceModifier
+                .fillMaxWidth()
+        ) {
+            CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
+                contentDescription = null,
+                onClick = { /*TODO*/ },
+                enabled = false,
+                backgroundColor = null,
+                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
+                modifier = GlanceModifier.size(width = 30.dp, height = 24.dp)
             )
-        )
+        }
     }
 }
 
@@ -235,7 +251,6 @@ private fun NoteNotFoundScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
@@ -252,7 +267,6 @@ private fun ConnectionErrorScreen(errorMessage: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(
@@ -269,7 +283,6 @@ private fun SuccessScreen(note: Note) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
-            .background(color = Color(red = 255, green = 227, blue = 120))
             .fillMaxSize()
     ) {
         Text(

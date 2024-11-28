@@ -13,12 +13,12 @@ android {
 
 dependencies {
     // Dependencies
-    implementation(projects.core.ui)
     implementation(projects.data.notes)
     implementation(libs.bundles.glaceMaterial3)
 
     // Core dependencies
     implementation(projects.core.model)
+    implementation(projects.core.ui)
 
     // Testing dependencies
     testImplementation(projects.core.testing)
