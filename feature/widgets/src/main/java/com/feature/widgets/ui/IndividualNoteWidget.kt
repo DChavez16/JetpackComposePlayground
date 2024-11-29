@@ -4,6 +4,7 @@ package com.feature.widgets.ui
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,18 +13,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
-import androidx.glance.Button
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
+import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.components.CircleIconButton
-import androidx.glance.appwidget.components.SquareIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
@@ -32,8 +33,10 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
@@ -202,47 +205,43 @@ private fun NoPinnedNoteScreen(
         verticalAlignment = Alignment.CenterVertically,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
-            .background(color = Color.Gray)
+            .background(color = Color(red = 191, green = 170, blue = 90))
             .fillMaxSize()
     ) {
         Text(
-            text = "No pinned note id saved",
+            text = glanceStringResource(R.string.individual_note_widget_no_pinned_note_label),
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             )
         )
 
-        Button(
-            text = "Pin note",
+        Spacer(GlanceModifier.height(16.dp))
+
+        CircleIconButton(
+            imageProvider = ImageProvider(R.drawable.baseline_push_pin),
             onClick = {
                 actionStartActivity<PinNoteActivity>(
                     actionParametersOf(glanceIdKey to glanceId)
                 )
-            }
+            },
+            backgroundColor = GlanceTheme.colors.primary,
+            contentColor = GlanceTheme.colors.onPrimary,
+            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_accesibility)
         )
     }
 }
 
 @Composable
 private fun LoadingScreen() {
-    Column(
-        modifier = GlanceModifier.fillMaxSize().background(Color.Black.copy(alpha = 0.25f))
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.25f))
     ) {
-        Row(
-            horizontalAlignment = Alignment.End,
-            modifier = GlanceModifier
-                .fillMaxWidth()
-        ) {
-            CircleIconButton(
-                imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
-                contentDescription = null,
-                onClick = { /*TODO*/ },
-                enabled = false,
-                backgroundColor = null,
-                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
-                modifier = GlanceModifier.size(width = 30.dp, height = 24.dp)
-            )
-        }
+        CircularProgressIndicator(
+            color = ColorProvider(day = Color.Gray, night = Color.Gray)
+        )
     }
 }
 
@@ -285,6 +284,22 @@ private fun SuccessScreen(note: Note) {
         modifier = GlanceModifier
             .fillMaxSize()
     ) {
+        Row(
+            horizontalAlignment = Alignment.End,
+            modifier = GlanceModifier
+                .fillMaxWidth()
+        ) {
+            CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
+                contentDescription = null,
+                onClick = { /*TODO*/ },
+                enabled = false,
+                backgroundColor = null,
+                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
+                modifier = GlanceModifier.size(width = 30.dp, height = 24.dp)
+            )
+        }
+
         Text(
             text = "Note title: ${note.title}",
             style = TextStyle(
@@ -362,4 +377,12 @@ private fun SuccessScreenPreview() {
             glanceId = 1
         )
     }
+}
+
+
+// Helper functions
+@Composable
+private fun glanceStringResource(@StringRes id: Int): String {
+    val context = LocalContext.current
+    return context.getString(id)
 }

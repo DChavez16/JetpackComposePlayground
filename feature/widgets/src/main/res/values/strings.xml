@@ -8,4 +8,8 @@
     <string name="individual_note_widget_description">Pin an important note into your how screen!!</string>
     <string name="all_notes_widget_label">All notes</string>
     <string name="all_notes_widget_description">Easily scroll through all your notes</string>
+
+    <!-- Individual Note Widget -->
+    <string name="individual_note_widget_no_pinned_note_label">No note pinned</string>
+    <string name="individual_note_widget_pin_note_accesibility">Pin a note to this Widget</string>"
 </resources>
