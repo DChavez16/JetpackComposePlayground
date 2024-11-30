@@ -187,7 +187,7 @@ private fun IndividualNoteWidgetContent(
         // Content
         when (noteUiState) {
             is Loading -> LoadingScreen()
-            is NoPinnedNote -> NoteNotFoundScreen()
+            is NoPinnedNote -> NoteNotFoundScreen(glanceId)
             is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
             is Success -> SuccessScreen(noteUiState.note)
         }
@@ -199,6 +199,7 @@ private fun NoPinnedNoteScreen(
     glanceId: Int
 ) {
 
+    // Action parameter key to pair with glanceId
     val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
 
     Column(
@@ -226,7 +227,7 @@ private fun NoPinnedNoteScreen(
             },
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
-            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_accesibility)
+            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
         )
     }
 }
@@ -246,17 +247,38 @@ private fun LoadingScreen() {
 }
 
 @Composable
-private fun NoteNotFoundScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
+private fun NoteNotFoundScreen(
+    glanceId: Int
+) {
+
+    // Action parameter key to pair with glanceId
+    val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
+
+    Column(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
             .fillMaxSize()
     ) {
         Text(
-            text = "Note not found",
+            text = glanceStringResource(R.string.individual_note_widget_note_not_found_label),
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             )
+        )
+
+        Spacer(GlanceModifier.height(16.dp))
+
+        CircleIconButton(
+            imageProvider = ImageProvider(R.drawable.baseline_push_pin),
+            onClick = {
+                actionStartActivity<PinNoteActivity>(
+                    actionParametersOf(glanceIdKey to glanceId)
+                )
+            },
+            backgroundColor = GlanceTheme.colors.primary,
+            contentColor = GlanceTheme.colors.onPrimary,
+            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
         )
     }
 }

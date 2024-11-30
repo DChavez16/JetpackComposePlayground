@@ -11,5 +11,6 @@
 
     <!-- Individual Note Widget -->
     <string name="individual_note_widget_no_pinned_note_label">No note pinned</string>
-    <string name="individual_note_widget_pin_note_accesibility">Pin a note to this Widget</string>"
+    <string name="individual_note_widget_pin_note_button_accesibility">Pin a note to this Widget</string>
+    <string name="individual_note_widget_note_not_found_label">Note not found</string>
 </resources>
