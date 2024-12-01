@@ -150,7 +150,12 @@ class IndividualNoteWidget : GlanceAppWidget() {
             IndividualNoteWidgetContent(
                 pinnedNoteId = pinnedNoteId,
                 noteUiState = notesUiState.collectAsState().value,
-                glanceId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+                glanceId = GlanceAppWidgetManager(context).getAppWidgetId(id),
+                updateWidget = {
+                    coroutineScope.launch {
+                        IndividualNoteWidget().update(context, id)
+                    }
+                }
             )
         }
     }
@@ -161,7 +166,8 @@ class IndividualNoteWidget : GlanceAppWidget() {
 private fun IndividualNoteWidgetContent(
     pinnedNoteId: Long,
     noteUiState: IndividualNoteWidgetUiState,
-    glanceId: Int
+    glanceId: Int,
+    updateWidget: () -> Unit = {}
 ) {
     if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId = glanceId)
     else Column(
@@ -188,7 +194,7 @@ private fun IndividualNoteWidgetContent(
         when (noteUiState) {
             is Loading -> LoadingScreen()
             is NoPinnedNote -> NoteNotFoundScreen(glanceId)
-            is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage)
+            is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage, updateWidget)
             is Success -> SuccessScreen(noteUiState.note)
         }
     }
@@ -259,6 +265,7 @@ private fun NoteNotFoundScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
             .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.25f))
     ) {
         Text(
             text = glanceStringResource(R.string.individual_note_widget_note_not_found_label),
@@ -284,17 +291,32 @@ private fun NoteNotFoundScreen(
 }
 
 @Composable
-private fun ConnectionErrorScreen(errorMessage: String) {
-    Box(
-        contentAlignment = Alignment.Center,
+private fun ConnectionErrorScreen(
+    errorMessage: String,
+    retryConnection: () -> Unit
+) {
+    Column(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = GlanceModifier
             .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.25f))
     ) {
         Text(
-            text = "Error: $errorMessage",
+            text = "${glanceStringResource(R.string.individual_note_widget_connection_error_label)} $errorMessage",
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             )
+        )
+
+        Spacer(GlanceModifier.height(16.dp))
+
+        CircleIconButton(
+            imageProvider = ImageProvider(R.drawable.baseline_cached),
+            onClick = retryConnection,
+            backgroundColor = GlanceTheme.colors.primary,
+            contentColor = GlanceTheme.colors.onPrimary,
+            contentDescription = glanceStringResource(R.string.individual_note_widget_retry_connection_button_accesibility)
         )
     }
 }

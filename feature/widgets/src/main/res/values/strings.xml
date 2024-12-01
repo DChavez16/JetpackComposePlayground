@@ -11,6 +11,8 @@
 
     <!-- Individual Note Widget -->
     <string name="individual_note_widget_no_pinned_note_label">No note pinned</string>
-    <string name="individual_note_widget_pin_note_button_accesibility">Pin a note to this Widget</string>
     <string name="individual_note_widget_note_not_found_label">Note not found</string>
+    <string name="individual_note_widget_connection_error_label">Connection error:</string>
+    <string name="individual_note_widget_pin_note_button_accesibility">Pin a note to this Widget</string>
+    <string name="individual_note_widget_retry_connection_button_accesibility">Retry to connect</string>
 </resources>
