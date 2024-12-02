@@ -37,6 +37,7 @@ import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
+import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
@@ -182,11 +183,13 @@ private fun IndividualNoteWidgetContent(
                 .fillMaxWidth()
                 .background(color = Color(red = 249, green = 208, blue = 59))
         ) {
-            Text(
-                text = "Individual Note Widget",
-                style = TextStyle(
-                    color = ColorProvider(day = Color.White, night = Color.White)
-                )
+            CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.thumb_tack_2_plain),
+                contentDescription = null,
+                onClick = {},
+                enabled = false,
+                backgroundColor = null,
+                modifier = GlanceModifier.height(24.dp)
             )
         }
 
@@ -324,7 +327,7 @@ private fun ConnectionErrorScreen(
 @Composable
 private fun SuccessScreen(note: Note) {
     Box(
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.TopStart,
         modifier = GlanceModifier
             .fillMaxSize()
     ) {
@@ -340,7 +343,7 @@ private fun SuccessScreen(note: Note) {
                 enabled = false,
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
-                modifier = GlanceModifier.size(width = 30.dp, height = 24.dp)
+                modifier = GlanceModifier.size(24.dp)
             )
         }
 
@@ -348,7 +351,8 @@ private fun SuccessScreen(note: Note) {
             text = "Note title: ${note.title}",
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
+            ),
+            modifier = GlanceModifier.fillMaxSize().padding(16.dp)
         )
     }
 }
