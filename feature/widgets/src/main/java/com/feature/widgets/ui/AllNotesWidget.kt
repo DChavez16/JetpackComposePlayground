@@ -23,7 +23,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.example.model.Note
-import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
+import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.feature.widgets.HiltEntryPoint
+package com.feature.widgets.hiltEntryPoint
 
 import com.example.notes.RemoteNoteRepository
 import dagger.hilt.EntryPoint

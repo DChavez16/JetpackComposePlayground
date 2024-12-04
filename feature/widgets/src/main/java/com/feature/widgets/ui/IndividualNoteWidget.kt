@@ -47,7 +47,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.example.model.fakeNotesList
-import com.feature.widgets.HiltEntryPoint.WidgetsEntryPoint
+import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import com.feature.widgets.R
 import com.feature.widgets.activity.PinNoteActivity
 import com.feature.widgets.receiver.IndividualNoteReceiver
@@ -172,6 +172,9 @@ private fun IndividualNoteWidgetContent(
     glanceId: Int,
     updateWidget: () -> Unit = {}
 ) {
+
+    // TODO Fix state always being ConnectionError
+
     if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId)
     else Column(
         modifier = GlanceModifier
@@ -191,6 +194,7 @@ private fun IndividualNoteWidgetContent(
                 onClick = {},
                 enabled = false,
                 backgroundColor = null,
+                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 modifier = GlanceModifier.height(24.dp)
             )
         }
@@ -311,7 +315,8 @@ private fun ConnectionErrorScreen(
             text = "${glanceStringResource(R.string.individual_note_widget_connection_error_label)} $errorMessage",
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
+            ),
+            maxLines = 2
         )
 
         Spacer(GlanceModifier.height(16.dp))
