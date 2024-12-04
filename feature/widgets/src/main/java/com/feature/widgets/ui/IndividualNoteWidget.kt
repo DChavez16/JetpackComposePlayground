@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -41,6 +42,7 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
+import androidx.glance.text.FontStyle
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.model.Note
@@ -170,7 +172,7 @@ private fun IndividualNoteWidgetContent(
     glanceId: Int,
     updateWidget: () -> Unit = {}
 ) {
-    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId = glanceId)
+    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId)
     else Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -198,7 +200,7 @@ private fun IndividualNoteWidgetContent(
             is Loading -> LoadingScreen()
             is NoPinnedNote -> NoteNotFoundScreen(glanceId)
             is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage, updateWidget)
-            is Success -> SuccessScreen(noteUiState.note)
+            is Success -> SuccessScreen(glanceId, noteUiState.note)
         }
     }
 }
@@ -325,7 +327,14 @@ private fun ConnectionErrorScreen(
 }
 
 @Composable
-private fun SuccessScreen(note: Note) {
+private fun SuccessScreen(
+    glanceId: Int,
+    note: Note
+) {
+
+    // Action parameter key to pair with glanceId
+    val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
+
     Box(
         contentAlignment = Alignment.TopStart,
         modifier = GlanceModifier
@@ -339,7 +348,11 @@ private fun SuccessScreen(note: Note) {
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
                 contentDescription = null,
-                onClick = { /*TODO*/ },
+                onClick = {
+                    actionStartActivity<PinNoteActivity>(
+                        actionParametersOf(glanceIdKey to glanceId)
+                    )
+                },
                 enabled = false,
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
@@ -348,8 +361,10 @@ private fun SuccessScreen(note: Note) {
         }
 
         Text(
-            text = "Note title: ${note.title}",
+            text = note.title,
             style = TextStyle(
+                fontSize = 28.sp,
+                fontStyle = FontStyle.Italic,
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             ),
             modifier = GlanceModifier.fillMaxSize().padding(16.dp)
