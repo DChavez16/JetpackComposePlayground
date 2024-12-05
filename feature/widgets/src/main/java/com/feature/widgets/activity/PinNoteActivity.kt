@@ -26,6 +26,7 @@ class PinNoteActivity : ComponentActivity() {
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
+                        glanceId = glanceWidgetId,
                         a = {
                             val intent =
                                 Intent(UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID).apply {
@@ -45,11 +46,12 @@ class PinNoteActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(
+    glanceId: Int,
     a: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = "Pick note!!!!1!11!",
+        text = "Glance id: $glanceId",
         modifier = modifier.clickable { a }
     )
 }
@@ -58,6 +60,6 @@ fun Greeting(
 @Composable
 fun GreetingPreview() {
     PreviewAppTheme {
-        Greeting({})
+        Greeting(-1, {})
     }
 }

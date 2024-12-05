@@ -34,7 +34,6 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
-import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -47,13 +46,14 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.example.model.fakeNotesList
-import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import com.feature.widgets.R
 import com.feature.widgets.activity.PinNoteActivity
+import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import com.feature.widgets.receiver.IndividualNoteReceiver
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.ConnectionError
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.Loading
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.NoPinnedNote
+import com.feature.widgets.ui.IndividualNoteWidgetUiState.NoteNotFound
 import com.feature.widgets.ui.IndividualNoteWidgetUiState.Success
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +63,7 @@ import okio.IOException
 
 // - NOTE RECOLLECTION USE CASE
 // Get pinned note id from preferences
-//  If the pinned id is -1, display 'no pinned note screen'
+//  If the pinned id is null (-1), display 'no pinned note screen'
 //  Else Try to get the note with the pinned id from the repository, display 'loading screen' in the meantime
 //      If note collection failed, display 'connection error screen', show button to retry connection (aka, update widget method)
 //      Else display 'success screen' if the note exists, or 'note no longer exists screen' otherwise
@@ -95,7 +95,7 @@ class IndividualNoteWidget : GlanceAppWidget() {
             val prefs = currentState<Preferences>()
 
             // Get the pinned note id from the preferences, set -1 if null
-            val pinnedNoteId = prefs[IndividualNoteReceiver.PINNED_NOTE_ID] ?: 0
+            val pinnedNoteId = prefs[IndividualNoteReceiver.PINNED_NOTE_ID] ?: -1
 
             // Start the notesUiState as Loading
             var notesUiState = remember {
@@ -124,8 +124,8 @@ class IndividualNoteWidget : GlanceAppWidget() {
                             // If the retreived note is null
                             notesUiState.value = if (retreivedNote == null) {
                                 Log.i(TAG, "The note with the pinned note id no longer exists")
-                                // Set the notesUiState as NoPinnedNote
-                                NoPinnedNote
+                                // Set the notesUiState as NoNoteFound
+                                NoteNotFound
                             } else {
                                 Log.i(
                                     TAG,
@@ -151,7 +151,6 @@ class IndividualNoteWidget : GlanceAppWidget() {
 
             // Individual note Widget content
             IndividualNoteWidgetContent(
-                pinnedNoteId = pinnedNoteId,
                 noteUiState = notesUiState.collectAsState().value,
                 glanceId = GlanceAppWidgetManager(context).getAppWidgetId(id),
                 updateWidget = {
@@ -167,42 +166,40 @@ class IndividualNoteWidget : GlanceAppWidget() {
 
 @Composable
 private fun IndividualNoteWidgetContent(
-    pinnedNoteId: Long,
     noteUiState: IndividualNoteWidgetUiState,
     glanceId: Int,
     updateWidget: () -> Unit = {}
 ) {
-
-    // TODO Fix state always being ConnectionError
-
-    if (pinnedNoteId.toInt() == -1) NoPinnedNoteScreen(glanceId)
-    else Column(
+    Column(
         modifier = GlanceModifier
             .fillMaxSize()
             .background(color = Color(red = 255, green = 227, blue = 120))
     ) {
-        // Widget header
-        Row(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = GlanceModifier
-                .fillMaxWidth()
-                .background(color = Color(red = 249, green = 208, blue = 59))
-        ) {
-            CircleIconButton(
-                imageProvider = ImageProvider(R.drawable.thumb_tack_2_plain),
-                contentDescription = null,
-                onClick = {},
-                enabled = false,
-                backgroundColor = null,
-                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
-                modifier = GlanceModifier.height(24.dp)
-            )
+        // Widget header if the state isn't NoPinnedNote
+        if (noteUiState !is NoPinnedNote) {
+            Row(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .background(color = Color(red = 249, green = 208, blue = 59))
+            ) {
+                CircleIconButton(
+                    imageProvider = ImageProvider(R.drawable.thumb_tack_2_plain),
+                    contentDescription = null,
+                    onClick = {},
+                    enabled = false,
+                    backgroundColor = null,
+                    contentColor = ColorProvider(day = Color.Black, night = Color.Black),
+                    modifier = GlanceModifier.height(24.dp)
+                )
+            }
         }
 
         // Content
         when (noteUiState) {
             is Loading -> LoadingScreen()
-            is NoPinnedNote -> NoteNotFoundScreen(glanceId)
+            is NoPinnedNote -> NoPinnedNoteScreen(glanceId)
+            is NoteNotFound -> NoteNotFoundScreen(glanceId)
             is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage, updateWidget)
             is Success -> SuccessScreen(glanceId, noteUiState.note)
         }
@@ -228,18 +225,13 @@ private fun NoPinnedNoteScreen(
             text = glanceStringResource(R.string.individual_note_widget_no_pinned_note_label),
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
+            ),
+            modifier = GlanceModifier.padding(8.dp)
         )
-
-        Spacer(GlanceModifier.height(16.dp))
 
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_push_pin),
-            onClick = {
-                actionStartActivity<PinNoteActivity>(
-                    actionParametersOf(glanceIdKey to glanceId)
-                )
-            },
+            onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
             contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
@@ -280,18 +272,13 @@ private fun NoteNotFoundScreen(
             text = glanceStringResource(R.string.individual_note_widget_note_not_found_label),
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
+            ),
+            modifier = GlanceModifier.padding(8.dp)
         )
-
-        Spacer(GlanceModifier.height(16.dp))
 
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_push_pin),
-            onClick = {
-                actionStartActivity<PinNoteActivity>(
-                    actionParametersOf(glanceIdKey to glanceId)
-                )
-            },
+            onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
             contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
@@ -316,10 +303,9 @@ private fun ConnectionErrorScreen(
             style = TextStyle(
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             ),
-            maxLines = 2
+            maxLines = 2,
+            modifier = GlanceModifier.padding(8.dp)
         )
-
-        Spacer(GlanceModifier.height(16.dp))
 
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_cached),
@@ -353,11 +339,7 @@ private fun SuccessScreen(
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
                 contentDescription = null,
-                onClick = {
-                    actionStartActivity<PinNoteActivity>(
-                        actionParametersOf(glanceIdKey to glanceId)
-                    )
-                },
+                onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
                 enabled = false,
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
@@ -383,6 +365,7 @@ private sealed interface IndividualNoteWidgetUiState {
     data class Success(val note: Note) : IndividualNoteWidgetUiState
     data class ConnectionError(val errorMessage: String) : IndividualNoteWidgetUiState
     data object NoPinnedNote : IndividualNoteWidgetUiState
+    data object NoteNotFound : IndividualNoteWidgetUiState
     data object Loading : IndividualNoteWidgetUiState
 }
 
@@ -392,7 +375,6 @@ private sealed interface IndividualNoteWidgetUiState {
 private fun NoPinnedNoteScreenPreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
-            pinnedNoteId = -1,
             noteUiState = NoPinnedNote,
             glanceId = 1
         )
@@ -404,7 +386,6 @@ private fun NoPinnedNoteScreenPreview() {
 private fun LoadingScreenPreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
-            pinnedNoteId = 1,
             noteUiState = Loading,
             glanceId = 1
         )
@@ -416,8 +397,7 @@ private fun LoadingScreenPreview() {
 private fun NoteNotFoundScreenPreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
-            pinnedNoteId = 1,
-            noteUiState = NoPinnedNote,
+            noteUiState = NoteNotFound,
             glanceId = 1
         )
     }
@@ -428,7 +408,6 @@ private fun NoteNotFoundScreenPreview() {
 private fun ConnectionErrorScreenPreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
-            pinnedNoteId = 1,
             noteUiState = ConnectionError("Connection error"),
             glanceId = 1
         )
@@ -440,7 +419,6 @@ private fun ConnectionErrorScreenPreview() {
 private fun SuccessScreenPreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
-            pinnedNoteId = 1,
             noteUiState = Success(fakeNotesList[0]),
             glanceId = 1
         )
