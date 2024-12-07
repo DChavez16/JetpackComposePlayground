@@ -7,11 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,7 +52,7 @@ class PinNoteActivity : ComponentActivity() {
                             sendBroadcast(intent)
                         },
                         noteList = emptyList(),
-                        modifier = Modifier.padding(innerPadding)
+                        innerPadding = innerPadding
                     )
                 }
             }
@@ -63,9 +65,24 @@ class PinNoteActivity : ComponentActivity() {
 private fun PinNoteContent(
     onNoteSelected: (Long) -> Unit,
     noteList: List<Note>,
-    modifier: Modifier = Modifier
+    innerPadding: PaddingValues
 ) {
-
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = innerPadding,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(
+            items = noteList,
+            key = { note -> note.id }
+        ) { note ->
+            NoteListItem(
+                note = note,
+                onNoteClicked = onNoteSelected
+            )
+        }
+    }
 }
 
 @Composable
@@ -79,7 +96,10 @@ private fun NoteListItem(
         colors = CardDefaults.cardColors().copy(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
         ),
-        modifier = Modifier.clickable { onNoteClicked(note.id) }.fillMaxWidth().height(112.dp)
+        modifier = Modifier
+            .clickable { onNoteClicked(note.id) }
+            .fillMaxWidth()
+            .height(112.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -124,7 +144,8 @@ fun PinNoteContentPreview() {
     PreviewAppTheme {
         PinNoteContent(
             onNoteSelected = {},
-            noteList = fakeNotesList
+            noteList = fakeNotesList,
+            innerPadding = PaddingValues(16.dp)
         )
     }
 }
