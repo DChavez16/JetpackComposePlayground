@@ -15,4 +15,7 @@
     <string name="individual_note_widget_connection_error_label">Connection error:</string>
     <string name="individual_note_widget_pin_note_button_accesibility">Pin a note to this Widget</string>
     <string name="individual_note_widget_retry_connection_button_accesibility">Retry to connect</string>
+
+    <!-- Pin Note Screen -->
+    <string name="pin_note_activity_title">Select a note to pin</string>
 </resources>

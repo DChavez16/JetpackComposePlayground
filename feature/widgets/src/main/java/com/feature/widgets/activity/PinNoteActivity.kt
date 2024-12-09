@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.feature.widgets.activity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,7 @@ import com.example.model.fakeNotesList
 import com.example.notes.NoteRepository
 import com.example.ui.theme.AppTheme
 import com.example.ui.theme.PreviewAppTheme
+import com.feature.widgets.R
 import com.feature.widgets.receiver.UpdatePinnedNoteIdBroadcastReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -118,6 +123,15 @@ private fun PinNoteContent(
         contentPadding = innerPadding,
         modifier = Modifier.fillMaxSize()
     ) {
+        stickyHeader(
+            key = 0
+        ) {
+            Text(
+                text = stringResource(R.string.pin_note_activity_title),
+                style = MaterialTheme.typography.displaySmall
+            )
+        }
+
 //        items(
 //            items = pinNoteUiState,
 //            key = { note -> note.id }
