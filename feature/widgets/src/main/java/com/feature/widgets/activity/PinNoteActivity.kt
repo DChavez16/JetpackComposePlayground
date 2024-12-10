@@ -7,19 +7,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -90,7 +97,9 @@ class PinNoteActivity : ComponentActivity() {
             }
 
             AppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     PinNoteContent(
                         pinNoteUiState = pinNoteUiState.collectAsState().value,
                         onNoteSelected = { newPinnedNoteId ->
@@ -117,32 +126,122 @@ private fun PinNoteContent(
     onNoteSelected: (Long) -> Unit,
     innerPadding: PaddingValues
 ) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
+    ) {
+        when (pinNoteUiState) {
+            is PinNoteUiState.Loading -> PinNoteLoadingScreen()
+            is PinNoteUiState.ConnectionError -> PinNoteErrorScreen(
+                errorMessage = pinNoteUiState.errorMessage
+            )
+
+            is PinNoteUiState.Success -> PinNoteSuccessScreen(
+                notes = pinNoteUiState.noteList,
+                onNoteSelected = onNoteSelected
+            )
+        }
+    }
+}
+
+
+// Loading screen
+@Composable
+private fun PinNoteLoadingScreen() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Progress indicator
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .size(48.dp)
+        )
+
+        // Loading notes text
+        Text(
+            text = stringResource(R.string.pin_note_activity_loading_label),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+    }
+}
+
+
+// Error screen
+@Composable
+private fun PinNoteErrorScreen(
+    errorMessage: String
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Error icon
+        Icon(
+            imageVector = Icons.Rounded.Error,
+            tint = MaterialTheme.colorScheme.error,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .size(48.dp)
+        )
+
+        // Error message
+        Text(
+            text = stringResource(R.string.pin_note_activity_error_message, errorMessage),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+    }
+}
+
+
+// Success screen
+@Composable
+private fun PinNoteSuccessScreen(
+    notes: List<Note>,
+    onNoteSelected: (Long) -> Unit
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = innerPadding,
         modifier = Modifier.fillMaxSize()
     ) {
+        // Pin note title
         stickyHeader(
             key = 0
         ) {
             Text(
-                text = stringResource(R.string.pin_note_activity_title),
-                style = MaterialTheme.typography.displaySmall
+                text = stringResource(R.string.pin_note_activity_success_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
-//        items(
-//            items = pinNoteUiState,
-//            key = { note -> note.id }
-//        ) { note ->
-//            NoteListItem(
-//                note = note,
-//                onNoteClicked = onNoteSelected
-//            )
-//        }
+        // Retreived notes
+        items(
+            items = notes,
+            key = { note -> note.id }
+        ) { note ->
+            NoteListItem(
+                note = note,
+                onNoteClicked = onNoteSelected
+            )
+        }
     }
 }
+
 
 @Composable
 private fun NoteListItem(
@@ -194,6 +293,42 @@ private sealed interface PinNoteUiState {
 
 
 // Previews
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PinNoteLoadingPreview() {
+    PreviewAppTheme {
+        PinNoteContent(
+            onNoteSelected = {},
+            pinNoteUiState = PinNoteUiState.Loading,
+            innerPadding = PaddingValues(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PinNoteErrorPreview() {
+    PreviewAppTheme {
+        PinNoteContent(
+            onNoteSelected = {},
+            pinNoteUiState = PinNoteUiState.ConnectionError("Connection error"),
+            innerPadding = PaddingValues(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PinNoteSuccessPreview() {
+    PreviewAppTheme {
+        PinNoteContent(
+            onNoteSelected = {},
+            pinNoteUiState = PinNoteUiState.Success(fakeNotesList),
+            innerPadding = PaddingValues(16.dp)
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun NoteListItemPreview() {
@@ -201,18 +336,6 @@ fun NoteListItemPreview() {
         NoteListItem(
             note = fakeNotesList[0],
             onNoteClicked = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PinNoteContentPreview() {
-    PreviewAppTheme {
-        PinNoteContent(
-            onNoteSelected = {},
-            pinNoteUiState = PinNoteUiState.Success(fakeNotesList),
-            innerPadding = PaddingValues(16.dp)
         )
     }
 }

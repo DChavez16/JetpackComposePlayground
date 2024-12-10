@@ -17,5 +17,7 @@
     <string name="individual_note_widget_retry_connection_button_accesibility">Retry to connect</string>
 
     <!-- Pin Note Screen -->
-    <string name="pin_note_activity_title">Select a note to pin</string>
+    <string name="pin_note_activity_loading_label">Retrieving notes</string>
+    <string name="pin_note_activity_error_message">Error retrieving notes:/t%s</string>
+    <string name="pin_note_activity_success_title">Select a note to pin</string>
 </resources>
