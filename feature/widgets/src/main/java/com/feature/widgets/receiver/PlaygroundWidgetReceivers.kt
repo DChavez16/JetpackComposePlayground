@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -23,6 +24,8 @@ import javax.inject.Inject
 //https://stackoverflow.com/questions/71381707/how-to-create-an-instance-of-room-dao-or-repository-or-viewmodel-in-glanceappwid/72168589#72168589
 //&
 //https://stackoverflow.com/questions/75511282/display-data-from-database-room-in-widget-glance-using-jetpack-compose
+
+private const val TAG = "IndividualNoteReceiver"
 
 // Receiver for the 'IndividualNoteWidget'
 @AndroidEntryPoint
@@ -57,11 +60,19 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
         super.onReceive(context, intent)
 
         if (intent.action == UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID) {
+            Log.i(TAG, "Intent received with action: ${intent.action}")
+
+            // Retreving the parameters from the intent
+            val newPinnedNoteId = intent.getLongExtra("new_pinned_note_id", -1)
+            val widgetId = intent.getIntExtra("widget_id_int", -1)
+
+            Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id: $widgetId")
+
             // Update the pinned note id in the Widget parameters
             updatePinnedNoteId(
-                context,
-                intent.getIntExtra("widget_id_int", -1),
-                intent.getLongExtra("new_pinned_note_id", -1)
+                context = context,
+                widgetIdInt = widgetId,
+                newPinnedNoteId = newPinnedNoteId
             )
         }
     }
@@ -78,10 +89,16 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
 
             // Update the pinned note id in the Widget parameters
             updateAppWidgetState(context, PreferencesGlanceStateDefinition, widgetId) { prefs ->
+                Log.i(
+                    TAG,
+                    "Updating parameters of the widget with id: $widgetIdInt, setting new pinned note id: $newPinnedNoteId"
+                )
                 prefs.toMutablePreferences().apply {
                     this[PINNED_NOTE_ID] = newPinnedNoteId
                 }
             }
+
+            Log.i(TAG, "Updating widget with id: $widgetIdInt")
 
             // Refresh the widget
             IndividualNoteWidget().update(context, widgetId)
@@ -93,50 +110,32 @@ class UpdatePinnedNoteIdBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         const val UPDATE_PINNED_NOTE_ID = "updatePinnedNoteId"
+        private const val TAG = "UpdatePinnedNoteIdBroadcastReceiver"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
+        Log.i(TAG, "Broadcast received with action: ${intent?.action}")
+
         if (intent?.action == UPDATE_PINNED_NOTE_ID) {
-            val widgetReceiverIntent = Intent(context, IndividualNoteReceiver::class.java)
-                .apply { action = UPDATE_PINNED_NOTE_ID }
+            // Get the new pinned note id and the widget id from the intent
+            val newPinnedNoteId = intent.getLongExtra("new_pinned_note_id", -1)
+            val widgetId = intent.getIntExtra("widget_id_int", -1)
 
-            widgetReceiverIntent.putExtra(
-                "new_pinned_note_id",
-                intent.getLongExtra("new_pinned_note_id", -1)
-            )
-            widgetReceiverIntent.putExtra("widget_id", intent.getIntExtra("widget_id_int", -1))
+            Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id: $widgetId")
 
+            // Creating intent for the 'IndividualNoteReceiver' and setting the parameters
+            val widgetReceiverIntent = Intent(context, IndividualNoteReceiver::class.java).apply {
+                action = UPDATE_PINNED_NOTE_ID
+                putExtra("new_pinned_note_id", newPinnedNoteId)
+                putExtra("widget_id_int", widgetId)
+            }
+
+            // Sending broadcast to the 'IndividualNoteReceiver'
             context?.sendBroadcast(widgetReceiverIntent)
         }
     }
 }
-
-//class UpdatePinnedNoteIdCallback : ActionCallback {
-//
-//    companion object {
-//        const val UPDATE_PINNED_NOTE_ID = "updatePinnedNoteId"
-//    }
-//
-//    override suspend fun onAction(
-//        context: Context,
-//        glanceId: GlanceId,
-//        parameters: ActionParameters
-//    ) {
-//
-//        val intent = Intent(context, IndividualNoteReceiver::class.java).apply {
-//            action = UPDATE_PINNED_NOTE_ID
-//        }
-//
-//        intent.putExtra(
-//            "new_pinned_note_id",
-//            parameters[ActionParameters.Key<Long>("new_pinned_note_id")]
-//        )
-//        intent.putExtra("widget_id_int", parameters[ActionParameters.Key<Int>("widget_id_int")])
-//
-//        context.sendBroadcast(intent)
-//    }
-//}
 
 
 // Receiver for the 'AllNotesWidget'

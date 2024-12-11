@@ -4,11 +4,13 @@ package com.feature.widgets.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,14 +40,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.model.Note
 import com.example.model.fakeNotesList
-import com.example.notes.NoteRepository
+import com.example.notes.RemoteNoteRepository
 import com.example.ui.theme.AppTheme
 import com.example.ui.theme.PreviewAppTheme
+import com.example.ui.ui.CompactSizeScreenThemePreview
 import com.feature.widgets.R
 import com.feature.widgets.receiver.UpdatePinnedNoteIdBroadcastReceiver
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,20 +59,23 @@ import kotlinx.coroutines.launch
 import okio.IOException
 import javax.inject.Inject
 
+private const val TAG = "PinNoteActivityTag"
+
 @AndroidEntryPoint
 class PinNoteActivity : ComponentActivity() {
 
     @Inject
-    lateinit var notesRepository: NoteRepository
+    lateinit var notesRepository: RemoteNoteRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.i(TAG, "PinNoteActivity created")
 
         // Get the widget id (as int) from the intent
         val glanceWidgetId = intent.getIntExtra("GLANCE_ID_INT_KEY", -1)
 
         setContent {
-
             // Define coroutine scope
             val coroutineScope = rememberCoroutineScope()
 
@@ -77,39 +84,54 @@ class PinNoteActivity : ComponentActivity() {
                 MutableStateFlow<PinNoteUiState>(PinNoteUiState.Loading)
             }
 
+            // TODO Surround this in a function to avoid repeating code
             // Notes recollection
             LaunchedEffect(Unit) {
                 coroutineScope.launch(Dispatchers.IO) {
                     try {
+                        Log.i(TAG, "Retreiving notes from the repository")
                         // Set the pinNoteUiState as Loading
                         pinNoteUiState.value = PinNoteUiState.Loading
 
                         // Retreive the note with the pinnedId from the repository and set pinNoteUiState as Success
                         pinNoteUiState.value = PinNoteUiState.Success(notesRepository.getNotes())
+                        Log.i(TAG, "Notes successfully retreived")
                     } catch (e: IOException) {
                         // Set the pinNoteUiState as ConnectionError with the error message
                         pinNoteUiState.value = PinNoteUiState.ConnectionError(e.message.toString())
+                        Log.e(TAG, "IOException error: ${e.message}")
                     } catch (e: Exception) {
                         // Set the pinNoteUiState as ConnectionError with the error message
                         pinNoteUiState.value = PinNoteUiState.ConnectionError(e.message.toString())
+                        Log.e(TAG, "Exception error: ${e.message}")
                     }
                 }
             }
 
-            AppTheme {
+            val isDarkTheme = isSystemInDarkTheme()
+
+            AppTheme(
+                isDarkTheme = { isDarkTheme }
+            ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     PinNoteContent(
                         pinNoteUiState = pinNoteUiState.collectAsState().value,
                         onNoteSelected = { newPinnedNoteId ->
+                            Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id $glanceWidgetId")
+
                             val intent =
-                                Intent(UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID).apply {
-                                    putExtra("new_pinned_note_id", -1)
-                                    putExtra("widget_id", glanceWidgetId)
+                                Intent(this, UpdatePinnedNoteIdBroadcastReceiver::class.java).apply {
+                                    action = UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID
+                                    putExtra("new_pinned_note_id", newPinnedNoteId)
+                                    putExtra("widget_id_int", glanceWidgetId)
                                 }
 
-                            sendBroadcast(intent)
+                            // TODO Force the widget update
+                            // TODO End this activity after the broadcast is sent
+
+                            this.sendBroadcast(intent)
                         },
                         innerPadding = innerPadding
                     )
@@ -129,10 +151,10 @@ private fun PinNoteContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding)
             .background(
                 color = MaterialTheme.colorScheme.background
             )
+            .padding(innerPadding)
     ) {
         when (pinNoteUiState) {
             is PinNoteUiState.Loading -> PinNoteLoadingScreen()
@@ -181,6 +203,7 @@ private fun PinNoteLoadingScreen() {
 private fun PinNoteErrorScreen(
     errorMessage: String
 ) {
+    // TODO Add retry button
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -201,6 +224,7 @@ private fun PinNoteErrorScreen(
             text = stringResource(R.string.pin_note_activity_error_message, errorMessage),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
@@ -215,8 +239,9 @@ private fun PinNoteSuccessScreen(
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         // Pin note title
         stickyHeader(
@@ -225,7 +250,8 @@ private fun PinNoteSuccessScreen(
             Text(
                 text = stringResource(R.string.pin_note_activity_success_title),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
 
@@ -293,43 +319,43 @@ private sealed interface PinNoteUiState {
 
 
 // Previews
-@Preview(showBackground = true, showSystemUi = true)
+@CompactSizeScreenThemePreview
 @Composable
 fun PinNoteLoadingPreview() {
-    PreviewAppTheme {
+    PreviewAppTheme(darkTheme = isSystemInDarkTheme()) {
         PinNoteContent(
             onNoteSelected = {},
             pinNoteUiState = PinNoteUiState.Loading,
-            innerPadding = PaddingValues(16.dp)
+            innerPadding = PaddingValues(0.dp)
         )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CompactSizeScreenThemePreview
 @Composable
 fun PinNoteErrorPreview() {
-    PreviewAppTheme {
+    PreviewAppTheme(darkTheme = isSystemInDarkTheme()) {
         PinNoteContent(
             onNoteSelected = {},
             pinNoteUiState = PinNoteUiState.ConnectionError("Connection error"),
-            innerPadding = PaddingValues(16.dp)
+            innerPadding = PaddingValues(0.dp)
         )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CompactSizeScreenThemePreview
 @Composable
 fun PinNoteSuccessPreview() {
-    PreviewAppTheme {
+    PreviewAppTheme(darkTheme = isSystemInDarkTheme()) {
         PinNoteContent(
             onNoteSelected = {},
             pinNoteUiState = PinNoteUiState.Success(fakeNotesList),
-            innerPadding = PaddingValues(16.dp)
+            innerPadding = PaddingValues(0.dp)
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun NoteListItemPreview() {
     PreviewAppTheme {

@@ -34,6 +34,16 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/all_notes_widget_info" />
         </receiver>
+
+        <!-- Receiver for the 'UpdatePinnedNoteIdBroadcastReceiver' -->
+        <receiver
+            android:name=".receiver.UpdatePinnedNoteIdBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.widgets.UPDATE_PINNED_NOTE_ID" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
