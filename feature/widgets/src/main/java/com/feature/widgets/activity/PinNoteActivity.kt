@@ -25,16 +25,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -84,9 +88,11 @@ class PinNoteActivity : ComponentActivity() {
                 MutableStateFlow<PinNoteUiState>(PinNoteUiState.Loading)
             }
 
-            // TODO Surround this in a function to avoid repeating code
+            // Flag used as a key to recompose the LaunchedEffect that retreives the notes from the repository
+            var retryConnectionFlag = remember { mutableStateOf(false) }
+
             // Notes recollection
-            LaunchedEffect(Unit) {
+            LaunchedEffect(retryConnectionFlag.value) {
                 coroutineScope.launch(Dispatchers.IO) {
                     try {
                         Log.i(TAG, "Retreiving notes from the repository")
@@ -119,21 +125,30 @@ class PinNoteActivity : ComponentActivity() {
                     PinNoteContent(
                         pinNoteUiState = pinNoteUiState.collectAsState().value,
                         onNoteSelected = { newPinnedNoteId ->
-                            Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id $glanceWidgetId")
+                            Log.i(
+                                TAG,
+                                "Pinning note with id $newPinnedNoteId to widget with id $glanceWidgetId"
+                            )
 
-                            val intent =
-                                Intent(this, UpdatePinnedNoteIdBroadcastReceiver::class.java).apply {
-                                    action = UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID
-                                    putExtra("new_pinned_note_id", newPinnedNoteId)
-                                    putExtra("widget_id_int", glanceWidgetId)
-                                }
+                            val intent = Intent(
+                                this,
+                                UpdatePinnedNoteIdBroadcastReceiver::class.java
+                            ).apply {
+                                action =
+                                    UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID
+                                putExtra("new_pinned_note_id", newPinnedNoteId)
+                                putExtra("widget_id_int", glanceWidgetId)
+                            }
 
                             // TODO Force the widget update
                             // TODO End this activity after the broadcast is sent
 
                             this.sendBroadcast(intent)
                         },
-                        innerPadding = innerPadding
+                        innerPadding = innerPadding,
+                        retryConnection = {
+                            retryConnectionFlag.value = !retryConnectionFlag.value
+                        }
                     )
                 }
             }
@@ -146,7 +161,8 @@ class PinNoteActivity : ComponentActivity() {
 private fun PinNoteContent(
     pinNoteUiState: PinNoteUiState,
     onNoteSelected: (Long) -> Unit,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    retryConnection: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -159,7 +175,8 @@ private fun PinNoteContent(
         when (pinNoteUiState) {
             is PinNoteUiState.Loading -> PinNoteLoadingScreen()
             is PinNoteUiState.ConnectionError -> PinNoteErrorScreen(
-                errorMessage = pinNoteUiState.errorMessage
+                errorMessage = pinNoteUiState.errorMessage,
+                retryConnection = retryConnection
             )
 
             is PinNoteUiState.Success -> PinNoteSuccessScreen(
@@ -201,9 +218,9 @@ private fun PinNoteLoadingScreen() {
 // Error screen
 @Composable
 private fun PinNoteErrorScreen(
-    errorMessage: String
+    errorMessage: String,
+    retryConnection: () -> Unit
 ) {
-    // TODO Add retry button
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -227,6 +244,20 @@ private fun PinNoteErrorScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
+
+        // Retry button
+        IconButton(
+            onClick = retryConnection,
+            colors = IconButtonDefaults.iconButtonColors().copy(
+                contentColor = MaterialTheme.colorScheme.onBackground
+            ),
+            modifier = Modifier.padding(top = 12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Replay,
+                contentDescription = stringResource(R.string.pin_note_activity_error_retry_connection_accessibility)
+            )
+        }
     }
 }
 
