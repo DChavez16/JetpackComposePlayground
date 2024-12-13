@@ -7,4 +7,5 @@
     android:targetCellHeight="1"
     android:minResizeHeight="60dp"
     android:maxResizeHeight="120dp"
-    android:targetCellWidth="2"/>
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="0"/>
