@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalGlancePreviewApi::class)
+@file:Suppress("unused")
 
 package com.feature.widgets.ui
 
@@ -103,7 +104,7 @@ class IndividualNoteWidget : GlanceAppWidget() {
             }
 
             // Pinned note recollection
-            LaunchedEffect(Unit) {
+            LaunchedEffect(pinnedNoteId) {
                 coroutineScope.launch(Dispatchers.IO) {
                     // If the pinned note is -1
                     if (pinnedNoteId.toInt() == -1) {
@@ -234,7 +235,7 @@ private fun NoPinnedNoteScreen(
             onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
-            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
+            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accessibility)
         )
     }
 }
@@ -281,7 +282,7 @@ private fun NoteNotFoundScreen(
             onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
-            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accesibility)
+            contentDescription = glanceStringResource(R.string.individual_note_widget_pin_note_button_accessibility)
         )
     }
 }
@@ -312,7 +313,7 @@ private fun ConnectionErrorScreen(
             onClick = retryConnection,
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
-            contentDescription = glanceStringResource(R.string.individual_note_widget_retry_connection_button_accesibility)
+            contentDescription = glanceStringResource(R.string.individual_note_widget_retry_connection_button_accessibility)
         )
     }
 }
@@ -337,6 +338,7 @@ private fun SuccessScreen(
                 .fillMaxWidth()
         ) {
             CircleIconButton(
+                // TODO Change 'arrow drop down' icon for a 'pin' icon
                 imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
                 contentDescription = null,
                 onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),

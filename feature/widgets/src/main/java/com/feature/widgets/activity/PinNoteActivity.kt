@@ -141,9 +141,10 @@ class PinNoteActivity : ComponentActivity() {
                             }
 
                             // TODO Force the widget update
-                            // TODO End this activity after the broadcast is sent
 
                             this.sendBroadcast(intent)
+
+                            // TODO End this activity after the broadcast is sent
                         },
                         innerPadding = innerPadding,
                         retryConnection = {
