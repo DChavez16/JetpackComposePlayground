@@ -39,7 +39,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.FontStyle
@@ -171,6 +170,10 @@ private fun IndividualNoteWidgetContent(
     glanceId: Int,
     updateWidget: () -> Unit = {}
 ) {
+
+    // Action parameter key to pair with glanceId
+    val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
+
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -187,8 +190,8 @@ private fun IndividualNoteWidgetContent(
                 CircleIconButton(
                     imageProvider = ImageProvider(R.drawable.thumb_tack_2_plain),
                     contentDescription = null,
-                    onClick = {},
-                    enabled = false,
+                    onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
+                    enabled = noteUiState is Success,
                     backgroundColor = null,
                     contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                     modifier = GlanceModifier.height(24.dp)
@@ -323,42 +326,15 @@ private fun SuccessScreen(
     glanceId: Int,
     note: Note
 ) {
-
-    // Action parameter key to pair with glanceId
-    val glanceIdKey = ActionParameters.Key<Int>("GLANCE_ID_INT_KEY")
-
-    Box(
-        contentAlignment = Alignment.TopStart,
-        modifier = GlanceModifier
-            .fillMaxSize()
-    ) {
-        Row(
-            horizontalAlignment = Alignment.End,
-            modifier = GlanceModifier
-                .fillMaxWidth()
-        ) {
-            CircleIconButton(
-                // TODO Change 'arrow drop down' icon for a 'pin' icon
-                imageProvider = ImageProvider(R.drawable.baseline_arrow_drop_down),
-                contentDescription = null,
-                onClick = actionStartActivity<PinNoteActivity>(actionParametersOf(glanceIdKey to glanceId)),
-                enabled = false,
-                backgroundColor = null,
-                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
-                modifier = GlanceModifier.size(24.dp)
-            )
-        }
-
-        Text(
-            text = note.title,
-            style = TextStyle(
-                fontSize = 28.sp,
-                fontStyle = FontStyle.Italic,
-                color = ColorProvider(day = Color.Black, night = Color.Black)
-            ),
-            modifier = GlanceModifier.fillMaxSize().padding(16.dp)
-        )
-    }
+    Text(
+        text = note.title,
+        style = TextStyle(
+            fontSize = 28.sp,
+            fontStyle = FontStyle.Italic,
+            color = ColorProvider(day = Color.Black, night = Color.Black)
+        ),
+        modifier = GlanceModifier.fillMaxSize().padding(12.dp)
+    )
 }
 
 
