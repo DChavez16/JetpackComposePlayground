@@ -5,7 +5,6 @@ package com.feature.widgets.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -48,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ComponentActivity
 import com.example.model.Note
 import com.example.model.fakeNotesList
 import com.example.notes.RemoteNoteRepository
@@ -140,11 +140,10 @@ class PinNoteActivity : ComponentActivity() {
                                 putExtra("widget_id_int", glanceWidgetId)
                             }
 
-                            // TODO Force the widget update
-
                             this.sendBroadcast(intent)
 
-                            // TODO End this activity after the broadcast is sent
+                            Log.i(TAG, "Finishing PinNoteActivity")
+                            this.finish()
                         },
                         innerPadding = innerPadding,
                         retryConnection = {
