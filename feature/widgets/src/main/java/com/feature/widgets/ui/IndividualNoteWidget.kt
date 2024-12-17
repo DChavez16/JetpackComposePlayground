@@ -80,6 +80,8 @@ class IndividualNoteWidget : GlanceAppWidget() {
 
         Log.i(TAG, "AllNotesWidget started")
 
+        // TODO Open the note in the app when clicked
+
         // Hilt entry point
         val notesEntryPoint = EntryPointAccessors
             .fromApplication(context.applicationContext, WidgetsEntryPoint::class.java)

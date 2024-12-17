@@ -136,9 +136,3 @@ class UpdatePinnedNoteIdBroadcastReceiver : BroadcastReceiver() {
         }
     }
 }
-
-
-// Receiver for the 'AllNotesWidget'
-class AllNotesReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = AllNotesWidget()
-}
