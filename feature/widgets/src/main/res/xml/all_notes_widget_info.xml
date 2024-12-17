@@ -2,4 +2,12 @@
 <appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/glance_default_loading_layout"
-    android:description="@string/all_notes_widget_description"/>
+    android:description="@string/all_notes_widget_description"
+    android:resizeMode="vertical|horizontal"
+    android:targetCellHeight="2"
+    android:minResizeHeight="120dp"
+    android:maxResizeHeight="540dp"
+    android:targetCellWidth="3"
+    android:minResizeWidth="180dp"
+    android:maxResizeWidth="420dp"
+    android:updatePeriodMillis="0" />

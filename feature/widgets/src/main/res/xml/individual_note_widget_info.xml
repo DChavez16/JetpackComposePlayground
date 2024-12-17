@@ -8,4 +8,4 @@
     android:minResizeHeight="60dp"
     android:maxResizeHeight="120dp"
     android:targetCellWidth="2"
-    android:updatePeriodMillis="0"/>
+    android:updatePeriodMillis="0" />
