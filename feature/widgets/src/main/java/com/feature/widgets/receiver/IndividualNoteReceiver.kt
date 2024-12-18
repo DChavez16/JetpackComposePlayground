@@ -11,14 +11,11 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import com.example.notes.RemoteNoteRepository
-import com.feature.widgets.ui.AllNotesWidget
 import com.feature.widgets.ui.IndividualNoteWidget
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 //https://stackoverflow.com/questions/71381707/how-to-create-an-instance-of-room-dao-or-repository-or-viewmodel-in-glanceappwid/72168589#72168589
@@ -38,10 +35,6 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     companion object {
         val PINNED_NOTE_ID = longPreferencesKey("selected_note_id")
     }
-
-    // Inject NoteRepository
-    @Inject
-    lateinit var noteRepository: RemoteNoteRepository
 
     // Define a coroutine scope
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
