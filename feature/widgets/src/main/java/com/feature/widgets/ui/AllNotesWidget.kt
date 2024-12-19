@@ -7,24 +7,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.updateAll
-import androidx.glance.background
-import androidx.glance.color.ColorProvider
-import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
-import androidx.glance.layout.fillMaxSize
-import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -37,40 +26,63 @@ class AllNotesWidget() : GlanceAppWidget() {
 
         Log.i(TAG, "AllNotesWidget started")
 
-        val notesEntryPoint = EntryPointAccessors.fromApplication(
-            context.applicationContext, WidgetsEntryPoint::class.java,
-        )
+        // Hilt entry point
+        val notesEntryPoint = EntryPointAccessors
+            .fromApplication(context.applicationContext, WidgetsEntryPoint::class.java)
+
+        // Obtain a NoteRepository instance from the entry point
+        val noteRepository = notesEntryPoint.getNoteRepository()
 
         provideContent {
+            // Define the coroutine scope
             val coroutineScope = rememberCoroutineScope()
-            val noteRepository = notesEntryPoint.getNoteRepository()
+
+            // Start the notesUiState as Loading
             var notesUiState = remember {
                 MutableStateFlow<AllNotesWidgetUiState>(AllNotesWidgetUiState.Loading)
             }
 
-            LaunchedEffect(Unit) {
-                coroutineScope.launch {
+            // Initiallize the last update time
+            var lastUpdated: Long = -1
+
+            // Update Widget flag
+            var updateWidgetFlag = false
+
+            // Notes recollection
+            LaunchedEffect(updateWidgetFlag) {
+                coroutineScope.launch(Dispatchers.IO) {
+                    // Attempt to collect the notes from the repository
                     try {
+                        Log.i(TAG, "Recollecting notes from the repository")
+                        // Set the notesUiState as Loading
                         notesUiState.value = AllNotesWidgetUiState.Loading
-                        Log.i(TAG, "Retreiving notes")
+
+                        // Retreive the notes from the repository
                         notesUiState.value =
                             AllNotesWidgetUiState.Success(noteRepository.getNotes())
+
                         Log.i(TAG, "Notes succesfully retrieved")
+
+                        // TODO Obtain the current time in Long
                     } catch (e: IOException) {
-                        notesUiState.value = AllNotesWidgetUiState.Error(e.message.toString())
                         Log.e(TAG, "IO Exception error: ${e.message}")
-                    } catch (e: Exception) {
+                        // Set the notesUiState as Error with the error message
                         notesUiState.value = AllNotesWidgetUiState.Error(e.message.toString())
+                    } catch (e: Exception) {
                         Log.e(TAG, "Exception error: ${e.message}")
+                        notesUiState.value = AllNotesWidgetUiState.Error(e.message.toString())
                     }
                 }
             }
 
             AllNotesWidgetContent(
                 notesUiState = notesUiState.collectAsState().value,
-                retryButtonClicked = {
-                    coroutineScope.launch {
-                        AllNotesWidget().updateAll(context)
+                lastUpdated = lastUpdated,
+                updateNotesList = { newUpdateTime ->
+                    coroutineScope.launch() {
+                        Log.i(TAG, "Updating the list of notes...")
+
+                        updateWidgetFlag = !updateWidgetFlag
                     }
                 }
             )
@@ -82,77 +94,10 @@ class AllNotesWidget() : GlanceAppWidget() {
 @Composable
 private fun AllNotesWidgetContent(
     notesUiState: AllNotesWidgetUiState,
-    retryButtonClicked: () -> Unit
+    lastUpdated: Long,
+    updateNotesList: (Long) -> Unit
 ) {
-    when (notesUiState) {
-        is AllNotesWidgetUiState.Loading -> WidgetLoadingContent(retryButtonClicked)
-        is AllNotesWidgetUiState.Error -> WidgetErrorContent(
-            errorMessage = notesUiState.errorMessage,
-            retryButtonClicked = retryButtonClicked
-        )
 
-        is AllNotesWidgetUiState.Success -> WidgetSuccessContent(
-            notesUiState.notes,
-            retryButtonClicked
-        )
-    }
-}
-
-@Composable
-private fun WidgetLoadingContent(
-    retryButtonClicked: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = GlanceModifier
-            .background(color = Color.Yellow)
-            .fillMaxSize()
-            .clickable(retryButtonClicked)
-    ) {
-        Text(
-            text = "Loading...",
-            style = TextStyle(
-                color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
-        )
-    }
-}
-
-@Composable
-private fun WidgetErrorContent(errorMessage: String, retryButtonClicked: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = GlanceModifier
-            .background(color = Color.Red)
-            .fillMaxSize()
-            .clickable(retryButtonClicked)
-    ) {
-        Text(
-            text = "Error!!\n$errorMessage",
-            style = TextStyle(
-                color = ColorProvider(day = Color.White, night = Color.White),
-                textAlign = TextAlign.Center
-            )
-        )
-    }
-}
-
-@Composable
-private fun WidgetSuccessContent(notesList: List<Note>, retryButtonClicked: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = GlanceModifier
-            .background(color = Color.Green)
-            .fillMaxSize()
-            .clickable(retryButtonClicked)
-    ) {
-        Text(
-            text = "Success!!\nItems: ${notesList.size}",
-            style = TextStyle(
-                color = ColorProvider(day = Color.Black, night = Color.Black)
-            )
-        )
-    }
 }
 
 

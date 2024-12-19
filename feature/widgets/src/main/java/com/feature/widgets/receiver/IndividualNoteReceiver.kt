@@ -12,7 +12,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.feature.widgets.ui.IndividualNoteWidget
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 private const val TAG = "IndividualNoteReceiver"
 
 // Receiver for the 'IndividualNoteWidget'
-@AndroidEntryPoint
 class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
 
     // IndividualNoteWidget instance
