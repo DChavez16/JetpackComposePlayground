@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalGlancePreviewApi::class)
+@file:Suppress("unused")
 
 package com.feature.widgets.ui
 
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
@@ -23,12 +25,17 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.preview.ExperimentalGlancePreviewApi
@@ -37,6 +44,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.example.model.Note
+import com.example.model.fakeNotesList
 import com.feature.widgets.R
 import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -132,23 +140,122 @@ private fun AllNotesWidgetContent(
     }
     // Else, is Loading or Success
     else {
-        /* TODO Add a Box with a Column and another Box (overlay) inside (both fit the available space)
-        Column with two elements
-            List of notes which fit all the available space
-            Row that:
+        // Obtain the list of notes from the uiState and store them in cache, if uiState is not Success, do nothing
+        var cachedNotes = remember { mutableStateOf(emptyList<Note>()) }
+        try {
+            cachedNotes.value = (notesUiState as AllNotesWidgetUiState.Success).notes
+        } catch (e: Exception) {
+        }
+
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(color = Color(red = 255, green = 227, blue = 120))
+        ) {
+            // Success and Loading content
+            Column(
+                modifier = GlanceModifier.fillMaxSize()
+            ) {
+                // List of notes
+                NotesList(
+                    // Using the cached notes, ensures the last list of notes will always be showed in the Widget, even if the uiState is Loading
+                    noteList = cachedNotes.value
+                )
+
+                // Bottom row
+                BottomRow(
+                    isLoading = notesUiState is AllNotesWidgetUiState.Loading,
+                    lastUpdateTime = lastUpdated,
+                    onRefresh = updateNotesList
+                )
+            }
+
+            // I the uiState is Loading, show an overlay that obscures the widget's screen
+            if (notesUiState is AllNotesWidgetUiState.Loading) {
+                Box(
+                    content = {},
+                    modifier = GlanceModifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.25f))
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NotesList(
+    noteList: List<Note>
+) {
+    // If the list of notes is empty, show a text indicating it
+    if (noteList.isEmpty()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = GlanceModifier.fillMaxSize()
+        ) {
+            Text(
+                text = glanceStringResource(R.string.all_notes_widget_success_no_notes_label),
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    color = ColorProvider(day = Color.Black, night = Color.Black)
+                ),
+                modifier = GlanceModifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
+    // Else display the list of notes
+    else {
+        LazyColumn {
+            items(
+                items = noteList,
+                itemId = { note -> note.id }
+            ) { note ->
+                NoteElement(note = note)
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoteElement(
+    note: Note
+) {
+    Column(
+        modifier = GlanceModifier.fillMaxWidth().padding(2.dp)
+    ) {
+        Text(
+            text = note.title,
+            style = TextStyle(
+                fontSize = 14.sp,
+                color = ColorProvider(day = Color.Black, night = Color.Black)
+            ),
+            maxLines = 1,
+            modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 4.dp)
+        )
+
+        Box(
+            content = {},
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .height(1.dp)
+        )
+    }
+}
+
+@Composable
+private fun BottomRow(
+    isLoading: Boolean = true,
+    lastUpdateTime: Long = -1,
+    onRefresh: () -> Unit = {}
+) {
+    /* TODO Row that:
                 If uiState is Success:
                     show the last time the list was updated AND an icon button to update the list
                 Else uiState is Loading:
                     Shows a circular progress indicator
-
-        Box that adds a dark background when uiState is Loading
-
-         * The list should keep showing the elements even when the widget is updating (uiState as Loading)
-         ** When uiState is Loading, add an overlay that obscures the Widget
          */
-    }
 }
-
 
 @Composable
 private fun ErrorScreen(
@@ -205,12 +312,76 @@ private sealed interface AllNotesWidgetUiState {
 
 
 // Previews
+@Preview()
+@Composable
+private fun NoteElementPreview() {
+    GlanceTheme {
+        NoteElement(
+            fakeNotesList[0]
+        )
+    }
+}
+
+@Preview(widthDp = 180, heightDp = 120)
+@Composable
+private fun NotesListPreview() {
+    GlanceTheme {
+        NotesList(
+            fakeNotesList
+        )
+    }
+}
+
+@Preview()
+@Composable
+private fun BottomRowLoadingPreview() {
+    GlanceTheme {
+        BottomRow()
+    }
+}
+
+@Preview()
+@Composable
+private fun BottomRowSuccessPreview() {
+    GlanceTheme {
+        BottomRow(
+            isLoading = false,
+            lastUpdateTime = System.currentTimeMillis(),
+            onRefresh = {}
+        )
+    }
+}
+
 @Preview(widthDp = 180, heightDp = 240)
 @Composable
 private fun ErrorScreenPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Error("Error message"),
+            lastUpdated = -1,
+            updateNotesList = {}
+        )
+    }
+}
+
+@Preview(widthDp = 180, heightDp = 240)
+@Composable
+private fun LoadingScreenPreview() {
+    GlanceTheme {
+        AllNotesWidgetContent(
+            notesUiState = AllNotesWidgetUiState.Loading,
+            lastUpdated = -1,
+            updateNotesList = {}
+        )
+    }
+}
+
+@Preview(widthDp = 180, heightDp = 240)
+@Composable
+private fun SuccessScreenPreview() {
+    GlanceTheme {
+        AllNotesWidgetContent(
+            notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
             lastUpdated = -1,
             updateNotesList = {}
         )
