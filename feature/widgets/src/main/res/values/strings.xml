@@ -13,6 +13,8 @@
     <string name="all_notes_widget_error_message_label">Error retrieving notes:\n%s</string>
     <string name="all_notes_widget_error_retry_connection_button_accessibility">Retry to connect</string>
     <string name="all_notes_widget_success_no_notes_label">There is no note to display</string>
+    <string name="all_notes_widget_success_last_updated_label">Last update: %s</string>
+    <string name="all_notes_widget_success_reload_notes_button_accessibility">Reload the list of notes</string>
 
     <!-- Individual Note Widget -->
     <string name="individual_note_widget_no_pinned_note_label">No note pinned</string>

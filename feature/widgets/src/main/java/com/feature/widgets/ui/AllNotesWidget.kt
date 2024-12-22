@@ -23,6 +23,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -33,11 +34,14 @@ import androidx.glance.color.ColorProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.Text
@@ -52,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
+import java.util.Calendar
 
 private const val TAG = "AllNotesWidget"
 
@@ -152,6 +157,8 @@ private fun AllNotesWidgetContent(
                 .fillMaxSize()
                 .background(color = Color(red = 255, green = 227, blue = 120))
         ) {
+            // TODO Fix Bottom row not showing when loading
+            // TODO Set notes list to fill all the given space
             // Success and Loading content
             Column(
                 modifier = GlanceModifier.fillMaxSize()
@@ -249,12 +256,46 @@ private fun BottomRow(
     lastUpdateTime: Long = -1,
     onRefresh: () -> Unit = {}
 ) {
-    /* TODO Row that:
-                If uiState is Success:
-                    show the last time the list was updated AND an icon button to update the list
-                Else uiState is Loading:
-                    Shows a circular progress indicator
-         */
+    // Create instance of Calendar
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.timeInMillis = lastUpdateTime
+
+    Row(
+        horizontalAlignment = Alignment.End,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = GlanceModifier.fillMaxWidth()
+    ) {
+        // If isLoading is false, display the last updated time and a button to reload
+        if (!isLoading) {
+            // Last updated time
+            Text(
+                text = glanceStringResource(
+                    R.string.all_notes_widget_success_last_updated_label,
+                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
+                )
+            )
+
+            Spacer(
+                modifier = GlanceModifier.width(8.dp)
+            )
+
+            // Reload button
+            CircleIconButton(
+                imageProvider = ImageProvider(R.drawable.baseline_cached),
+                onClick = onRefresh,
+                backgroundColor = null,
+                contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
+                modifier = GlanceModifier.size(12.dp)
+            )
+        }
+        // Else, display a CircularProgressIndicator
+        else {
+            CircularProgressIndicator(
+                color = ColorProvider(day = Color.Gray, night = Color.Gray),
+                modifier = GlanceModifier.size(12.dp)
+            )
+        }
+    }
 }
 
 @Composable
