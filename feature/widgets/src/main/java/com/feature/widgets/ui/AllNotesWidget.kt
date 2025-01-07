@@ -36,6 +36,7 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -115,6 +116,8 @@ class AllNotesWidget() : GlanceAppWidget() {
                 lastUpdated = lastUpdated.longValue,
                 updateNotesList = {
                     coroutineScope.launch(Dispatchers.IO) {
+                        // TODO Fix Widget not updating immediately
+
                         Log.i(TAG, "Updating the list of notes...")
 
                         // Obtain the current time in millis
@@ -157,23 +160,23 @@ private fun AllNotesWidgetContent(
                 .fillMaxSize()
                 .background(color = Color(red = 255, green = 227, blue = 120))
         ) {
-            // TODO Fix Bottom row not showing when loading
-            // TODO Set notes list to fill all the given space
             // Success and Loading content
             Column(
-                modifier = GlanceModifier.fillMaxSize()
+                modifier = GlanceModifier.fillMaxSize().padding(8.dp)
             ) {
                 // List of notes
                 NotesList(
                     // Using the cached notes, ensures the last list of notes will always be showed in the Widget, even if the uiState is Loading
-                    noteList = cachedNotes.value
+                    noteList = cachedNotes.value,
+                    modifier = GlanceModifier.fillMaxSize().defaultWeight()
                 )
 
                 // Bottom row
                 BottomRow(
                     isLoading = notesUiState is AllNotesWidgetUiState.Loading,
                     lastUpdateTime = lastUpdated,
-                    onRefresh = updateNotesList
+                    onRefresh = updateNotesList,
+                    modifier = GlanceModifier.fillMaxWidth()
                 )
             }
 
@@ -192,13 +195,14 @@ private fun AllNotesWidgetContent(
 
 @Composable
 private fun NotesList(
-    noteList: List<Note>
+    noteList: List<Note>,
+    modifier: GlanceModifier = GlanceModifier
 ) {
     // If the list of notes is empty, show a text indicating it
     if (noteList.isEmpty()) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = GlanceModifier.fillMaxSize()
+            modifier = modifier
         ) {
             Text(
                 text = glanceStringResource(R.string.all_notes_widget_success_no_notes_label),
@@ -212,10 +216,12 @@ private fun NotesList(
     }
     // Else display the list of notes
     else {
-        LazyColumn {
+        LazyColumn(
+            modifier = modifier
+        ) {
             items(
                 items = noteList,
-                itemId = { note -> note.id }
+                itemId = { note -> note.id },
             ) { note ->
                 NoteElement(note = note)
             }
@@ -254,7 +260,8 @@ private fun NoteElement(
 private fun BottomRow(
     isLoading: Boolean = true,
     lastUpdateTime: Long = -1,
-    onRefresh: () -> Unit = {}
+    onRefresh: () -> Unit = {},
+    modifier: GlanceModifier = GlanceModifier
 ) {
     // Create instance of Calendar
     val calendar: Calendar = Calendar.getInstance()
@@ -263,7 +270,7 @@ private fun BottomRow(
     Row(
         horizontalAlignment = Alignment.End,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = GlanceModifier.fillMaxWidth()
+        modifier = modifier
     ) {
         // If isLoading is false, display the last updated time and a button to reload
         if (!isLoading) {
@@ -272,6 +279,9 @@ private fun BottomRow(
                 text = glanceStringResource(
                     R.string.all_notes_widget_success_last_updated_label,
                     "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
+                ),
+                style = TextStyle(
+                    fontSize = 12.sp
                 )
             )
 
@@ -284,15 +294,16 @@ private fun BottomRow(
                 imageProvider = ImageProvider(R.drawable.baseline_cached),
                 onClick = onRefresh,
                 backgroundColor = null,
+                contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
-                modifier = GlanceModifier.size(12.dp)
+                modifier = GlanceModifier.size(16.dp)
             )
         }
         // Else, display a CircularProgressIndicator
         else {
             CircularProgressIndicator(
                 color = ColorProvider(day = Color.Gray, night = Color.Gray),
-                modifier = GlanceModifier.size(12.dp)
+                modifier = GlanceModifier.size(16.dp)
             )
         }
     }
