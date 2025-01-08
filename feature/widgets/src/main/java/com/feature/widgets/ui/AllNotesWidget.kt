@@ -116,8 +116,6 @@ class AllNotesWidget() : GlanceAppWidget() {
                 lastUpdated = lastUpdated.longValue,
                 updateNotesList = {
                     coroutineScope.launch(Dispatchers.IO) {
-                        // TODO Fix Widget not updating immediately
-
                         Log.i(TAG, "Updating the list of notes...")
 
                         // Obtain the current time in millis
@@ -125,6 +123,9 @@ class AllNotesWidget() : GlanceAppWidget() {
 
                         // Update the lastUpdated value
                         lastUpdated.longValue = newUpdateTime
+
+                        // Updates the Widget
+                        AllNotesWidget().update(context, id)
                     }
                 }
             )
