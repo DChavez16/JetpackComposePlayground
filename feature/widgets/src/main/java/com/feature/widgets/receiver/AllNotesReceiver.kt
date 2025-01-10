@@ -12,4 +12,6 @@ class AllNotesReceiver: GlanceAppWidgetReceiver() {
 
     // AllNotesWidget instance
     override val glanceAppWidget = AllNotesWidget()
+
+    // TODO Add receiver to update widget
 }

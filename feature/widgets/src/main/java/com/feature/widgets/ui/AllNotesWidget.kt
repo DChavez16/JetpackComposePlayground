@@ -85,8 +85,11 @@ class AllNotesWidget() : GlanceAppWidget() {
             // Initiallize the last update time
             var lastUpdated = remember { mutableLongStateOf(-1) }
 
+            // Initialize the update flag
+            var widgetUpdates = remember { mutableStateOf(false) }
+
             // Notes recollection
-            LaunchedEffect(lastUpdated) {
+            LaunchedEffect(widgetUpdates) {
                 coroutineScope.launch(Dispatchers.IO) {
                     // Attempt to collect the notes from the repository
                     try {
@@ -97,6 +100,12 @@ class AllNotesWidget() : GlanceAppWidget() {
                         // Retreive the notes from the repository
                         notesUiState.value =
                             AllNotesWidgetUiState.Success(noteRepository.getNotes())
+
+                        // Obtain the current time in millis
+                        val newUpdateTime = System.currentTimeMillis()
+
+                        // Update the lastUpdated value
+                        lastUpdated.longValue = newUpdateTime
 
                         Log.i(TAG, "Notes succesfully retrieved")
                     } catch (e: IOException) {
@@ -117,11 +126,7 @@ class AllNotesWidget() : GlanceAppWidget() {
                     coroutineScope.launch(Dispatchers.IO) {
                         Log.i(TAG, "Updating the list of notes...")
 
-                        // Obtain the current time in millis
-                        val newUpdateTime = System.currentTimeMillis()
-
-                        // Update the lastUpdated value
-                        lastUpdated.longValue = newUpdateTime
+                        widgetUpdates.value = !widgetUpdates.value
 
                         // Updates the Widget
                         AllNotesWidget().update(context, id)
@@ -270,7 +275,7 @@ private fun BottomRow(
     Row(
         horizontalAlignment = Alignment.End,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier.padding(4.dp)
     ) {
         // If isLoading is false, display the last updated time and a button to reload
         if (!isLoading) {
@@ -281,7 +286,7 @@ private fun BottomRow(
                     "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                 ),
                 style = TextStyle(
-                    fontSize = 12.sp
+                    fontSize = 14.sp
                 )
             )
 
@@ -296,7 +301,7 @@ private fun BottomRow(
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
-                modifier = GlanceModifier.size(16.dp)
+                modifier = GlanceModifier.size(18.dp)
             )
         }
         // Else, display a CircularProgressIndicator
