@@ -88,6 +88,8 @@ class AllNotesWidget() : GlanceAppWidget() {
             // Initialize the update flag
             var widgetUpdates = remember { mutableStateOf(false) }
 
+            // TODO Collect the update widget flag and set it as the Launched effect key
+
             // Notes recollection
             LaunchedEffect(widgetUpdates) {
                 coroutineScope.launch(Dispatchers.IO) {
@@ -123,6 +125,7 @@ class AllNotesWidget() : GlanceAppWidget() {
                 notesUiState = notesUiState.collectAsState().value,
                 lastUpdated = lastUpdated.longValue,
                 updateNotesList = {
+                    // TODO Take this method parameter off the AllNotesWidgetContent function
                     coroutineScope.launch(Dispatchers.IO) {
                         Log.i(TAG, "Updating the list of notes...")
 
@@ -148,6 +151,7 @@ private fun AllNotesWidgetContent(
     if (notesUiState is AllNotesWidgetUiState.Error) {
         ErrorScreen(
             errorMessage = notesUiState.errorMessage,
+            // TODO Take this method parameter off the ErrorScreen function
             updateNotesList = updateNotesList
         )
     }
@@ -180,6 +184,7 @@ private fun AllNotesWidgetContent(
                 BottomRow(
                     isLoading = notesUiState is AllNotesWidgetUiState.Loading,
                     lastUpdateTime = lastUpdated,
+                    // TODO Take this method parameter off the BottomRow function
                     onRefresh = updateNotesList,
                     modifier = GlanceModifier.fillMaxWidth()
                 )
@@ -297,6 +302,7 @@ private fun BottomRow(
             // Reload button
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_cached),
+                // TODO Replace the implementation of this parameter with an action calling UPDATE_WIDGET_FLAG_ACTION
                 onClick = onRefresh,
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
@@ -351,6 +357,7 @@ private fun ErrorScreen(
         // Retry button
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_cached),
+            // TODO Replace the implementation of this parameter with an action calling UPDATE_WIDGET_FLAG_ACTION
             onClick = updateNotesList,
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
