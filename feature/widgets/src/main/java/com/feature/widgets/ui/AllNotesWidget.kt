@@ -4,6 +4,7 @@
 package com.feature.widgets.ui
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -23,8 +24,11 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.action
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
@@ -51,6 +55,7 @@ import com.example.model.Note
 import com.example.model.fakeNotesList
 import com.feature.widgets.R
 import com.feature.widgets.hiltEntryPoint.WidgetsEntryPoint
+import com.feature.widgets.receiver.AllNotesReceiver
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -124,17 +129,7 @@ class AllNotesWidget() : GlanceAppWidget() {
             AllNotesWidgetContent(
                 notesUiState = notesUiState.collectAsState().value,
                 lastUpdated = lastUpdated.longValue,
-                updateNotesList = {
-                    // TODO Take this method parameter off the AllNotesWidgetContent function
-                    coroutineScope.launch(Dispatchers.IO) {
-                        Log.i(TAG, "Updating the list of notes...")
-
-                        widgetUpdates.value = !widgetUpdates.value
-
-                        // Updates the Widget
-                        AllNotesWidget().update(context, id)
-                    }
-                }
+                widgetIdInt = GlanceAppWidgetManager(context).getAppWidgetId(id)
             )
         }
     }
@@ -145,14 +140,13 @@ class AllNotesWidget() : GlanceAppWidget() {
 private fun AllNotesWidgetContent(
     notesUiState: AllNotesWidgetUiState,
     lastUpdated: Long,
-    updateNotesList: () -> Unit
+    widgetIdInt: Int = -1,
 ) {
     // If is Error
     if (notesUiState is AllNotesWidgetUiState.Error) {
         ErrorScreen(
             errorMessage = notesUiState.errorMessage,
-            // TODO Take this method parameter off the ErrorScreen function
-            updateNotesList = updateNotesList
+            widgetIdInt = widgetIdInt
         )
     }
     // Else, is Loading or Success
@@ -184,8 +178,7 @@ private fun AllNotesWidgetContent(
                 BottomRow(
                     isLoading = notesUiState is AllNotesWidgetUiState.Loading,
                     lastUpdateTime = lastUpdated,
-                    // TODO Take this method parameter off the BottomRow function
-                    onRefresh = updateNotesList,
+                    widgetIdInt = widgetIdInt,
                     modifier = GlanceModifier.fillMaxWidth()
                 )
             }
@@ -270,7 +263,7 @@ private fun NoteElement(
 private fun BottomRow(
     isLoading: Boolean = true,
     lastUpdateTime: Long = -1,
-    onRefresh: () -> Unit = {},
+    widgetIdInt: Int = -1,
     modifier: GlanceModifier = GlanceModifier
 ) {
     // Create instance of Calendar
@@ -303,7 +296,7 @@ private fun BottomRow(
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_cached),
                 // TODO Replace the implementation of this parameter with an action calling UPDATE_WIDGET_FLAG_ACTION
-                onClick = onRefresh,
+                onClick = TODO(),
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
@@ -323,7 +316,7 @@ private fun BottomRow(
 @Composable
 private fun ErrorScreen(
     errorMessage: String,
-    updateNotesList: () -> Unit
+    widgetIdInt: Int = -1,
 ) {
     Column(
         verticalAlignment = Alignment.CenterVertically,
@@ -357,8 +350,12 @@ private fun ErrorScreen(
         // Retry button
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_cached),
-            // TODO Replace the implementation of this parameter with an action calling UPDATE_WIDGET_FLAG_ACTION
-            onClick = updateNotesList,
+            onClick = actionSendBroadcast(
+                intent = Intent().apply {
+                    action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
+                    putExtra("widget_id_int", widgetIdInt)
+                }
+            ),
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
             contentDescription = glanceStringResource(R.string.all_notes_widget_error_retry_connection_button_accessibility)
@@ -410,8 +407,7 @@ private fun BottomRowSuccessPreview() {
     GlanceTheme {
         BottomRow(
             isLoading = false,
-            lastUpdateTime = System.currentTimeMillis(),
-            onRefresh = {}
+            lastUpdateTime = System.currentTimeMillis()
         )
     }
 }
@@ -422,8 +418,7 @@ private fun ErrorScreenPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Error("Error message"),
-            lastUpdated = -1,
-            updateNotesList = {}
+            lastUpdated = -1
         )
     }
 }
@@ -434,8 +429,7 @@ private fun LoadingScreenPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Loading,
-            lastUpdated = -1,
-            updateNotesList = {}
+            lastUpdated = -1
         )
     }
 }
@@ -446,8 +440,7 @@ private fun SuccessScreenPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
-            lastUpdated = -1,
-            updateNotesList = {}
+            lastUpdated = -1
         )
     }
 }
