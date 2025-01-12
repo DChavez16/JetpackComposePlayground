@@ -24,7 +24,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.action.action
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -295,8 +294,12 @@ private fun BottomRow(
             // Reload button
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_cached),
-                // TODO Replace the implementation of this parameter with an action calling UPDATE_WIDGET_FLAG_ACTION
-                onClick = TODO(),
+                onClick = actionSendBroadcast(
+                    intent = Intent().apply {
+                        action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
+                        putExtra("widget_id_int", widgetIdInt)
+                    }
+                ),
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
