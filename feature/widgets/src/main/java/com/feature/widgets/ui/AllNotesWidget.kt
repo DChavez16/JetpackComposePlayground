@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -34,6 +35,7 @@ import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.color.ColorProvider
+import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -89,13 +91,14 @@ class AllNotesWidget() : GlanceAppWidget() {
             // Initiallize the last update time
             var lastUpdated = remember { mutableLongStateOf(-1) }
 
-            // Initialize the update flag
-            var widgetUpdates = remember { mutableStateOf(false) }
+            // Get the preferences from the current Widget
+            val prefs = currentState<Preferences>()
 
-            // TODO Collect the update widget flag and set it as the Launched effect key
+            // Get the update flag from the preferences, set false if null
+            val widgetUpdateFlag = prefs[AllNotesReceiver.WIDGET_UPDATE_FLAG_KEY] ?: false
 
             // Notes recollection
-            LaunchedEffect(widgetUpdates) {
+            LaunchedEffect(widgetUpdateFlag) {
                 coroutineScope.launch(Dispatchers.IO) {
                     // Attempt to collect the notes from the repository
                     try {
