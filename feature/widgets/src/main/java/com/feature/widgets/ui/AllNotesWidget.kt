@@ -25,6 +25,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.Action
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -70,7 +71,7 @@ class AllNotesWidget() : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
-        Log.i(TAG, "AllNotesWidget started")
+        Log.i(TAG, "AllNotesWidget started with id ${GlanceAppWidgetManager(context).getAppWidgetId(id)}")
 
         // Hilt entry point
         val notesEntryPoint = EntryPointAccessors
@@ -95,7 +96,7 @@ class AllNotesWidget() : GlanceAppWidget() {
             val prefs = currentState<Preferences>()
 
             // Get the update flag from the preferences, set false if null
-            val widgetUpdateFlag = prefs[AllNotesReceiver.WIDGET_UPDATE_FLAG_KEY] ?: false
+            val widgetUpdateFlag = prefs[AllNotesReceiver.WIDGET_UPDATE_FLAG_KEY]
 
             // Notes recollection
             LaunchedEffect(widgetUpdateFlag) {
@@ -131,7 +132,15 @@ class AllNotesWidget() : GlanceAppWidget() {
             AllNotesWidgetContent(
                 notesUiState = notesUiState.collectAsState().value,
                 lastUpdated = lastUpdated.longValue,
-                widgetIdInt = GlanceAppWidgetManager(context).getAppWidgetId(id)
+                updateAction = actionSendBroadcast(
+                    Intent(
+                        LocalContext.current,
+                        AllNotesReceiver::class.java
+                    ).apply {
+                        action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
+                        putExtra("widget_id_int", GlanceAppWidgetManager(context).getAppWidgetId(id))
+                    }
+                )
             )
         }
     }
@@ -142,13 +151,13 @@ class AllNotesWidget() : GlanceAppWidget() {
 private fun AllNotesWidgetContent(
     notesUiState: AllNotesWidgetUiState,
     lastUpdated: Long,
-    widgetIdInt: Int = -1,
+    updateAction: Action = actionSendBroadcast(Intent())
 ) {
     // If is Error
     if (notesUiState is AllNotesWidgetUiState.Error) {
         ErrorScreen(
             errorMessage = notesUiState.errorMessage,
-            widgetIdInt = widgetIdInt
+            updateAction = updateAction
         )
     }
     // Else, is Loading or Success
@@ -180,7 +189,7 @@ private fun AllNotesWidgetContent(
                 BottomRow(
                     isLoading = notesUiState is AllNotesWidgetUiState.Loading,
                     lastUpdateTime = lastUpdated,
-                    widgetIdInt = widgetIdInt,
+                    updateAction = updateAction,
                     modifier = GlanceModifier.fillMaxWidth()
                 )
             }
@@ -265,7 +274,7 @@ private fun NoteElement(
 private fun BottomRow(
     isLoading: Boolean = true,
     lastUpdateTime: Long = -1,
-    widgetIdInt: Int = -1,
+    updateAction: Action = actionSendBroadcast(Intent()),
     modifier: GlanceModifier = GlanceModifier
 ) {
     // Create instance of Calendar
@@ -297,12 +306,7 @@ private fun BottomRow(
             // Reload button
             CircleIconButton(
                 imageProvider = ImageProvider(R.drawable.baseline_cached),
-                onClick = actionSendBroadcast(
-                    intent = Intent().apply {
-                        action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
-                        putExtra("widget_id_int", widgetIdInt)
-                    }
-                ),
+                onClick = updateAction,
                 backgroundColor = null,
                 contentColor = ColorProvider(day = Color.Black, night = Color.Black),
                 contentDescription = glanceStringResource(R.string.all_notes_widget_success_reload_notes_button_accessibility),
@@ -323,6 +327,7 @@ private fun BottomRow(
 private fun ErrorScreen(
     errorMessage: String,
     widgetIdInt: Int = -1,
+    updateAction: Action
 ) {
     Column(
         verticalAlignment = Alignment.CenterVertically,
@@ -356,12 +361,7 @@ private fun ErrorScreen(
         // Retry button
         CircleIconButton(
             imageProvider = ImageProvider(R.drawable.baseline_cached),
-            onClick = actionSendBroadcast(
-                intent = Intent().apply {
-                    action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
-                    putExtra("widget_id_int", widgetIdInt)
-                }
-            ),
+            onClick = updateAction,
             backgroundColor = GlanceTheme.colors.primary,
             contentColor = GlanceTheme.colors.onPrimary,
             contentDescription = glanceStringResource(R.string.all_notes_widget_error_retry_connection_button_accessibility)

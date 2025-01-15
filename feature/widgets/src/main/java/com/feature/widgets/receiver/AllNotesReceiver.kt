@@ -40,12 +40,10 @@ class AllNotesReceiver: GlanceAppWidgetReceiver() {
 
         // If the action is to update the widget flag
         if(intent.action == UPDATE_WIDGET_FLAG_ACTION) {
-            Log.i(TAG, "Intent received with action: ${intent.action}")
-
             // Retreiving the parameters from the intent
             val widgetId = intent.getIntExtra("widget_id_int", -1)
 
-            Log.i(TAG, "Updating widget with id: $widgetId")
+            Log.i(TAG, "Intent received with action: ${intent.action}")
 
             // Update the widget flag
             triggerWidgetUpdate(
