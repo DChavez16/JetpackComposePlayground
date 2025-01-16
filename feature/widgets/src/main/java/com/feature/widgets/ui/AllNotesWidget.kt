@@ -69,6 +69,8 @@ private const val TAG = "AllNotesWidget"
 
 class AllNotesWidget() : GlanceAppWidget() {
 
+    // TODO Add error layout
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
         Log.i(TAG, "AllNotesWidget started with id ${GlanceAppWidgetManager(context).getAppWidgetId(id)}")
