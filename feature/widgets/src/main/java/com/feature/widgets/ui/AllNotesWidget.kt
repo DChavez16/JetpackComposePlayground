@@ -70,6 +70,7 @@ private const val TAG = "AllNotesWidget"
 class AllNotesWidget() : GlanceAppWidget() {
 
     // TODO Add error layout
+    // TODO Add variant for bigger Widget
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
@@ -250,12 +251,12 @@ private fun NoteElement(
     note: Note
 ) {
     Column(
-        modifier = GlanceModifier.fillMaxWidth().padding(2.dp)
+        modifier = GlanceModifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp, start = 2.dp, end = 2.dp)
     ) {
         Text(
             text = note.title,
             style = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 18.sp,
                 color = ColorProvider(day = Color.Black, night = Color.Black)
             ),
             maxLines = 1,
