@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="200dp"
+    android:background="#ffe378"
+    android:orientation="vertical">
 
+    <!-- Widget header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="#f9d03b">
+
+    </LinearLayout>
+
+    <!-- Note content -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Individual note widget preview"/>
-</FrameLayout>
+        android:text="@string/individual_note_content_placeholder_preview"/>
+</LinearLayout>

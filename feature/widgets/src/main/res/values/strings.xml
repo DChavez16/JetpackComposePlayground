@@ -23,6 +23,7 @@
     <string name="individual_note_widget_connection_error_label">Connection error:</string>
     <string name="individual_note_widget_pin_note_button_accessibility">Pin a note to this Widget</string>
     <string name="individual_note_widget_retry_connection_button_accessibility">Retry to connect</string>
+    <string name="individual_note_content_placeholder_preview">Arts class</string>
 
     <!-- Pin Note Screen -->
     <string name="pin_note_activity_loading_label">Retrieving notes</string>
