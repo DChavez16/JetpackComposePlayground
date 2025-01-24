@@ -15,15 +15,18 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/thumb_tack_2_plain"
-            android:tint="@android:color/black"
             android:contentDescription="@string/individual_note_widget_pin_note_button_accessibility"
-            />
+            android:src="@drawable/thumb_tack_2_plain"
+            android:tint="@android:color/black" />
     </LinearLayout>
 
     <!-- Note content -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/individual_note_content_placeholder_preview"/>
+        android:padding="12dp"
+        android:text="@string/individual_note_content_placeholder_preview"
+        android:textColor="@android:color/black"
+        android:textSize="28sp"
+        android:textStyle="italic" />
 </LinearLayout>
