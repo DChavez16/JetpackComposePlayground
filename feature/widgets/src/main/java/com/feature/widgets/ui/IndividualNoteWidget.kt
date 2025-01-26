@@ -76,7 +76,6 @@ private const val TAG = "IndividualNoteWidget"
 
 class IndividualNoteWidget : GlanceAppWidget() {
 
-    // TODO Add error layout
     // TODO Add variant for bigger Widget
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -165,6 +164,16 @@ class IndividualNoteWidget : GlanceAppWidget() {
                 }
             )
         }
+    }
+
+    // https://developer.android.com/develop/ui/compose/glance/error-handling
+    override fun onCompositionError(
+        context: Context,
+        glanceId: GlanceId,
+        appWidgetId: Int,
+        throwable: Throwable
+    ) {
+        // TODO Add error layout
     }
 }
 
