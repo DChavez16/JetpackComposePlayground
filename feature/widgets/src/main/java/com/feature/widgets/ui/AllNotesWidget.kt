@@ -69,7 +69,6 @@ private const val TAG = "AllNotesWidget"
 
 class AllNotesWidget() : GlanceAppWidget() {
 
-    // TODO Add error layout
     // TODO Add variant for bigger Widget
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
@@ -146,6 +145,16 @@ class AllNotesWidget() : GlanceAppWidget() {
                 )
             )
         }
+    }
+
+    // https://developer.android.com/develop/ui/compose/glance/error-handling
+    override fun onCompositionError(
+        context: Context,
+        glanceId: GlanceId,
+        appWidgetId: Int,
+        throwable: Throwable
+    ) {
+        // TODO Add error layout
     }
 }
 
