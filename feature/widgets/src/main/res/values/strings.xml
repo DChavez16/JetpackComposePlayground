@@ -25,6 +25,10 @@
     <string name="individual_note_widget_retry_connection_button_accessibility">Retry to connect</string>
     <string name="individual_note_content_placeholder_preview">Arts class</string>
 
+    <!-- Widget commons -->
+    <string name="widget_composition_error_message">Widget display error</string>
+    <string name="widget_composition_error_reload_button"><u>Reload</u></string>
+
     <!-- Pin Note Screen -->
     <string name="pin_note_activity_loading_label">Retrieving notes</string>
     <string name="pin_note_activity_error_message">Error retrieving notes:\n%s</string>

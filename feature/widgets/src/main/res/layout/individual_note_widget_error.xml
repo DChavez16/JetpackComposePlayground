@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFDAD6"
+    android:gravity="center"
+    android:orientation="horizontal">
 
+    <!-- Error icon -->
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@null"
+        android:src="@drawable/round_broken_image"
+        android:tint="#93000a" />
+
+    <!-- Error message & reload button-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp">
+
+        <!-- Error message -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_composition_error_message"
+            android:textColor="#93000a"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Reload text button -->
+        <TextView
+            android:id="@+id/widget_error_reload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:text="@string/widget_composition_error_reload_button"
+            android:textColor="#93000a"
+            android:textSize="18sp" />
+    </LinearLayout>
 </LinearLayout>
