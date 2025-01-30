@@ -74,7 +74,9 @@ import okio.IOException
 
 private const val TAG = "IndividualNoteWidget"
 
-class IndividualNoteWidget : GlanceAppWidget() {
+class IndividualNoteWidget : GlanceAppWidget(
+    errorUiLayout = R.layout.individual_note_widget_error
+) {
 
     // TODO Add variant for bigger Widget
 
