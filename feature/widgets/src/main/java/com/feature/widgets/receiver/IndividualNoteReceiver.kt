@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -29,9 +30,12 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     // IndividualNoteWidget instance
     override val glanceAppWidget: GlanceAppWidget = IndividualNoteWidget()
 
-    // Preferences keys
     companion object {
+        // Preferences keys
         val PINNED_NOTE_ID = longPreferencesKey("selected_note_id")
+
+        // Intent actions
+        const val UPDATE_INDIVIDUAL_NOTE_WIDGET = "updateIndividualNoteWidget"
     }
 
     // Define a coroutine scope
@@ -50,26 +54,44 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        if (intent.action == UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID) {
-            Log.i(TAG, "Intent received with action: ${intent.action}")
+        when (intent.action) {
+            // Update the pinned note id of the specified Individual Note Widget
+            UpdatePinnedNoteIdBroadcastReceiver.UPDATE_PINNED_NOTE_ID -> {
+                Log.i(TAG, "Intent received with action: ${intent.action}")
 
-            // Retreving the parameters from the intent
-            val newPinnedNoteId = intent.getLongExtra("new_pinned_note_id", -1)
-            val widgetId = intent.getIntExtra("widget_id_int", -1)
+                // Retreving the parameters from the intent
+                val newPinnedNoteId = intent.getLongExtra("new_pinned_note_id", -1)
+                val widgetIdInt = intent.getIntExtra("widget_id_int", -1)
 
-            Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id: $widgetId")
+                Log.i(TAG, "Pinning note with id $newPinnedNoteId to widget with id: $widgetIdInt")
 
-            // Update the pinned note id in the Widget parameters
-            updatePinnedNoteId(
-                context = context,
-                widgetIdInt = widgetId,
-                newPinnedNoteId = newPinnedNoteId
-            )
+                // Update the pinned note id in the Widget parameters
+                updatePinnedNoteId(
+                    context = context,
+                    widgetIdInt = widgetIdInt,
+                    newPinnedNoteId = newPinnedNoteId
+                )
+            }
+
+            // Plain update of the specified Individual Note Widget
+            UPDATE_INDIVIDUAL_NOTE_WIDGET -> {
+                Log.i(TAG, "Reloading Widget from the composition error screen")
+
+                // Retreiving the parameters of the intent
+                val widgetIdInt = intent.getIntExtra("widget_id_int", -1)
+
+                // Get widget to update id
+                val widgetId = GlanceAppWidgetManager(context).getGlanceIdBy(widgetIdInt)
+
+                // Updates the specified Individual Note Widget
+                Log.i(TAG, "Updating widget with id: $widgetIdInt")
+                updateIndividualNoteWidget(context = context, widgetId = widgetId)
+            }
         }
     }
 
     // Update the pinned note id in the given's Widget parameters
-    fun updatePinnedNoteId(
+    private fun updatePinnedNoteId(
         context: Context,
         widgetIdInt: Int,
         newPinnedNoteId: Long,
@@ -89,8 +111,19 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
                 }
             }
 
+            // Updates the specified Individual Note Widget
             Log.i(TAG, "Updating widget with id: $widgetIdInt")
+            updateIndividualNoteWidget(context = context, widgetId = widgetId)
+        }
+    }
 
+
+    // Update the Individual Note Widget
+    private fun updateIndividualNoteWidget(
+        context: Context,
+        widgetId: GlanceId
+    ) {
+        coroutineScope.launch {
             // Refresh the widget
             IndividualNoteWidget().update(context, widgetId)
         }
