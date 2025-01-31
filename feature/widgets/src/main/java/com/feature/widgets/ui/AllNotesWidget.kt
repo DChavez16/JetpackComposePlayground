@@ -147,7 +147,7 @@ class AllNotesWidget() : GlanceAppWidget() {
         }
     }
 
-    // https://developer.android.com/develop/ui/compose/glance/error-handling
+    // https://developer.android.com/develop/ui/compose/glance/error-handling#add-actions
     override fun onCompositionError(
         context: Context,
         glanceId: GlanceId,

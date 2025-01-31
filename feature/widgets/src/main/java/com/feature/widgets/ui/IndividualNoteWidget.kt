@@ -3,8 +3,11 @@
 
 package com.feature.widgets.ui
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +78,7 @@ import okio.IOException
 private const val TAG = "IndividualNoteWidget"
 
 class IndividualNoteWidget : GlanceAppWidget(
-    errorUiLayout = R.layout.individual_note_widget_error
+    errorUiLayout = R.layout.common_widget_ui_error
 ) {
 
     // TODO Add variant for bigger Widget
@@ -168,14 +171,21 @@ class IndividualNoteWidget : GlanceAppWidget(
         }
     }
 
-    // https://developer.android.com/develop/ui/compose/glance/error-handling
+    // https://developer.android.com/develop/ui/compose/glance/error-handling#add-actions
     override fun onCompositionError(
         context: Context,
         glanceId: GlanceId,
         appWidgetId: Int,
         throwable: Throwable
     ) {
-        // TODO Add error layout
+        // Get error layout remote view instance
+        val remoteView = RemoteViews(context.packageName, R.layout.common_widget_ui_error)
+
+        // Set click action to the reload button
+        remoteView.setOnClickPendingIntent(
+            R.id.widget_error_reload_button,
+            getErrorIntent(context)
+        )
     }
 }
 
@@ -425,4 +435,12 @@ private fun SuccessScreenPreview() {
 private fun glanceStringResource(@StringRes id: Int): String {
     val context = LocalContext.current
     return context.getString(id)
+}
+
+private fun getErrorIntent(context: Context): PendingIntent {
+    val intent = Intent(context, IndividualNoteReceiver::class.java).apply {
+        action = IndividualNoteReceiver.UPDATE_INDIVIDUAL_NOTE_WIDGET
+    }
+
+    return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 }
