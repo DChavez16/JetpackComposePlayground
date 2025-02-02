@@ -67,7 +67,9 @@ import java.util.Calendar
 
 private const val TAG = "AllNotesWidget"
 
-class AllNotesWidget() : GlanceAppWidget() {
+class AllNotesWidget() : GlanceAppWidget(
+    errorUiLayout = R.layout.common_widget_ui_error
+) {
 
     // TODO Add variant for bigger Widget
 
