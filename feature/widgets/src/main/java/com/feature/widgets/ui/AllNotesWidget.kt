@@ -6,6 +6,7 @@ package com.feature.widgets.ui
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -156,7 +157,10 @@ class AllNotesWidget() : GlanceAppWidget(
         appWidgetId: Int,
         throwable: Throwable
     ) {
-        // TODO Add error layout
+        // Get error layout remote view instance
+        val remoteView = RemoteViews(context.packageName, R.layout.common_widget_ui_error)
+
+        // TODO Set click action to the reload button
     }
 }
 
