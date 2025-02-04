@@ -3,6 +3,7 @@
 
 package com.feature.widgets.ui
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -475,4 +476,12 @@ private fun SuccessScreenPreview() {
 private fun glanceStringResource(@StringRes id: Int, formatArgs: String = ""): String {
     val context = LocalContext.current
     return context.getString(id, formatArgs)
+}
+
+private fun getErrorIntent(context: Context): PendingIntent {
+    val intent = Intent(context, AllNotesReceiver::class.java).apply {
+        action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
+    }
+
+    return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 }
