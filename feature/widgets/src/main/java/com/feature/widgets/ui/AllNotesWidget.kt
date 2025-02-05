@@ -161,7 +161,11 @@ class AllNotesWidget() : GlanceAppWidget(
         // Get error layout remote view instance
         val remoteView = RemoteViews(context.packageName, R.layout.common_widget_ui_error)
 
-        // TODO Set click action to the reload button
+        // Set click action
+        remoteView.setOnClickPendingIntent(
+            R.id.widget_error_reload_button,
+            getErrorIntent(context)
+        )
     }
 }
 
