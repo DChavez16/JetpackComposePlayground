@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
@@ -23,12 +24,14 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -82,6 +85,19 @@ class IndividualNoteWidget : GlanceAppWidget(
 ) {
 
     // TODO Add variant for bigger Widget
+    // Companion object for the Widget available sizes
+    companion object {
+        private val SMALL_SQUARE = DpSize(60.dp, 60.dp)
+        private val VERTICAL_RECTANGLE = DpSize(60.dp, 120.dp)
+    }
+
+    // Declare Widget responsive size mode
+    override val sizeMode = SizeMode.Responsive(
+        setOf(
+            SMALL_SQUARE,
+            VERTICAL_RECTANGLE
+        )
+    )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
@@ -99,6 +115,9 @@ class IndividualNoteWidget : GlanceAppWidget(
         provideContent {
             // Define coroutine scope
             val coroutineScope = rememberCoroutineScope()
+
+            // Get the current size
+            val currentSize = LocalSize.current
 
             // Get the preferences from the current widget
             val prefs = currentState<Preferences>()
@@ -162,6 +181,7 @@ class IndividualNoteWidget : GlanceAppWidget(
             IndividualNoteWidgetContent(
                 noteUiState = notesUiState.collectAsState().value,
                 glanceId = GlanceAppWidgetManager(context).getAppWidgetId(id),
+                isVerticalRectangle = currentSize.height >= VERTICAL_RECTANGLE.height,
                 updateWidget = {
                     coroutineScope.launch {
                         IndividualNoteWidget().update(context, id)
@@ -194,6 +214,7 @@ class IndividualNoteWidget : GlanceAppWidget(
 private fun IndividualNoteWidgetContent(
     noteUiState: IndividualNoteWidgetUiState,
     glanceId: Int,
+    isVerticalRectangle: Boolean = false,
     updateWidget: () -> Unit = {}
 ) {
 
@@ -231,7 +252,7 @@ private fun IndividualNoteWidgetContent(
             is NoPinnedNote -> NoPinnedNoteScreen(glanceId)
             is NoteNotFound -> NoteNotFoundScreen(glanceId)
             is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage, updateWidget)
-            is Success -> SuccessScreen(glanceId, noteUiState.note)
+            is Success -> SuccessScreen(glanceId, noteUiState.note, isVerticalRectangle)
         }
     }
 }
@@ -350,8 +371,12 @@ private fun ConnectionErrorScreen(
 @Composable
 private fun SuccessScreen(
     glanceId: Int,
-    note: Note
+    note: Note,
+    isExpandedNote: Boolean = false
 ) {
+
+    // TODO Add note content is the note is expanded
+
     Text(
         text = note.title,
         style = TextStyle(
