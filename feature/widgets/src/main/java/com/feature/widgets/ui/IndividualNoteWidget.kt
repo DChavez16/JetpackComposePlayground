@@ -48,7 +48,10 @@ import androidx.glance.layout.padding
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.FontStyle
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.example.model.fakeNotesList
@@ -84,11 +87,10 @@ class IndividualNoteWidget : GlanceAppWidget(
     errorUiLayout = R.layout.common_widget_ui_error
 ) {
 
-    // TODO Add variant for bigger Widget
     // Companion object for the Widget available sizes
     companion object {
-        private val SMALL_SQUARE = DpSize(60.dp, 60.dp)
-        private val VERTICAL_RECTANGLE = DpSize(60.dp, 120.dp)
+        private val SMALL_SQUARE = DpSize(100.dp, 100.dp)
+        private val VERTICAL_RECTANGLE = DpSize(100.dp, 200.dp)
     }
 
     // Declare Widget responsive size mode
@@ -375,17 +377,37 @@ private fun SuccessScreen(
     isExpandedNote: Boolean = false
 ) {
 
-    // TODO Add note content is the note is expanded
+    val columnVerticalAlignment = if (isExpandedNote) Alignment.Top else Alignment.CenterVertically
 
-    Text(
-        text = note.title,
-        style = TextStyle(
-            fontSize = 28.sp,
-            fontStyle = FontStyle.Italic,
-            color = ColorProvider(day = Color.Black, night = Color.Black)
-        ),
+    Column(
+        verticalAlignment = columnVerticalAlignment,
         modifier = GlanceModifier.fillMaxSize().padding(12.dp)
-    )
+    ) {
+        // Note title
+        Text(
+            text = note.title,
+            style = TextStyle(
+                fontSize = 28.sp,
+                fontStyle = FontStyle.Italic,
+                color = ColorProvider(day = Color.Black, night = Color.Black)
+            ),
+            maxLines = if (isExpandedNote) 1 else 2,
+            modifier = GlanceModifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
+
+        // Show note body content if isExpandedNote is true
+        if(isExpandedNote) {
+            Text(
+                text = note.body,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = ColorProvider(day = Color.DarkGray, night = Color.DarkGray)
+                ),
+                maxLines = 8,
+                modifier = GlanceModifier.fillMaxSize()
+            )
+        }
+    }
 }
 
 
@@ -445,11 +467,23 @@ private fun ConnectionErrorScreenPreview() {
 
 @Preview(widthDp = 200, heightDp = 200)
 @Composable
-private fun SuccessScreenPreview() {
+private fun SuccessScreenSmallSquarePreview() {
     GlanceTheme {
         IndividualNoteWidgetContent(
             noteUiState = Success(fakeNotesList[0]),
             glanceId = 1
+        )
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 200)
+@Composable
+private fun SuccessScreenVerticalRectanglePreview() {
+    GlanceTheme {
+        IndividualNoteWidgetContent(
+            noteUiState = Success(fakeNotesList[0]),
+            glanceId = 1,
+            isVerticalRectangle = true
         )
     }
 }
