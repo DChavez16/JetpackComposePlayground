@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
@@ -74,10 +75,21 @@ class AllNotesWidget() : GlanceAppWidget(
 ) {
 
     // TODO Add variant for bigger Widget
+    // Companion object for the Widget available spaces
+    companion object {
+        val SMALL_SQUARE = DpSize(100.dp, 100.dp)
+        val VERTICAL_RECTANGLE = DpSize(100.dp, 200.dp)
+        val HORIZONTAL_RECTANGLE = DpSize(300.dp, 100.dp)
+    }
+
+    // TODO Declare Widget responsive size mode
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
-        Log.i(TAG, "AllNotesWidget started with id ${GlanceAppWidgetManager(context).getAppWidgetId(id)}")
+        Log.i(
+            TAG,
+            "AllNotesWidget started with id ${GlanceAppWidgetManager(context).getAppWidgetId(id)}"
+        )
 
         // Hilt entry point
         val notesEntryPoint = EntryPointAccessors
@@ -89,6 +101,8 @@ class AllNotesWidget() : GlanceAppWidget(
         provideContent {
             // Define the coroutine scope
             val coroutineScope = rememberCoroutineScope()
+
+            // TODO Get the current size
 
             // Start the notesUiState as Loading
             var notesUiState = remember {
@@ -138,13 +152,17 @@ class AllNotesWidget() : GlanceAppWidget(
             AllNotesWidgetContent(
                 notesUiState = notesUiState.collectAsState().value,
                 lastUpdated = lastUpdated.longValue,
+                // TODO Send the current size as a parameter
                 updateAction = actionSendBroadcast(
                     Intent(
                         LocalContext.current,
                         AllNotesReceiver::class.java
                     ).apply {
                         action = AllNotesReceiver.UPDATE_WIDGET_FLAG_ACTION
-                        putExtra("widget_id_int", GlanceAppWidgetManager(context).getAppWidgetId(id))
+                        putExtra(
+                            "widget_id_int",
+                            GlanceAppWidgetManager(context).getAppWidgetId(id)
+                        )
                     }
                 )
             )
@@ -174,6 +192,7 @@ class AllNotesWidget() : GlanceAppWidget(
 private fun AllNotesWidgetContent(
     notesUiState: AllNotesWidgetUiState,
     lastUpdated: Long,
+    widgetCurrentSize: DpSize = DpSize(180.dp, 240.dp),
     updateAction: Action = actionSendBroadcast(Intent())
 ) {
     // If is Error
@@ -202,6 +221,7 @@ private fun AllNotesWidgetContent(
                 modifier = GlanceModifier.fillMaxSize().padding(8.dp)
             ) {
                 // List of notes
+                // TODO Make use of Widget current size
                 NotesList(
                     // Using the cached notes, ensures the last list of notes will always be showed in the Widget, even if the uiState is Loading
                     noteList = cachedNotes.value,
@@ -271,7 +291,8 @@ private fun NoteElement(
     note: Note
 ) {
     Column(
-        modifier = GlanceModifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp, start = 2.dp, end = 2.dp)
+        modifier = GlanceModifier.fillMaxWidth()
+            .padding(top = 4.dp, bottom = 4.dp, start = 2.dp, end = 2.dp)
     ) {
         Text(
             text = note.title,

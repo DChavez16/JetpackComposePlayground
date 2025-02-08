@@ -48,10 +48,7 @@ import androidx.glance.layout.padding
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.FontStyle
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
 import com.example.model.Note
 import com.example.model.fakeNotesList
@@ -396,7 +393,7 @@ private fun SuccessScreen(
         )
 
         // Show note body content if isExpandedNote is true
-        if(isExpandedNote) {
+        if (isExpandedNote) {
             Text(
                 text = note.body,
                 style = TextStyle(
