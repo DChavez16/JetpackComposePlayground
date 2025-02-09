@@ -32,6 +32,7 @@ import androidx.glance.action.Action
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -82,7 +83,14 @@ class AllNotesWidget() : GlanceAppWidget(
         val HORIZONTAL_RECTANGLE = DpSize(300.dp, 100.dp)
     }
 
-    // TODO Declare Widget responsive size mode
+    // Declare Widget responsive size mode
+    override val sizeMode = SizeMode.Responsive(
+        setOf(
+            SMALL_SQUARE,
+            VERTICAL_RECTANGLE,
+            HORIZONTAL_RECTANGLE
+        )
+    )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
 
