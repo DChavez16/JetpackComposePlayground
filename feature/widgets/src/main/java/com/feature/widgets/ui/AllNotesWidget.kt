@@ -28,6 +28,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
@@ -110,7 +111,8 @@ class AllNotesWidget() : GlanceAppWidget(
             // Define the coroutine scope
             val coroutineScope = rememberCoroutineScope()
 
-            // TODO Get the current size
+            // Get the current size
+            val currentSize = LocalSize.current
 
             // Start the notesUiState as Loading
             var notesUiState = remember {
@@ -160,7 +162,7 @@ class AllNotesWidget() : GlanceAppWidget(
             AllNotesWidgetContent(
                 notesUiState = notesUiState.collectAsState().value,
                 lastUpdated = lastUpdated.longValue,
-                // TODO Send the current size as a parameter
+                widgetCurrentSize = currentSize,
                 updateAction = actionSendBroadcast(
                     Intent(
                         LocalContext.current,
