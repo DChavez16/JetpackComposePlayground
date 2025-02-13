@@ -231,10 +231,11 @@ private fun AllNotesWidgetContent(
                 modifier = GlanceModifier.fillMaxSize().padding(8.dp)
             ) {
                 // List of notes
-                // TODO Make use of Widget current size
                 NotesList(
                     // Using the cached notes, ensures the last list of notes will always be showed in the Widget, even if the uiState is Loading
                     noteList = cachedNotes.value,
+                    useDoubleColumn = widgetCurrentSize.width >= AllNotesWidget.HORIZONTAL_RECTANGLE.width,
+                    useExpandedNote = widgetCurrentSize.height >= AllNotesWidget.VERTICAL_RECTANGLE.height,
                     modifier = GlanceModifier.fillMaxSize().defaultWeight()
                 )
 
@@ -263,6 +264,8 @@ private fun AllNotesWidgetContent(
 @Composable
 private fun NotesList(
     noteList: List<Note>,
+    useDoubleColumn: Boolean = false,
+    useExpandedNote: Boolean = false,
     modifier: GlanceModifier = GlanceModifier
 ) {
     // If the list of notes is empty, show a text indicating it
@@ -283,6 +286,7 @@ private fun NotesList(
     }
     // Else display the list of notes
     else {
+        // TODO Set LazyVerticalGrid with two columns if useDoubleColumn is true, else set one column
         LazyColumn(
             modifier = modifier
         ) {
@@ -290,6 +294,7 @@ private fun NotesList(
                 items = noteList,
                 itemId = { note -> note.id },
             ) { note ->
+                // TODO Add parameter that expands the note content if useExpandedNote is true
                 NoteElement(note = note)
             }
         }
@@ -298,7 +303,8 @@ private fun NotesList(
 
 @Composable
 private fun NoteElement(
-    note: Note
+    note: Note,
+    displayFullInfo: Boolean = false
 ) {
     Column(
         modifier = GlanceModifier.fillMaxWidth()
