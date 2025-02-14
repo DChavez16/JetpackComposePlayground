@@ -294,8 +294,10 @@ private fun NotesList(
                 items = noteList,
                 itemId = { note -> note.id },
             ) { note ->
-                // TODO Add parameter that expands the note content if useExpandedNote is true
-                NoteElement(note = note)
+                NoteElement(
+                    note = note,
+                    displayFullInfo = useExpandedNote
+                )
             }
         }
     }
@@ -319,6 +321,8 @@ private fun NoteElement(
             maxLines = 1,
             modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 4.dp)
         )
+
+        // TODO Add the note content if displayFullInfo is true
 
         Box(
             content = {},
