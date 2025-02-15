@@ -322,7 +322,9 @@ private fun NoteElement(
             modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 4.dp)
         )
 
-        // TODO Add the note content if displayFullInfo is true
+        if(displayFullInfo) {
+            // TODO Add the note content if displayFullInfo is true
+        }
 
         Box(
             content = {},
@@ -506,11 +508,23 @@ private fun LoadingScreenPreview() {
 
 @Preview(widthDp = 180, heightDp = 240)
 @Composable
-private fun SuccessScreenPreview() {
+private fun SuccessScreenSmallPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
             lastUpdated = -1
+        )
+    }
+}
+
+@Preview(widthDp = 200, heightDp = 300)
+@Composable
+private fun SuccessScreenExpandedPreview() {
+    GlanceTheme {
+        AllNotesWidgetContent(
+            notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
+            lastUpdated = -1,
+            widgetCurrentSize = DpSize(200.dp, 300.dp)
         )
     }
 }
