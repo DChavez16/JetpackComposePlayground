@@ -323,7 +323,15 @@ private fun NoteElement(
         )
 
         if(displayFullInfo) {
-            // TODO Add the note content if displayFullInfo is true
+            Text(
+                text = note.body,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    color = ColorProvider(day = Color.DarkGray, night = Color.DarkGray)
+                ),
+                maxLines = 2,
+                modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 6.dp)
+            )
         }
 
         Box(
@@ -512,19 +520,32 @@ private fun SuccessScreenSmallPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
-            lastUpdated = -1
+            lastUpdated = -1,
+            widgetCurrentSize = DpSize(100.dp, 100.dp)
         )
     }
 }
 
-@Preview(widthDp = 200, heightDp = 300)
+@Preview(widthDp = 180, heightDp = 300)
 @Composable
-private fun SuccessScreenExpandedPreview() {
+private fun SuccessScreenExpandedVerticalPreview() {
     GlanceTheme {
         AllNotesWidgetContent(
             notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
             lastUpdated = -1,
-            widgetCurrentSize = DpSize(200.dp, 300.dp)
+            widgetCurrentSize = DpSize(100.dp, 200.dp)
+        )
+    }
+}
+
+@Preview(widthDp = 360, heightDp = 240)
+@Composable
+private fun SuccessScreenExpandedHorizontalPreview() {
+    GlanceTheme {
+        AllNotesWidgetContent(
+            notesUiState = AllNotesWidgetUiState.Success(fakeNotesList),
+            lastUpdated = -1,
+            widgetCurrentSize = DpSize(300.dp, 100.dp)
         )
     }
 }
