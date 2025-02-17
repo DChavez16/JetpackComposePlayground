@@ -36,7 +36,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
+import androidx.glance.appwidget.lazy.GridCells
 import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.LazyVerticalGrid
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -287,18 +289,19 @@ private fun NotesList(
     // Else display the list of notes
     else {
         // TODO Set LazyVerticalGrid with two columns if useDoubleColumn is true, else set one column
-        LazyColumn(
+        LazyVerticalGrid(
+            gridCells = GridCells.Fixed(1),
             modifier = modifier
         ) {
-            items(
-                items = noteList,
-                itemId = { note -> note.id },
-            ) { note ->
-                NoteElement(
-                    note = note,
-                    displayFullInfo = useExpandedNote
-                )
-            }
+                items(
+                    items = noteList,
+                    itemId = { note -> note.id }
+                ) { note ->
+                    NoteElement(
+                        note = note,
+                        displayFullInfo = useExpandedNote
+                    )
+                }
         }
     }
 }
