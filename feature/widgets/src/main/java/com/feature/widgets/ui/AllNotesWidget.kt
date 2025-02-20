@@ -77,7 +77,6 @@ class AllNotesWidget() : GlanceAppWidget(
     errorUiLayout = R.layout.common_widget_ui_error
 ) {
 
-    // TODO Add variant for bigger Widget
     // Companion object for the Widget available spaces
     companion object {
         val SMALL_SQUARE = DpSize(100.dp, 100.dp)
@@ -288,6 +287,7 @@ private fun NotesList(
     // Else display the list of notes
     else {
         LazyVerticalGrid(
+            // Use 2 grid cells if the value of useDoubleColumn is true, else use 1 grid cell
             gridCells = GridCells.Fixed(if (useDoubleColumn) 2 else 1),
             modifier = modifier
         ) {
@@ -323,6 +323,7 @@ private fun NoteElement(
             modifier = GlanceModifier.fillMaxWidth().padding(horizontal = 4.dp)
         )
 
+        // If displayFullInfo is true, display the note's body
         if (displayFullInfo) {
             Text(
                 text = note.body,
