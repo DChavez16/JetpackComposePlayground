@@ -28,6 +28,7 @@ import androidx.glance.LocalSize
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -371,14 +372,15 @@ private fun ConnectionErrorScreen(
 private fun SuccessScreen(
     glanceId: Int,
     note: Note,
-    isExpandedNote: Boolean = false
+    isExpandedNote: Boolean = false,
+    onNoteClick: (Long) -> Unit = {}
 ) {
 
     val columnVerticalAlignment = if (isExpandedNote) Alignment.Top else Alignment.CenterVertically
 
     Column(
         verticalAlignment = columnVerticalAlignment,
-        modifier = GlanceModifier.fillMaxSize().padding(12.dp)
+        modifier = GlanceModifier.fillMaxSize().padding(12.dp).clickable { onNoteClick(note.id) }
     ) {
         // Note title
         Text(
