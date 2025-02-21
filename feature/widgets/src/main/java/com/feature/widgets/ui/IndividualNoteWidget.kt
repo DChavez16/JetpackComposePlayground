@@ -215,7 +215,8 @@ private fun IndividualNoteWidgetContent(
     noteUiState: IndividualNoteWidgetUiState,
     glanceId: Int,
     isVerticalRectangle: Boolean = false,
-    updateWidget: () -> Unit = {}
+    updateWidget: () -> Unit = {},
+    openSelectedWidget: (Long) -> Unit = {}
 ) {
 
     // Action parameter key to pair with glanceId
@@ -252,7 +253,12 @@ private fun IndividualNoteWidgetContent(
             is NoPinnedNote -> NoPinnedNoteScreen(glanceId)
             is NoteNotFound -> NoteNotFoundScreen(glanceId)
             is ConnectionError -> ConnectionErrorScreen(noteUiState.errorMessage, updateWidget)
-            is Success -> SuccessScreen(glanceId, noteUiState.note, isVerticalRectangle)
+            is Success -> SuccessScreen(
+                glanceId = glanceId,
+                note = noteUiState.note,
+                isExpandedNote = isVerticalRectangle,
+                onNoteClick = openSelectedWidget
+            )
         }
     }
 }
