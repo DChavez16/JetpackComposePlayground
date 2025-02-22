@@ -103,8 +103,6 @@ class IndividualNoteWidget : GlanceAppWidget(
 
         Log.i(TAG, "AllNotesWidget started")
 
-        // TODO Open the note in the app when clicked
-
         // Hilt entry point
         val notesEntryPoint = EntryPointAccessors
             .fromApplication(context.applicationContext, WidgetsEntryPoint::class.java)
@@ -186,6 +184,9 @@ class IndividualNoteWidget : GlanceAppWidget(
                     coroutineScope.launch {
                         IndividualNoteWidget().update(context, id)
                     }
+                },
+                openSelectedWidget = { noteId ->
+                    // TODO Open the note with the given noteId in the app
                 }
             )
         }
