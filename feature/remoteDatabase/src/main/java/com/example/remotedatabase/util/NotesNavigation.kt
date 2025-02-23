@@ -13,7 +13,9 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import com.example.model.Note
+import com.example.model.UserTag
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
 import com.example.remotedatabase.ui.NotesDetailScreen
@@ -118,6 +120,18 @@ internal fun RemoteDatabaseNavHost(
                 },
                 viewModelStoreOwner = viewModelStoreOwner()
             )
+        }
+
+        // Edit Note deep link destination
+        // TODO https://developer.android.com/develop/ui/compose/navigation#deeplinks
+        val uri = "https://www.example.com"
+        composable<Note>(
+            deepLinks = listOf(
+                navDeepLink<Note>(basePath = "$uri/editNote")
+            )
+        ) { backStackEntry ->
+
+            // TODO Set the current note on the view model with the backStackEntry id argument
         }
     }
 }
