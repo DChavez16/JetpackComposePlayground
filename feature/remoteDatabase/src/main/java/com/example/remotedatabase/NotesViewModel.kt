@@ -229,7 +229,8 @@ internal class NotesViewModel @Inject constructor(
         _isListView.value = !_isListView.value
     }
 
-    fun changeCurrentSelectedNote(note: Note) {
-        _currentSelectedNote.value = note
+    // Gets the id of the new selected note and changes the current selected note with it
+    fun changeCurrentSelectedNote(newSelectedNoteId: Long) {
+        _currentSelectedNote.value = (_notesUiState.value as NotesUiState.Success).notes.find { it.id == newSelectedNoteId } ?: Note()
     }
 }
