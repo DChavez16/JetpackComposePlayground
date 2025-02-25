@@ -74,7 +74,7 @@ internal fun RemoteDatabaseNavHost(
                 isListViewMode = { isListView },
                 onNoteClick = { selectedNote ->
                     // Set the selecteNote as the current selected note
-                    notesViewModel.changeCurrentSelectedNote(selectedNote)
+                    notesViewModel.changeCurrentSelectedNote(selectedNote.id)
 
                     // Navigate to the EditNote destination
                     navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
