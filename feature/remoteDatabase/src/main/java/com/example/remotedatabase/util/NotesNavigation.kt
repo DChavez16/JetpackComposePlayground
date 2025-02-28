@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import com.example.model.Note
 import com.example.model.UserTag
 import com.example.remotedatabase.NotesViewModel
@@ -123,13 +124,17 @@ internal fun RemoteDatabaseNavHost(
         }
 
         // Edit Note deep link destination
-        // TODO https://developer.android.com/develop/ui/compose/navigation#deeplinks
+        // https://developer.android.com/develop/ui/compose/navigation#deeplinks
         val uri = "https://www.example.com"
         composable<Note>(
             deepLinks = listOf(
                 navDeepLink<Note>(basePath = "$uri/editNote")
             )
         ) { backStackEntry ->
+
+            // Get the id parameter from the backstack entry
+            val id = backStackEntry.toRoute<Note>().id
+            Log.i(LOG_TAG, "Obtained id $id from the backstack entry")
 
             // TODO Set the current note on the view model with the backStackEntry id argument
         }
