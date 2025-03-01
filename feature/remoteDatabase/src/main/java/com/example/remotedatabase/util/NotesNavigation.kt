@@ -138,7 +138,18 @@ internal fun RemoteDatabaseNavHost(
             // Set the current note on the view model with the backStackEntry id argument
             notesViewModel.changeCurrentSelectedNote(pinnedNoteId)
 
-            // TODO Navigate to the EditNote destination and displays the NotesDetailScreen
+            // Navigate to the EditNote destination and displays the NotesDetailScreen
+            NotesDetailScreen(
+                noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
+                onMainButtonClick = { updatedNote ->
+                    // Updating the note
+                    notesViewModel.updateNote(updatedNote)
+
+                    // Returnting to the NotesList destination
+                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
+                },
+                viewModelStoreOwner = viewModelStoreOwner()
+            )
         }
     }
 }
