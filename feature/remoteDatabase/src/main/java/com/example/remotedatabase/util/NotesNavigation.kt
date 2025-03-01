@@ -16,7 +16,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.example.model.Note
-import com.example.model.UserTag
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
 import com.example.remotedatabase.ui.NotesDetailScreen
@@ -133,10 +132,13 @@ internal fun RemoteDatabaseNavHost(
         ) { backStackEntry ->
 
             // Get the id parameter from the backstack entry
-            val id = backStackEntry.toRoute<Note>().id
-            Log.i(LOG_TAG, "Obtained id $id from the backstack entry")
+            val pinnedNoteId = backStackEntry.toRoute<Note>().id
+            Log.i(LOG_TAG, "Obtained id $pinnedNoteId from the backstack entry")
 
-            // TODO Set the current note on the view model with the backStackEntry id argument
+            // Set the current note on the view model with the backStackEntry id argument
+            notesViewModel.changeCurrentSelectedNote(pinnedNoteId)
+
+            // TODO Navigate to the EditNote destination and displays the NotesDetailScreen
         }
     }
 }
