@@ -25,6 +25,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
+import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
@@ -33,6 +34,7 @@ import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -185,9 +187,13 @@ class IndividualNoteWidget : GlanceAppWidget(
                         IndividualNoteWidget().update(context, id)
                     }
                 },
-                openSelectedWidget = { noteId ->
-                    // TODO Open the note with the given noteId in the app
-                }
+                // TODO Open the note with the given noteId in the app
+                // TODO Send an action instead, triggering an intent to IndividualNoteReceiver sending the current note ID
+                openSelectedWidget = actionSendBroadcast(
+                    Intent(
+
+                    )
+                )
             )
         }
     }
@@ -217,7 +223,7 @@ private fun IndividualNoteWidgetContent(
     glanceId: Int,
     isVerticalRectangle: Boolean = false,
     updateWidget: () -> Unit = {},
-    openSelectedWidget: (Long) -> Unit = {}
+    openSelectedWidget: Action = actionSendBroadcast(Intent())
 ) {
 
     // Action parameter key to pair with glanceId
@@ -380,14 +386,14 @@ private fun SuccessScreen(
     glanceId: Int,
     note: Note,
     isExpandedNote: Boolean = false,
-    onNoteClick: (Long) -> Unit = {}
+    onNoteClick: Action = actionSendBroadcast(Intent())
 ) {
 
     val columnVerticalAlignment = if (isExpandedNote) Alignment.Top else Alignment.CenterVertically
 
     Column(
         verticalAlignment = columnVerticalAlignment,
-        modifier = GlanceModifier.fillMaxSize().padding(12.dp).clickable { onNoteClick(note.id) }
+        modifier = GlanceModifier.fillMaxSize().padding(12.dp).clickable(onNoteClick)
     ) {
         // Note title
         Text(
