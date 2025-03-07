@@ -194,7 +194,7 @@ class IndividualNoteWidget : GlanceAppWidget(
                         LocalContext.current,
                         IndividualNoteReceiver::class.java
                     ).apply {
-                        // TODO Set action
+                        action = IndividualNoteReceiver.OPEN_NOTE_IN_APP
                         // TODO Set the note id as intent extra
                     }
                 )
