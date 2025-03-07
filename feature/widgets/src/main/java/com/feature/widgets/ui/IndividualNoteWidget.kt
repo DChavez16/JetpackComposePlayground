@@ -191,8 +191,12 @@ class IndividualNoteWidget : GlanceAppWidget(
                 // TODO Send an action instead, triggering an intent to IndividualNoteReceiver sending the current note ID
                 openSelectedWidget = actionSendBroadcast(
                     Intent(
-
-                    )
+                        LocalContext.current,
+                        IndividualNoteReceiver::class.java
+                    ).apply {
+                        // TODO Set action
+                        // TODO Set the note id as intent extra
+                    }
                 )
             )
         }
