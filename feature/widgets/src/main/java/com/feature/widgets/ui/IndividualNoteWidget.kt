@@ -195,7 +195,10 @@ class IndividualNoteWidget : GlanceAppWidget(
                         IndividualNoteReceiver::class.java
                     ).apply {
                         action = IndividualNoteReceiver.OPEN_NOTE_IN_APP
-                        // TODO Set the note id as intent extra
+                        putExtra(
+                            "current_pinned_note_id",
+                            pinnedNoteId
+                        )
                     }
                 )
             )
