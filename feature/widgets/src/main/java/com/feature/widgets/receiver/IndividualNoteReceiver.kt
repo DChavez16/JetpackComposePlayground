@@ -1,13 +1,10 @@
 package com.feature.widgets.receiver
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.core.app.TaskStackBuilder
-import androidx.core.net.toUri
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
@@ -39,7 +36,6 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
 
         // Intent actions
         const val UPDATE_INDIVIDUAL_NOTE_WIDGET = "updateIndividualNoteWidget"
-        const val OPEN_NOTE_IN_APP = "openNoteInApp"
     }
 
     // Define a coroutine scope
@@ -90,29 +86,6 @@ class IndividualNoteReceiver : GlanceAppWidgetReceiver() {
                 // Updates the specified Individual Note Widget
                 Log.i(TAG, "Updating widget with id: $widgetIdInt")
                 updateIndividualNoteWidget(context = context, widgetId = widgetId)
-            }
-
-            // Open the current note in the app
-            OPEN_NOTE_IN_APP -> {
-                // Retreiving the parameters from the intent
-                val currentNoteId = intent.getLongExtra("current_pinned_note_id", -1)
-
-                Log.i(TAG, "Opening note with id: $currentNoteId in the app")
-
-                // Creates intent to open the note in the app setting the current note id as the parameter in the URI
-                val deepLinkIntent = Intent(
-                    Intent.ACTION_VIEW,
-                    "https://www.example.com/editNote/$currentNoteId".toUri()
-                )
-
-                // Creates the pending intent to opend the note in the app
-                val deepLinkPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
-                    addNextIntentWithParentStack(deepLinkIntent)
-                    getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
-                }
-
-                // Starts the pending intent
-                deepLinkPendingIntent.send()
             }
         }
     }
