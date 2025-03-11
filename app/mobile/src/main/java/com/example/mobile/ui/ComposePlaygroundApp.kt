@@ -9,9 +9,9 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.mobile.util.RootNavHost
@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ComposePlaygroundApp(
+    rootNavController: NavHostController,
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
 
@@ -35,8 +36,6 @@ fun ComposePlaygroundApp(
     // Defines the drawer initial state as closed
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    // Root NavHostController
-    val rootNavController = rememberNavController()
     // Observes the rootNavController BackStackEntry as State
     val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
     // Current route based on the current back stack entry

@@ -6,7 +6,6 @@ package com.feature.widgets.ui
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.StringRes
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -387,15 +385,8 @@ private fun SuccessScreen(
     val uri = "https://www.compose-playground.com"
     val intent = Intent(
         Intent.ACTION_VIEW,
-        "$uri/editNote/${note.id}".toUri()
-    ).apply {
-        putExtra("intentPath", "remoteDatabase")
-        putExtra("intentAction", "editNote")
-        putExtra("paramsBundle", Bundle().apply {
-            putInt("glanceId", glanceId)
-            putLong("noteId", note.id)
-        })
-    }
+        "$uri/notes/editNote/${note.id}".toUri()
+    )
 
     Column(
         verticalAlignment = columnVerticalAlignment,
