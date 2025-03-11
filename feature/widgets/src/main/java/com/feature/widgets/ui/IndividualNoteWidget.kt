@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalGlancePreviewApi::class)
+@file:OptIn(ExperimentalGlancePreviewApi::class, ExperimentalMaterial3Api::class)
 @file:Suppress("unused")
 
 package com.feature.widgets.ui
@@ -6,9 +6,11 @@ package com.feature.widgets.ui
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.StringRes
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -25,7 +29,6 @@ import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
-import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
@@ -34,7 +37,6 @@ import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
-import androidx.glance.appwidget.action.actionSendBroadcast
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
@@ -186,21 +188,7 @@ class IndividualNoteWidget : GlanceAppWidget(
                     coroutineScope.launch {
                         IndividualNoteWidget().update(context, id)
                     }
-                },
-                // TODO Open the note with the given noteId in the app
-                // TODO Send an action instead, triggering an intent to IndividualNoteReceiver sending the current note ID
-                openSelectedWidget = actionSendBroadcast(
-                    Intent(
-                        LocalContext.current,
-                        IndividualNoteReceiver::class.java
-                    ).apply {
-                        action = IndividualNoteReceiver.OPEN_NOTE_IN_APP
-                        putExtra(
-                            "current_pinned_note_id",
-                            pinnedNoteId
-                        )
-                    }
-                )
+                }
             )
         }
     }
@@ -229,8 +217,7 @@ private fun IndividualNoteWidgetContent(
     noteUiState: IndividualNoteWidgetUiState,
     glanceId: Int,
     isVerticalRectangle: Boolean = false,
-    updateWidget: () -> Unit = {},
-    openSelectedWidget: Action = actionSendBroadcast(Intent())
+    updateWidget: () -> Unit = {}
 ) {
 
     // Action parameter key to pair with glanceId
@@ -270,8 +257,7 @@ private fun IndividualNoteWidgetContent(
             is Success -> SuccessScreen(
                 glanceId = glanceId,
                 note = noteUiState.note,
-                isExpandedNote = isVerticalRectangle,
-                onNoteClick = openSelectedWidget
+                isExpandedNote = isVerticalRectangle
             )
         }
     }
@@ -392,15 +378,33 @@ private fun ConnectionErrorScreen(
 private fun SuccessScreen(
     glanceId: Int,
     note: Note,
-    isExpandedNote: Boolean = false,
-    onNoteClick: Action = actionSendBroadcast(Intent())
+    isExpandedNote: Boolean = false
 ) {
 
     val columnVerticalAlignment = if (isExpandedNote) Alignment.Top else Alignment.CenterVertically
 
+    // Deep link intent, sending the needed parameters to open the pinned note in the app
+    val uri = "https://www.compose-playground.com"
+    val intent = Intent(
+        Intent.ACTION_VIEW,
+        "$uri/editNote/${note.id}".toUri()
+    ).apply {
+        putExtra("intentPath", "remoteDatabase")
+        putExtra("intentAction", "editNote")
+        putExtra("paramsBundle", Bundle().apply {
+            putInt("glanceId", glanceId)
+            putLong("noteId", note.id)
+        })
+    }
+
     Column(
         verticalAlignment = columnVerticalAlignment,
-        modifier = GlanceModifier.fillMaxSize().padding(12.dp).clickable(onNoteClick)
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .padding(12.dp)
+            .clickable(
+                androidx.glance.appwidget.action.actionStartActivity(intent)
+            )
     ) {
         // Note title
         Text(
