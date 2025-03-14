@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.example.model.Note
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
@@ -124,32 +123,38 @@ internal fun RemoteDatabaseNavHost(
 
         // Edit Note deep link destination
         // https://developer.android.com/develop/ui/compose/navigation#deeplinks
-        val uri = "https://www.example.com"
-        composable<Note>(
+        val uri = "https://www.compose-playground.com"
+        composable(
+            route = "${RemoteDatabaseDestinations.EditNote.screenRouteName}/{noteId}",
             deepLinks = listOf(
-                navDeepLink<Note>(basePath = "$uri/editNote")
+                navDeepLink {
+                    uriPattern = "$uri/notes/editNote/{noteId}"
+                }
             )
         ) { backStackEntry ->
+            Log.i(LOG_TAG, "Retreiving note id argument from the backstack entry")
+            val noteId = backStackEntry.arguments?.getLong("noteId")
 
-            // Get the id parameter from the backstack entry
-            val pinnedNoteId = backStackEntry.toRoute<Note>().id
-            Log.i(LOG_TAG, "Obtained id $pinnedNoteId from the backstack entry")
+            if(noteId != null) {
+                Log.i(LOG_TAG, "Obtained id $noteId from the backstack entry")
+                // Set the current note on the view model with the backStackEntry id argument
+                notesViewModel.changeCurrentSelectedNote(noteId)
 
-            // Set the current note on the view model with the backStackEntry id argument
-            notesViewModel.changeCurrentSelectedNote(pinnedNoteId)
+                NotesDetailScreen(
+                    noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
+                    onMainButtonClick = { updatedNote ->
+                        // Updating the note
+                        notesViewModel.updateNote(updatedNote)
 
-            // Navigate to the EditNote destination and displays the NotesDetailScreen
-            NotesDetailScreen(
-                noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                onMainButtonClick = { updatedNote ->
-                    // Updating the note
-                    notesViewModel.updateNote(updatedNote)
-
-                    // Returnting to the NotesList destination
-                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
-                },
-                viewModelStoreOwner = viewModelStoreOwner()
-            )
+                        // Returnting to the NotesList destination
+                        navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
+                    },
+                    viewModelStoreOwner = viewModelStoreOwner()
+                )
+            }
+            else {
+                Log.i(LOG_TAG, "The obtained noteId is null")
+            }
         }
     }
 }
