@@ -87,6 +87,16 @@ class IndividualNoteWidget : GlanceAppWidget(
     errorUiLayout = R.layout.common_widget_ui_error
 ) {
 
+    /* TODO This widget was supposed to add a deep link to the "Edit Note" screen within the app
+        using the pinned note in the widget. But the way the architecture of the app's "nested
+        navigation" didn't make it possible, so, for now, the widget deep link redirects only to the
+        notes list within the app.
+        When the app architecture is refactorized so it can allow direct deep links without the need
+        of building several deep links along the road, and the app's architecture no longer gives
+        viewModelStoreOwner or NavGraph issues, the implementation of this widget deep link
+        will be done.
+     */
+
     // Companion object for the Widget available sizes
     companion object {
         private val SMALL_SQUARE = DpSize(100.dp, 100.dp)
@@ -385,7 +395,8 @@ private fun SuccessScreen(
     val uri = "https://www.compose-playground.com"
     val intent = Intent(
         Intent.ACTION_VIEW,
-        "$uri/notes/editNote/${note.id}".toUri()
+//        "$uri/notes/editNote/${note.id}".toUri()
+        "$uri/notes".toUri()
     )
 
     Column(
