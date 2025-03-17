@@ -32,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.remotedatabase.util.RemoteDatabaseDestinations
 import com.example.remotedatabase.util.RemoteDatabaseNavHost
 import com.example.ui.theme.PreviewAppTheme
@@ -43,12 +43,13 @@ import com.example.ui.ui.DefaultTopAppBar
 
 @Composable
 fun NotesScreen(
-    notesNavController: NavHostController,
     onMenuButtonClick: () -> Unit
 ) {
 
     // TODO Change to follow an Offline-first approach
 
+    // Notes Screen nav controller
+    val notesNavController = rememberNavController()
     // Observes the notesNavControlles BackstackEntry as State
     val currentBackStackEntry by notesNavController.currentBackStackEntryAsState()
     // Current route based on the current back stack entry
