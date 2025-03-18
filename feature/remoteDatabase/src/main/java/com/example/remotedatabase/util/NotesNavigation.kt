@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import com.example.model.Note
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
@@ -119,42 +118,6 @@ internal fun RemoteDatabaseNavHost(
                 },
                 viewModelStoreOwner = viewModelStoreOwner()
             )
-        }
-
-        // Edit Note deep link destination
-        // https://developer.android.com/develop/ui/compose/navigation#deeplinks
-        val uri = "https://www.compose-playground.com"
-        composable(
-            route = "${RemoteDatabaseDestinations.EditNote.screenRouteName}/{noteId}",
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = "$uri/notes/editNote/{noteId}"
-                }
-            )
-        ) { backStackEntry ->
-            Log.i(LOG_TAG, "Retreiving note id argument from the backstack entry")
-            val noteId = backStackEntry.arguments?.getLong("noteId")
-
-            if(noteId != null) {
-                Log.i(LOG_TAG, "Obtained id $noteId from the backstack entry")
-                // Set the current note on the view model with the backStackEntry id argument
-                notesViewModel.changeCurrentSelectedNote(noteId)
-
-                NotesDetailScreen(
-                    noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                    onMainButtonClick = { updatedNote ->
-                        // Updating the note
-                        notesViewModel.updateNote(updatedNote)
-
-                        // Returnting to the NotesList destination
-                        navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
-                    },
-                    viewModelStoreOwner = viewModelStoreOwner()
-                )
-            }
-            else {
-                Log.i(LOG_TAG, "The obtained noteId is null")
-            }
         }
     }
 }
