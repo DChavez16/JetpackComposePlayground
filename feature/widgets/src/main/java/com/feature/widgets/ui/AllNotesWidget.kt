@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
@@ -30,6 +31,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -76,6 +78,8 @@ private const val TAG = "AllNotesWidget"
 class AllNotesWidget() : GlanceAppWidget(
     errorUiLayout = R.layout.common_widget_ui_error
 ) {
+
+    // TODO Add deep link to open the notes list when the widget is clicked
 
     // Companion object for the Widget available spaces
     companion object {
@@ -268,6 +272,14 @@ private fun NotesList(
     useExpandedNote: Boolean = false,
     modifier: GlanceModifier = GlanceModifier
 ) {
+
+    // Deep link intent
+    val uri = "https://www.compose-playground.com"
+    val deepLinkIntent = Intent(
+        Intent.ACTION_VIEW,
+        "$uri/notes".toUri(),
+    )
+
     // If the list of notes is empty, show a text indicating it
     if (noteList.isEmpty()) {
         Box(
@@ -289,7 +301,9 @@ private fun NotesList(
         LazyVerticalGrid(
             // Use 2 grid cells if the value of useDoubleColumn is true, else use 1 grid cell
             gridCells = GridCells.Fixed(if (useDoubleColumn) 2 else 1),
-            modifier = modifier
+            modifier = modifier.clickable {
+                // TODO Start activity using the intent with a deep link
+            }
         ) {
             items(
                 items = noteList,
