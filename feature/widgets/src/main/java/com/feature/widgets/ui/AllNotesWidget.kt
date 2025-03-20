@@ -37,6 +37,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.lazy.GridCells
 import androidx.glance.appwidget.lazy.LazyVerticalGrid
@@ -78,8 +79,6 @@ private const val TAG = "AllNotesWidget"
 class AllNotesWidget() : GlanceAppWidget(
     errorUiLayout = R.layout.common_widget_ui_error
 ) {
-
-    // TODO Add deep link to open the notes list when the widget is clicked
 
     // Companion object for the Widget available spaces
     companion object {
@@ -302,7 +301,7 @@ private fun NotesList(
             // Use 2 grid cells if the value of useDoubleColumn is true, else use 1 grid cell
             gridCells = GridCells.Fixed(if (useDoubleColumn) 2 else 1),
             modifier = modifier.clickable {
-                // TODO Start activity using the intent with a deep link
+                actionStartActivity(deepLinkIntent)
             }
         ) {
             items(
