@@ -10,4 +10,5 @@ It includes:
 - Retrofit to connect to a remote database
 - Preferences Datastore
 - WorkManager
+- Alarm Manager
 - Unit & instrumentation tests
