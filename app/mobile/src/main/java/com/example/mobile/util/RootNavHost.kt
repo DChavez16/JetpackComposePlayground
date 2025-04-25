@@ -18,8 +18,6 @@ import com.example.themes.ThemeScreen
 import com.example.util.RootNavigationDestination
 import com.feature.alarms.AlarmsScreen
 
-const val URI = "https://www.compose-playground.com"
-
 // Root Navigation Composable function
 @Composable
 internal fun RootNavHost(
@@ -76,19 +74,7 @@ internal fun RootNavHost(
             )
         }
 
-        // Remote database destination
-//        composable(
-//            route = RootNavigationDestination.RemoteDatabase.itemRouteName,
-//            deepLinks = listOf(
-//                navDeepLink {
-//                    uriPattern = "$URI/notes"
-//                }
-//            )
-//        ) {
-//            NotesScreen(
-//                onMenuButtonClick = onMenuButtonClick
-//            )
-//        }
+        // Remote database graph
         remoteDatabaseGraph(
             navController = navController,
             onMenuButtonClick = onMenuButtonClick
