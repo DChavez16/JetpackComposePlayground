@@ -45,6 +45,7 @@ import com.example.ui.ui.DefaultTopAppBar
 fun NotesScreen(
     onMenuButtonClick: () -> Unit
 ) {
+    // TODO Add navigation graph, add that graph to the main navigation graph, and receive the main nav controller here
 
     // TODO Change to follow an Offline-first approach
 

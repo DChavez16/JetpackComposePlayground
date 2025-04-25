@@ -27,6 +27,7 @@ import com.example.ui.ui.DefaultTopAppBar
 fun LocalDatabaseScreen(
     onMenuButtonClick: () -> Unit
 ) {
+    // TODO Add navigation graph, add that graph to the main navigation graph, and receive the main nav controller here
 
     // Nav controller and current back stack entry to observe the current route
     val localDatabaseNavController = rememberNavController()
