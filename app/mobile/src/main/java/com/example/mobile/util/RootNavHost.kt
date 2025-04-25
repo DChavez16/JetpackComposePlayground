@@ -12,6 +12,7 @@ import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen
 import com.example.persistentWork.PersistentWorkScreen
 import com.example.remotedatabase.NotesScreen
+import com.example.remotedatabase.util.remoteDatabaseGraph
 import com.example.room.LocalDatabaseScreen
 import com.example.themes.ThemeScreen
 import com.example.util.RootNavigationDestination
@@ -76,18 +77,22 @@ internal fun RootNavHost(
         }
 
         // Remote database destination
-        composable(
-            route = RootNavigationDestination.RemoteDatabase.itemRouteName,
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = "$URI/notes"
-                }
-            )
-        ) {
-            NotesScreen(
-                onMenuButtonClick = onMenuButtonClick
-            )
-        }
+//        composable(
+//            route = RootNavigationDestination.RemoteDatabase.itemRouteName,
+//            deepLinks = listOf(
+//                navDeepLink {
+//                    uriPattern = "$URI/notes"
+//                }
+//            )
+//        ) {
+//            NotesScreen(
+//                onMenuButtonClick = onMenuButtonClick
+//            )
+//        }
+        remoteDatabaseGraph(
+            navController = navController,
+            onMenuButtonClick = onMenuButtonClick
+        )
 
         // Data Persistence destination
         composable(
