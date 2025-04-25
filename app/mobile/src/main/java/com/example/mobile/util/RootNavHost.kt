@@ -4,14 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import com.example.animations.AnimationScreen
 import com.example.configuration.ConfigurationScreen
 import com.example.datapersistence.DataPersistenceScreen
 import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen
 import com.example.persistentWork.PersistentWorkScreen
-import com.example.remotedatabase.NotesScreen
 import com.example.remotedatabase.util.remoteDatabaseGraph
 import com.example.room.LocalDatabaseScreen
 import com.example.themes.ThemeScreen
