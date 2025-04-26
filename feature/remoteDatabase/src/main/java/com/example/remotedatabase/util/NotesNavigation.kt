@@ -2,17 +2,27 @@ package com.example.remotedatabase.util
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import androidx.navigation.navigation
 import com.example.model.Note
 import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
@@ -21,6 +31,8 @@ import com.example.remotedatabase.ui.NotesListScreen
 
 
 private const val LOG_TAG = "RemoteDatabaseNavHost"
+
+const val URI = "https://www.compose-playground.com"
 
 // Remote database destination enum class
 internal enum class RemoteDatabaseDestinations(
@@ -118,6 +130,113 @@ internal fun RemoteDatabaseNavHost(
                 },
                 viewModelStoreOwner = viewModelStoreOwner()
             )
+        }
+    }
+}
+
+fun NavGraphBuilder.remoteDatabaseGraph(
+    navController: NavHostController,
+    onMenuButtonClick: () -> Unit
+) {
+    navigation(
+        route = "remoteDatabase",
+        startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName
+    ) {
+        composable(
+            route = RemoteDatabaseDestinations.NotesList.screenRouteName,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$URI/notes"
+                }
+            )
+        ) {
+//            val parentEntry = remember { navController.getBackStackEntry("remoteDatabase") }
+//            val viewModel = hiltViewModel<NotesViewModel>(parentEntry)
+
+            // TODO Refactor NotesListScreen and add it here
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text("Notes list")
+
+                Button(
+                    onClick = onMenuButtonClick
+                ) {
+                    Text("Open menu")
+                }
+
+                Row {
+                    Button(
+                        onClick = {
+                            navController.navigate(RemoteDatabaseDestinations.NewNote.screenRouteName)
+                        }
+                    ) {
+                        Text("To New Note")
+                    }
+
+                    Button(
+                        onClick = {
+                            navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
+                        }
+                    ) {
+                        Text("To Edit Note")
+                    }
+                }
+            }
+        }
+
+        composable(
+            route = RemoteDatabaseDestinations.NewNote.screenRouteName
+        ) {
+
+            // TODO Refactor NotesDetailScreen and add it here
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text("New note")
+
+                Button(
+                    onClick = {
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text("Return")
+                }
+            }
+        }
+
+        composable(
+            route = RemoteDatabaseDestinations.EditNote.screenRouteName,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$URI/notes/editNote"
+                }
+            )
+        ) {
+
+            // TODO Refactor NotesDetailScreen and add it here
+
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text("Edit note")
+
+                Button(
+                    onClick = {
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text("Return")
+                }
+            }
         }
     }
 }
