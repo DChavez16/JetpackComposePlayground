@@ -29,6 +29,7 @@ fun ComposePlaygroundApp(
 
     // TODO Add background to navigation drawer header so the elements can't be seen behind it
     // TODO Fix Navigation rail adding padding outside it bounds
+    // TODO Fix Drawer being draggable in child routes
 
     // Defines a coroutine scope
     val scope = rememberCoroutineScope()
@@ -39,7 +40,9 @@ fun ComposePlaygroundApp(
     // Observes the rootNavController BackStackEntry as State
     val rootNavBackStackEntry by rootNavController.currentBackStackEntryAsState()
     // Current route based on the current back stack entry
-    val currentRoute: String? = rootNavBackStackEntry?.destination?.route
+    val currentRoute: String? = rootNavBackStackEntry?.destination?.let {
+        it.parent?.route ?: it.route
+    }
 
 
     /* Navigation drawer behavior:
