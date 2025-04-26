@@ -75,6 +75,7 @@ internal fun RootNavHost(
         // Remote database graph
         remoteDatabaseGraph(
             navController = navController,
+            graphRoute = RootNavigationDestination.RemoteDatabase.itemRouteName,
             onMenuButtonClick = onMenuButtonClick
         )
 
