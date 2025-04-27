@@ -28,15 +28,19 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
@@ -65,15 +69,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
 import com.example.model.fakeUserTagsList
 import com.example.remotedatabase.NotesUiState
 import com.example.remotedatabase.R
+import com.example.remotedatabase.util.RemoteDatabaseDestinations
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExpandedSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
@@ -84,9 +90,12 @@ private const val LOG_TAG = "NotesListScreen"
 internal fun NotesListScreen(
     notesUiState: NotesUiState,
     isListViewMode: () -> Boolean,
+    onAddNoteCLick: () -> Unit = {},
     onNoteClick: (Note) -> Unit,
+    onMenuButtonClick: () -> Unit,
+    onChangeViewModeButtonCLick: () -> Unit,
     onErrorMessageRetryButtonClick: () -> Unit,
-    viewModelStoreOwner: ViewModelStoreOwner
+    parentNavBackStackEntry: NavBackStackEntry,
 ) {
 
     // State that holds a list of the current filtered user tags
@@ -99,7 +108,43 @@ internal fun NotesListScreen(
 
     Log.i(LOG_TAG, "NotesListScreen started")
 
+    // Top app bar title
+    val topAppBarTitle = stringResource(RemoteDatabaseDestinations.NotesList.screenTitle)
+    // Action button content description
+    val actionButtonContentDescription = stringResource(
+        if (isListViewMode()) R.string.remote_database_notes_list_change_to_grid_layout
+        else R.string.remote_database_notes_list_change_to_grid_layout
+    )
+
     Scaffold(
+        topBar = {
+            DefaultTopAppBar(
+                title = { topAppBarTitle },
+                onMenuButtonClick = onMenuButtonClick,
+                onBackButtonPressed = {},
+                isPrincipalScreen = { true },
+                actionButtonIcon = {
+                    // If the view mode is in list mode, show the list icon, else, the grid icon
+                    with(Icons.Rounded) {
+                        if (isListViewMode()) Icons.AutoMirrored.Rounded.List else GridView
+                    }
+                },
+                onActionButtonClick = onChangeViewModeButtonCLick,
+                actionButtonContentDescription = { actionButtonContentDescription }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onAddNoteCLick()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.remote_database_notes_list_write_new_note_button_label)
+                )
+            }
+        },
         containerColor = MaterialTheme.colorScheme.background,
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
@@ -177,7 +222,7 @@ internal fun NotesListScreen(
                             showBottomSheet = false
                         }
                     },
-                    notesViewModel = hiltViewModel(viewModelStoreOwner)
+                    notesViewModel = hiltViewModel(parentNavBackStackEntry)
                 )
             }
         }
@@ -278,6 +323,7 @@ private fun NoteSearchTools(
             modifier = Modifier.fillMaxWidth()
         ) {
             // Note search
+            // TODO Replace SearchBar's `query` parameter with `inputField`
             SearchBar(
                 query = noteSearchText,
                 onQueryChange = { newNoteSearchText -> noteSearchText = newNoteSearchText },
