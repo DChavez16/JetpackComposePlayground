@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -13,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,35 +65,11 @@ internal fun RemoteDatabaseNavHost(
     // Creates a ViewModel instance binded to viewModelStoreOwner
     val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
 
-    val notesUiState by notesViewModel.notesUiState.collectAsState()
-    val isListView by notesViewModel.isListView.collectAsState()
-
     NavHost(
         navController = navController,
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
         modifier = Modifier.padding(innerPadding())
     ) {
-        // Notes List destination
-        composable(
-            route = RemoteDatabaseDestinations.NotesList.screenRouteName
-        ) {
-            Log.i(LOG_TAG, "NotesListScreen destination selected in the NavHost")
-
-            NotesListScreen(
-                notesUiState = notesUiState,
-                isListViewMode = { isListView },
-                onNoteClick = { selectedNote ->
-                    // Set the selecteNote as the current selected note
-                    notesViewModel.changeCurrentSelectedNote(selectedNote.id)
-
-                    // Navigate to the EditNote destination
-                    navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
-                },
-                onErrorMessageRetryButtonClick = notesViewModel::getNotes,
-                viewModelStoreOwner = viewModelStoreOwner()
-            )
-        }
-
         // New Note destination
         composable(
             route = RemoteDatabaseDestinations.NewNote.screenRouteName
@@ -136,10 +112,11 @@ internal fun RemoteDatabaseNavHost(
 
 fun NavGraphBuilder.remoteDatabaseGraph(
     navController: NavHostController,
+    graphRoute: String,
     onMenuButtonClick: () -> Unit
 ) {
     navigation(
-        route = "remoteDatabase",
+        route = graphRoute,
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName
     ) {
         composable(
@@ -150,42 +127,34 @@ fun NavGraphBuilder.remoteDatabaseGraph(
                 }
             )
         ) {
-//            val parentEntry = remember { navController.getBackStackEntry("remoteDatabase") }
-//            val viewModel = hiltViewModel<NotesViewModel>(parentEntry)
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<NotesViewModel>(parentEntry)
 
-            // TODO Refactor NotesListScreen and add it here
+            // Notes List uiState
+            val notesUiState by notesViewModel.notesUiState.collectAsState()
+            // List view mode state
+            val isListView by notesViewModel.isListView.collectAsState()
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text("Notes list")
+            NotesListScreen(
+                notesUiState = notesUiState,
+                isListViewMode = { isListView },
+                onAddNoteCLick = {
+                    // Navigate to the NewNote destination
+                    navController.navigate(RemoteDatabaseDestinations.NewNote.screenRouteName)
+                },
+                onNoteClick = { selectedNote ->
+                    // Set the selecteNote as the current selected note
+                    notesViewModel.changeCurrentSelectedNote(selectedNote.id)
 
-                Button(
-                    onClick = onMenuButtonClick
-                ) {
-                    Text("Open menu")
-                }
-
-                Row {
-                    Button(
-                        onClick = {
-                            navController.navigate(RemoteDatabaseDestinations.NewNote.screenRouteName)
-                        }
-                    ) {
-                        Text("To New Note")
-                    }
-
-                    Button(
-                        onClick = {
-                            navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
-                        }
-                    ) {
-                        Text("To Edit Note")
-                    }
-                }
-            }
+                    // Navigate to the EditNote destination
+                    navController.navigate(RemoteDatabaseDestinations.EditNote.screenRouteName)
+                },
+                onMenuButtonClick = onMenuButtonClick,
+                onChangeViewModeButtonCLick = notesViewModel::changeViewMode,
+                onErrorMessageRetryButtonClick = notesViewModel::getNotes,
+                parentNavBackStackEntry = parentEntry
+            )
         }
 
         composable(
