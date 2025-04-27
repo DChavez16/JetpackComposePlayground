@@ -1,4 +1,4 @@
-package com.example.remotedatabase
+package com.example.remotedatabase.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

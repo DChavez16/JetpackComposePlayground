@@ -74,7 +74,6 @@ import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
 import com.example.model.fakeUserTagsList
-import com.example.remotedatabase.NotesUiState
 import com.example.remotedatabase.R
 import com.example.remotedatabase.util.RemoteDatabaseDestinations
 import com.example.ui.theme.PreviewAppTheme

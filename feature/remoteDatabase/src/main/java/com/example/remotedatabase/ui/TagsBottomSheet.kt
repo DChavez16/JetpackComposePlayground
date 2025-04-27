@@ -53,9 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.model.UserTag
 import com.example.model.fakeUserTagsList
-import com.example.remotedatabase.NotesViewModel
 import com.example.remotedatabase.R
-import com.example.remotedatabase.UserTagUiState
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
 
