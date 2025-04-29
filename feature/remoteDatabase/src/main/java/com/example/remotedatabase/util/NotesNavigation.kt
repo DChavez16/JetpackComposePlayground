@@ -2,29 +2,18 @@ package com.example.remotedatabase.util
 
 import android.util.Log
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.example.model.Note
-import com.example.remotedatabase.NotesViewModel
+import com.example.remotedatabase.ui.NotesViewModel
 import com.example.remotedatabase.R
 import com.example.remotedatabase.ui.NotesDetailScreen
 import com.example.remotedatabase.ui.NotesListScreen
@@ -53,72 +42,26 @@ internal enum class RemoteDatabaseDestinations(
     )
 }
 
-
-// Remote database NavHost Composable function
-@Composable
-internal fun RemoteDatabaseNavHost(
-    navController: NavHostController,
-    viewModelStoreOwner: () -> ViewModelStoreOwner,
-    innerPadding: () -> PaddingValues
-) {
-
-    // Creates a ViewModel instance binded to viewModelStoreOwner
-    val notesViewModel: NotesViewModel = hiltViewModel(viewModelStoreOwner())
-
-    NavHost(
-        navController = navController,
-        startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName,
-        modifier = Modifier.padding(innerPadding())
-    ) {
-        // New Note destination
-        composable(
-            route = RemoteDatabaseDestinations.NewNote.screenRouteName
-        ) {
-            Log.i(LOG_TAG, "NoteDetalScreen as 'new note' destination selected in the NavHost")
-
-            NotesDetailScreen(
-                noteToEdit = Note(),
-                onMainButtonClick = {
-                    // Creating a new note
-                    notesViewModel.createNote(it)
-
-                    // Returning to the NotesList destination
-                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
-                },
-                viewModelStoreOwner = viewModelStoreOwner()
-            )
-        }
-
-        // Edit Note destination
-        composable(
-            route = RemoteDatabaseDestinations.EditNote.screenRouteName
-        ) {
-            Log.i(LOG_TAG, "NoteDetalScreen as 'edit note' destination selected in the NavHost")
-
-            NotesDetailScreen(
-                noteToEdit = notesViewModel.currentSelectedNote.collectAsState().value,
-                onMainButtonClick = { updatedNote ->
-                    // Updating the note
-                    notesViewModel.updateNote(updatedNote)
-
-                    // Returning to the NotesList destination
-                    navController.navigate(RemoteDatabaseDestinations.NotesList.screenRouteName)
-                },
-                viewModelStoreOwner = viewModelStoreOwner()
-            )
-        }
-    }
-}
-
 fun NavGraphBuilder.remoteDatabaseGraph(
     navController: NavHostController,
     graphRoute: String,
     onMenuButtonClick: () -> Unit
 ) {
+    /* TODO Change to follow an Offline-first approach. There are two options ->
+        * Create a `useCases` package inside this module:
+            - Create a new module is not needed
+            - The use case is limited to ONLY this module
+        * Create a useCases module where all the app use cases are stored:
+            - A new module creation and configuration is needed
+            - The use case will be usable by all modules
+            - Not all features need use cases, and would interact directly with the needed repository in the data modules (use cases would seem unnecessary)
+     */
+
     navigation(
         route = graphRoute,
         startDestination = RemoteDatabaseDestinations.NotesList.screenRouteName
     ) {
+        // Notes List destination
         composable(
             route = RemoteDatabaseDestinations.NotesList.screenRouteName,
             deepLinks = listOf(
@@ -127,6 +70,8 @@ fun NavGraphBuilder.remoteDatabaseGraph(
                 }
             )
         ) {
+            Log.i(LOG_TAG, "NotesListScreen destination selected in the NavHost")
+
             // Creates viewModel using the parent entry
             val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
             val notesViewModel = hiltViewModel<NotesViewModel>(parentEntry)
@@ -157,29 +102,35 @@ fun NavGraphBuilder.remoteDatabaseGraph(
             )
         }
 
+        // New Note destination
         composable(
             route = RemoteDatabaseDestinations.NewNote.screenRouteName
         ) {
+            Log.i(LOG_TAG, "NoteDetalScreen as 'new note' destination selected in the NavHost")
 
-            // TODO Refactor NotesDetailScreen and add it here
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<NotesViewModel>(parentEntry)
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text("New note")
+            // Top App Bar title
+            val topAppBarTitle = stringResource(R.string.remote_database_new_note_screen_title)
 
-                Button(
-                    onClick = {
-                        navController.popBackStack()
-                    }
-                ) {
-                    Text("Return")
-                }
-            }
+            NotesDetailScreen(
+                noteToEdit = Note(),
+                topAppBarTitle = topAppBarTitle,
+                onMainButtonClick = {
+                    // Creating a new note
+                    notesViewModel.createNote(it)
+
+                    // Returning to the NotesList destination
+                    navController.popBackStack()
+                },
+                onReturnButtonClick = { navController.popBackStack() },
+                parentNavBackStackEntry = parentEntry
+            )
         }
 
+        // Edit Note destination
         composable(
             route = RemoteDatabaseDestinations.EditNote.screenRouteName,
             deepLinks = listOf(
@@ -188,24 +139,42 @@ fun NavGraphBuilder.remoteDatabaseGraph(
                 }
             )
         ) {
+            Log.i(LOG_TAG, "NoteDetalScreen as 'edit note' destination selected in the NavHost")
 
-            // TODO Refactor NotesDetailScreen and add it here
+            // TODO Implementate deep linnking from Widget
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text("Edit note")
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<NotesViewModel>(parentEntry)
 
-                Button(
-                    onClick = {
-                        navController.popBackStack()
-                    }
-                ) {
-                    Text("Return")
-                }
-            }
+            // Top App Bar title
+            val topAppBarTitle = stringResource(R.string.remote_database_edit_note_screen_title)
+
+            // Current selected note state
+            val currentSelectedNote by notesViewModel.currentSelectedNote.collectAsState()
+
+            NotesDetailScreen(
+                noteToEdit = currentSelectedNote,
+                topAppBarTitle = topAppBarTitle,
+                onMainButtonClick = {
+                    // Updates the current note
+                    notesViewModel.updateNote(it)
+
+                    // Returning to the NotesList destination
+                    navController.popBackStack()
+                },
+                onReturnButtonClick = { navController.popBackStack() },
+                parentNavBackStackEntry = parentEntry,
+                showDeleteActionButton = true,
+                onDeleteNote = {
+                    // TODO Fix note deletion not succeding AND causing the app to crash
+                    // Delete the current note in the remote database
+                    notesViewModel.deleteNote(noteId = currentSelectedNote.id)
+
+                    // Returning to the NotesList destination
+                    navController.popBackStack()
+                },
+            )
         }
     }
 }
