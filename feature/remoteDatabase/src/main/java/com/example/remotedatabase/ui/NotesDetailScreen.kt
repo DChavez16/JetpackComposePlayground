@@ -20,6 +20,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Discount
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -31,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -47,15 +51,17 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import com.example.model.Note
 import com.example.model.UserTag
 import com.example.model.fakeNotesList
 import com.example.remotedatabase.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 import com.example.ui.ui.ExpandedSizeScreenThemePreview
 import kotlinx.coroutines.launch
 
@@ -65,8 +71,12 @@ private const val LOG_TAG = "NotesDetailScreen"
 @Composable
 internal fun NotesDetailScreen(
     noteToEdit: Note,
+    topAppBarTitle: String,
     onMainButtonClick: (Note) -> Unit,
-    viewModelStoreOwner: ViewModelStoreOwner
+    onReturnButtonClick: () -> Unit,
+    parentNavBackStackEntry: NavBackStackEntry,
+    showDeleteActionButton: Boolean = false,
+    onDeleteNote: () -> Unit = {},
 ) {
 
     // Note's user tags wichh can be edited in the TagsBottomSheet
@@ -84,13 +94,34 @@ internal fun NotesDetailScreen(
     // Snackbar host invalid title message
     val invalidTitleMessage = stringResource(R.string.remote_database_notes_detail_snackbar_invalid_title)
 
+    // Show delete note alert dialog state
+    var showAlertDialog by rememberSaveable { mutableStateOf(false) }
+
+    // Action button content description
+    val actionButtonContentDescription = stringResource(R.string.remote_database_edit_note_delete_note_button)
+
     Log.i(LOG_TAG, "NotesDetailScreen started")
 
     Scaffold(
+        topBar = {
+            DefaultTopAppBar(
+                title = { topAppBarTitle },
+                onMenuButtonClick = {},
+                onBackButtonPressed = onReturnButtonClick,
+                isPrincipalScreen = { false },
+                actionButtonIcon = { if (showDeleteActionButton) Icons.Rounded.Delete else null },
+                onActionButtonClick = {
+                    // Show the delete note alert dialog
+                    showAlertDialog = true
+                },
+                actionButtonContentDescription = { actionButtonContentDescription }
+            )
+        },
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
+        // Screen content
         NotesDetailScreenContent(
             noteToEdit = { noteToEdit },
             noteTags = { editableNoteTags },
@@ -128,6 +159,7 @@ internal fun NotesDetailScreen(
             modifier = Modifier.padding(innerPadding)
         )
 
+        // If Bottom Sheet is visible
         if(showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -155,9 +187,17 @@ internal fun NotesDetailScreen(
                             showBottomSheet = false
                         }
                     },
-                    notesViewModel = hiltViewModel(viewModelStoreOwner)
+                    notesViewModel = hiltViewModel(parentNavBackStackEntry)
                 )
             }
+        }
+
+        // If the Alert Dialog is visible
+        if(showAlertDialog) {
+            DeleteNoteAlertDialog(
+                onDeleteButtonClick = onDeleteNote,
+                onDismiss = { showAlertDialog = false }
+            )
         }
     }
 }
@@ -384,6 +424,51 @@ private fun NoteBody(
 }
 
 
+@Composable
+private fun DeleteNoteAlertDialog(
+    onDeleteButtonClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        title = {
+            Text(
+                text = stringResource(R.string.remote_database_edit_note_delete_note_alert_dialog_header)
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.remote_database_edit_note_delete_note_alert_dialog_message)
+            )
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(
+                onClick = {
+                    onDeleteButtonClick()
+                    onDismiss()
+                }
+            ) {
+                Text(
+                    text = stringResource(R.string.remote_database_edit_note_delete_note_alert_dialog_confirm_button_label),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text(
+                    text = stringResource(R.string.remote_database_edit_note_delete_note_alert_dialog_cancel_button_label),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    )
+}
+
+
 /*
 Previews
  */
@@ -488,6 +573,26 @@ private fun NoteBodyPreview() {
             NoteBody(
                 noteBody = { fakeNotesList[0].body },
                 onNoteBodyChange = {}
+            )
+        }
+    }
+}
+
+
+@CompactSizeScreenThemePreview
+@Composable
+private fun DeleteNoteAlertDialogPreview() {
+    PreviewAppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
+        ) {
+            DeleteNoteAlertDialog(
+                onDeleteButtonClick = {},
+                onDismiss = {}
             )
         }
     }
