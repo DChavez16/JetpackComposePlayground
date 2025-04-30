@@ -60,8 +60,8 @@ import com.example.ui.theme.PreviewAppTheme
 @Composable
 fun DefaultTopAppBar(
     title: () -> String,
-    onMenuButtonClick: () -> Unit,
-    onBackButtonPressed: () -> Unit,
+    onMenuButtonClick: () -> Unit = {},
+    onBackButtonPressed: () -> Unit = {},
     isPrincipalScreen: () -> Boolean = { true },
     actionButtonIcon: () -> ImageVector? = { null },
     onActionButtonClick: () -> Unit = {},
