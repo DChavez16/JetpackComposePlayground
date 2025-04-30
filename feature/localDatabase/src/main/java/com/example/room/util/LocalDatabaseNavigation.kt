@@ -5,16 +5,19 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.room.ui.ProductsViewModel
+import androidx.navigation.navigation
 import com.example.room.R
 import com.example.room.ui.AddProductScreen
 import com.example.room.ui.ProductListScreen
+import com.example.room.ui.ProductsViewModel
 
 // Local database destinations enum class
 internal enum class LocalDatabaseDestinations(
@@ -91,6 +94,49 @@ internal fun LocalDatabaseNavHost(
                 // Sets as a parameter the viewModel instance binded to viewModelStoreOwner
                 productsViewModel = hiltViewModel<ProductsViewModel>(viewModelStoreOwner())
             )
+        }
+    }
+}
+
+
+fun NavGraphBuilder.localDatabaseGraph(
+    navController: NavHostController,
+    graphRoute: String,
+    onMenuButtonClick: () -> Unit
+) {
+
+    navigation(
+        startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName,
+        route = graphRoute
+    ) {
+        // Products List destination
+        composable(
+            route = LocalDatabaseDestinations.ProductsList.screenRouteName
+        ) {
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<ProductsViewModel>(parentEntry)
+
+        }
+
+        // Add Product destination
+        composable(
+            route = LocalDatabaseDestinations.AddProduct.screenRouteName
+        ) {
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<ProductsViewModel>(parentEntry)
+
+        }
+
+        // Edit Product destination
+        composable(
+            route = LocalDatabaseDestinations.EditProduct.screenRouteName
+        ) {
+            // Creates viewModel using the parent entry
+            val parentEntry = remember { navController.getBackStackEntry(graphRoute) }
+            val notesViewModel = hiltViewModel<ProductsViewModel>(parentEntry)
+
         }
     }
 }
