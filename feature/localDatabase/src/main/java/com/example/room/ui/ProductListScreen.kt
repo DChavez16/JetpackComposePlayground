@@ -16,14 +16,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -35,12 +38,12 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.Product
 import com.example.model.fakeProductsList
 import com.example.room.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
 
 
 /**
@@ -48,18 +51,39 @@ import com.example.ui.ui.CompactSizeScreenThemePreview
  */
 @Composable
 internal fun ProductListScreen(
+    productsUiState: () -> ProductsUiState,
+    onAddProductClick: () -> Unit,
     navigateToProduct: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-    productsViewModel: ProductsViewModel = hiltViewModel()
+    onMenuButtonClick: () -> Unit
 ) {
-    // Products UI state obtained from the ViewModel
-    val productsUiState by productsViewModel.productsUiState.collectAsState()
 
-    ProductListScreenContent(
-        productsUiState = { productsUiState },
-        navigateToProduct = navigateToProduct,
-        modifier = modifier
-    )
+    val topAppBarTitle = stringResource(id = R.string.local_database_products_list_screen_title)
+
+    Scaffold(
+        topBar = {
+            DefaultTopAppBar(
+                title = { topAppBarTitle },
+                onMenuButtonClick = onMenuButtonClick,
+                isPrincipalScreen = { true }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddProductClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add new product"
+                )
+            }
+        }
+    ) { innerPadding ->
+        ProductListScreenContent(
+            productsUiState = productsUiState,
+            navigateToProduct = navigateToProduct,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }
 
 
