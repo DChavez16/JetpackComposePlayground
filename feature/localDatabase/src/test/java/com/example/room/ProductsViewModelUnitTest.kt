@@ -2,10 +2,11 @@ package com.example.room
 
 import com.example.model.emptyProduct
 import com.example.model.fakeProductsList
+import com.example.room.ui.ProductsUiState
+import com.example.room.ui.ProductsViewModel
 import com.example.testing.repositories.FakeLocalProductRepository
 import com.example.testing.rules.MainCoroutineRule
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals

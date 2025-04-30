@@ -38,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.Product
 import com.example.model.fakeProductsList
-import com.example.room.ProductsUiState
-import com.example.room.ProductsViewModel
 import com.example.room.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview

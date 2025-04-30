@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.room.ui.ProductsViewModel
 import com.example.room.util.LocalDatabaseDestinations
 import com.example.room.util.LocalDatabaseNavHost
 import com.example.ui.ui.DefaultTopAppBar

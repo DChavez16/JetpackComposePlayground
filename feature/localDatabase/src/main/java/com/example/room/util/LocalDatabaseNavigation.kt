@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.room.ProductsViewModel
+import com.example.room.ui.ProductsViewModel
 import com.example.room.R
 import com.example.room.ui.AddProductScreen
 import com.example.room.ui.ProductListScreen
