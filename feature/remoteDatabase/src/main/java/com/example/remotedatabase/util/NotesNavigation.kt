@@ -42,6 +42,7 @@ internal enum class RemoteDatabaseDestinations(
     )
 }
 
+// Remote database navigation graph
 fun NavGraphBuilder.remoteDatabaseGraph(
     navController: NavHostController,
     graphRoute: String,
