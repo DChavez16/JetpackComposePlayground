@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -22,10 +23,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,36 +34,56 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.model.Product
 import com.example.model.isValidForSave
 import com.example.room.R
 import com.example.ui.theme.PreviewAppTheme
 import com.example.ui.ui.CompactSizeScreenThemePreview
+import com.example.ui.ui.DefaultTopAppBar
+
 
 /**
  * Composable to add a new product to the database
  */
 @Composable
 internal fun AddProductScreen(
+    currentProduct: () -> Product,
     onSaveProduct: () -> Unit,
-    modifier: Modifier = Modifier,
-    productsViewModel: ProductsViewModel = hiltViewModel()
+    onProductNameChange: (String) -> Unit,
+    onProductQuantityChange: (Int) -> Unit,
+    onProductDescriptionChange: (String) -> Unit,
+    onProductAvailabilityChange: (Boolean) -> Unit,
+    clearProductFields: () -> Unit,
+    isSaveButtonEnabled: () -> Boolean,
+    topAppBarTitle: String,
+    onBackButtonPressed: () -> Unit,
+    showDeletionActionButton: Boolean = false,
+    onDeleteProduct: () -> Unit = {}
 ) {
 
-    val currentProduct by productsViewModel.currentProduct.collectAsState()
-
-    AddProductScreenContent(
-        onSaveProduct = onSaveProduct,
-        currentProduct = { currentProduct },
-        onProductNameChange = productsViewModel::updateProductName,
-        onProductQuantityChange = productsViewModel::updateProductQuantity,
-        onProductDescriptionChange = productsViewModel::updateProductDescription,
-        onProductAvailabilityChange = productsViewModel::updateProductAvailability,
-        clearProductFields = productsViewModel::clearProductFields,
-        isSaveButtonEnabled = { currentProduct.isValidForSave() },
-        modifier = modifier
-    )
+    Scaffold(
+        topBar = {
+            DefaultTopAppBar(
+                title = { topAppBarTitle },
+                onBackButtonPressed = onBackButtonPressed,
+                isPrincipalScreen = { false },
+                actionButtonIcon = { if (showDeletionActionButton) Icons.Default.Delete else null },
+                onActionButtonClick = onDeleteProduct
+            )
+        }
+    ) { innerPadding ->
+        AddProductScreenContent(
+            onSaveProduct = onSaveProduct,
+            currentProduct = currentProduct,
+            onProductNameChange = onProductNameChange,
+            onProductQuantityChange = onProductQuantityChange,
+            onProductDescriptionChange = onProductDescriptionChange,
+            onProductAvailabilityChange = onProductAvailabilityChange,
+            clearProductFields = clearProductFields,
+            isSaveButtonEnabled = isSaveButtonEnabled,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }
 
 
