@@ -11,10 +11,10 @@ class LocalDatabaseTestActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            LocalDatabaseScreen(
-                onMenuButtonClick = {}
-            )
-        }
+//        setContent {
+//            LocalDatabaseScreen(
+//                onMenuButtonClick = {}
+//            )
+//        }
     }
 }
