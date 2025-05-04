@@ -11,10 +11,11 @@ import com.example.drawscope.DrawScopeScreen
 import com.example.lazylayouts.LazyLayoutScreen
 import com.example.persistentWork.PersistentWorkScreen
 import com.example.remotedatabase.util.remoteDatabaseGraph
-import com.example.room.LocalDatabaseScreen
+import com.example.room.util.localDatabaseGraph
 import com.example.themes.ThemeScreen
 import com.example.util.RootNavigationDestination
 import com.feature.alarms.AlarmsScreen
+
 
 // Root Navigation Composable function
 @Composable
@@ -64,13 +65,11 @@ internal fun RootNavHost(
         }
 
         // Local Database destination
-        composable(
-            route = RootNavigationDestination.LocalDatabase.itemRouteName
-        ) {
-            LocalDatabaseScreen(
-                onMenuButtonClick = onMenuButtonClick
-            )
-        }
+        localDatabaseGraph(
+            navController = navController,
+            graphRoute = RootNavigationDestination.LocalDatabase.itemRouteName,
+            onMenuButtonClick = onMenuButtonClick
+        )
 
         // Remote database graph
         remoteDatabaseGraph(
