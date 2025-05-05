@@ -46,6 +46,8 @@ fun NavGraphBuilder.localDatabaseGraph(
     onMenuButtonClick: () -> Unit
 ) {
 
+    // TODO Fix tests for this module
+
     navigation(
         startDestination = LocalDatabaseDestinations.ProductsList.screenRouteName,
         route = graphRoute
@@ -153,7 +155,13 @@ fun NavGraphBuilder.localDatabaseGraph(
                 topAppBarTitle = topAppBarTitle,
                 onBackButtonPressed = navController::popBackStack,
                 showDeletionActionButton = true,
-                onDeleteProduct = productsViewModel::deleteProduct
+                onDeleteProduct = {
+                    // Delete the current product
+                    productsViewModel.deleteProduct()
+
+                    // Returns to the previous screen
+                    navController.popBackStack()
+                }
             )
         }
     }
